@@ -1,0 +1,50 @@
+.App {
+    text-align: center;
+}
+
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.video-element {
+    transform: rotateY(180deg);
+    height: 100%;
+    margin-left: -44%;
+    z-index: 1;
+    object-fit: cover;
+}
+
+.video-pose-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    transform: rotateY(180deg);
+    z-index: 1;
+}
+
+.video-focus-selection-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 2;
+}
+
+.camera-elements {
+    transform: rotateY(180deg);
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+}
