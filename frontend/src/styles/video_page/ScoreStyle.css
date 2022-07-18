@@ -1,0 +1,9 @@
+.score {
+    z-index: 3;
+    position: fixed;
+    top: 0;
+    right: 0;
+    font-size: xx-large;
+    color: white;
+    background-color: black;
+}

@@ -6,6 +6,8 @@ import Webcam from "react-webcam";
 import { Pose, POSE_CONNECTIONS } from "@mediapipe/pose";
 import * as mp_drawing from "@mediapipe/drawing_utils";
 
+import Score from "./Score";
+
 type landmark = {
     x: number,
     y: number,
@@ -459,7 +461,7 @@ function Media(props: any, ref: Ref<unknown>) {
                 Play/Pause Video
             </button>
 
-            <p className="score">{score}</p>
+            <Score score={score} />
         </div>
     );
 }
