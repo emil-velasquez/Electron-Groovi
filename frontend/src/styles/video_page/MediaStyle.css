@@ -44,14 +44,19 @@
     left: 100%;
 }
 
-.focus-area-pose {
-    position: fixed;
-    left: 100%;
-}
-
 .video-button {
     position: fixed;
     left: 50%;
     bottom: 0;
     z-index: 3;
+}
+
+.score {
+    z-index: 3;
+    position: fixed;
+    top: 0;
+    right: 0;
+    font-size: xx-large;
+    color: white;
+    background-color: black;
 }
