@@ -6,12 +6,14 @@ import Webcam from "react-webcam";
 import { Pose, POSE_CONNECTIONS } from "@mediapipe/pose";
 import * as mp_drawing from "@mediapipe/drawing_utils";
 
+type landmark = {
+    x: number,
+    y: number,
+    z: number
+}
+
 //TODO: make sure to update props when we figure out what props to enter
 function Media(props: any, ref: Ref<unknown>) {
-    const JOINTS = [[16, 14, 12], [14, 12, 11], [14, 12, 24], [12, 24, 26], [24, 26, 28],
-    [26, 24, 23], [25, 23, 24], [23, 25, 27], [11, 23, 25], [13, 11, 23],
-    [13, 11, 12], [15, 13, 11]];
-
     const HALF_HIDDEN_VIDEO_WIDTH = 0.22;
 
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -23,6 +25,20 @@ function Media(props: any, ref: Ref<unknown>) {
     const mouseDown = useRef(false);
     const focusInterval = useRef<number | null>(null);
     const [rect, setRect] = useState({ startX: 0, startY: 0, width: 0, height: 0, updatedRect: false });
+
+    const webcamRef = useRef<Webcam>(null);
+    const webcamPoseCanvasRef = useRef<HTMLCanvasElement>(null);
+
+    const webcamReady = useRef(false);
+
+    const mirrored = useRef(true);
+
+    const JOINTS = [[16, 14, 12], [14, 12, 11], [14, 12, 24], [12, 24, 26], [24, 26, 28],
+    [26, 24, 23], [25, 23, 24], [23, 25, 27], [11, 23, 25], [13, 11, 23],
+    [13, 11, 12], [15, 13, 11]];
+
+    const diffPoseAngles = useRef<number[][]>([]);
+    const [score, setScore] = useState(0);
 
 
     useImperativeHandle(ref, () => ({
@@ -231,7 +247,7 @@ function Media(props: any, ref: Ref<unknown>) {
         }
 
         const videoCanvasPoseModel = getPoseModel();
-        videoCanvasPoseModel.onResults(videoOnResults)
+        videoCanvasPoseModel.onResults(videoOnResults);
 
         if (videoFocusCanvasRef.current !== null) {
             startPoseEstimation(videoCanvasPoseModel, videoFocusCanvasRef.current)
@@ -239,13 +255,39 @@ function Media(props: any, ref: Ref<unknown>) {
     }
 
     /**
+     * When the webcam is loaded, kick off it's pose model
+     */
+    function processWebcam() {
+        const webcamPoseModel = getPoseModel();
+        webcamPoseModel.onResults(webcamOnResults);
+
+        if (webcamRef.current !== null && webcamRef.current.video !== null) {
+            startPoseEstimation(webcamPoseModel, webcamRef.current.video)
+        }
+        webcamReady.current = true;
+    }
+
+    /**
      * Handle whenever the video pose model makes results
      */
     const videoOnResults = (results: any) => {
-        if (videoPoseCanvasRef.current !== null) {
-            console.log("video results")
-            console.log(results.poseLandmarks);
+        if (videoPoseCanvasRef.current !== null && webcamReady.current) {
+            console.log("video results");
+            adjustDiffPoseAngles(results, -1);
+            calcDiffAngleScore(0);
             drawResults(results, videoPoseCanvasRef.current);
+        }
+    }
+
+    /**
+     * Handle whenever the webcam pose modle makes results
+     */
+    const webcamOnResults = (results: any) => {
+        if (webcamPoseCanvasRef.current !== null) {
+            console.log('webcam results');
+            initializeDiffPoseAngles();
+            adjustDiffPoseAngles(results, 1);
+            drawResults(results, webcamPoseCanvasRef.current);
         }
     }
 
@@ -317,24 +359,107 @@ function Media(props: any, ref: Ref<unknown>) {
         }
     }, [rect])
 
+    /**
+     * Empty out diffPoseAngles in preparation for the next frame
+     * pre: webcamOnResults called
+     * post: diffPoseAngles is initialized to 12 arrays of [0, 0]
+     */
+    function initializeDiffPoseAngles() {
+        diffPoseAngles.current.length = 0;
+        for (let angleIndex = 0; angleIndex < JOINTS.length; angleIndex++) {
+            diffPoseAngles.current[angleIndex] = [0, 0]
+        }
+    }
+
+    /**
+     * Calculates the angle for a given set of 3 coordinates
+     * landmarks: array of 33 landmark JSON objects from pose model
+     * landmarkIndices: list of 3 indices of the angle we are looking at
+     * inZdirection: boolean for whether the points are XY or XZ
+     */
+    function calculateAngle(landmarks: landmark[], landmarkIndices: number[], inZdirection: boolean) {
+        const DEG_IN_PI = 180;
+
+        let points = [];
+        for (let index = 0; index < landmarkIndices.length; index++) {
+            const landmark = landmarks[landmarkIndices[index]];
+            points[index] = [landmark.x, 0];
+            points[index][1] = inZdirection ? landmark.z : landmark.y;
+        }
+
+        let vector1 = [points[0][0] - points[1][0], points[0][1] - points[1][1]];
+        let vector1Length = Math.sqrt(vector1[0] * vector1[0] + vector1[1] * vector1[1]);
+
+        let vector2 = [points[2][0] - points[1][0], points[2][1] - points[1][1]];
+        let vector2Length = Math.sqrt(vector2[0] * vector2[0] + vector2[1] * vector2[1]);
+
+        let dotProduct = vector1[0] * vector2[0] + vector1[1] * vector2[1];
+        return Math.acos(dotProduct / (vector1Length * vector2Length)) * DEG_IN_PI / Math.PI;
+    }
+
+    /**
+     * Adds or subtracts to diffPoseAngles to prepare for scoring
+     * pre: webcamOnResults or videoOnResults has been called / initializeDiffPoseAngles has been
+     * called if webcamOnResults is the caller
+     * post: diffPoseAngles is adjusted (added to if webcamOnResults/subtracted if videoOnResults)
+     */
+    function adjustDiffPoseAngles(results: any, scale: number) {
+        const landmarks = results.poseWorldLandmarks;
+        if (landmarks) {
+            if (scale === 1 || mirrored.current) {
+                for (let angleIndex = 0; angleIndex < JOINTS.length; angleIndex++) {
+                    const landmarkIndices = JOINTS[angleIndex];
+                    const xyAngle = scale * calculateAngle(landmarks, landmarkIndices, false);
+                    const xzAngle = scale * calculateAngle(landmarks, landmarkIndices, true);
+                    diffPoseAngles.current[angleIndex][0] += xyAngle;
+                    diffPoseAngles.current[angleIndex][1] += xzAngle;
+                }
+            } else {
+                for (let angleIndex = JOINTS.length - 1; angleIndex >= 0; angleIndex--) {
+                    const landmarkIndices = JOINTS[angleIndex];
+                    const xyAngle = scale * calculateAngle(landmarks, landmarkIndices, false);
+                    const xzAngle = scale * calculateAngle(landmarks, landmarkIndices, true);
+                    diffPoseAngles.current[(JOINTS.length - 1) - angleIndex][0] += xyAngle;
+                    diffPoseAngles.current[(JOINTS.length - 1) - angleIndex][1] += xzAngle;
+                }
+            }
+        }
+    }
+
+    /**
+    * Calculates how different the angles between the webcam and the video are with forgiveness interval
+    * pre: Both webcamOnResults and videoOnResults have been called
+    * post: single number representing the overall difference after a forgivenss is applied
+    */
+    function calcDiffAngleScore(forgivenessInterval: number) {
+        let curScore = 0;
+        for (let jointScore of diffPoseAngles.current) {
+            curScore += Math.abs(jointScore[0]) + Math.abs(jointScore[1]) - 2 * forgivenessInterval;
+        }
+        setScore(curScore);
+        curScore = 0;
+    }
+
     return (
         <div className="media-container">
+            <canvas className="video-focus-selection-canvas" ref={videoFocusSelectionCanvasRef}
+                onMouseDown={setRectStart} onMouseMove={dragRect} onMouseUp={finalizeRect} />
+            <canvas className="focus-area" ref={videoFocusCanvasRef} />
+            <canvas className="focus-area" ref={videoPoseCanvasRef} />
             <div className="video-container">
                 <video crossOrigin="Anonymous" className="video-element" ref={videoRef} onLoadedData={initVideoCanvas}>
                     <source src="./videos/BTBT.mp4" type="video/mp4" />
                 </video>
             </div>
-            <canvas className="video-focus-selection-canvas" ref={videoFocusSelectionCanvasRef}
-                onMouseDown={setRectStart} onMouseMove={dragRect} onMouseUp={finalizeRect} />
-            <canvas className="focus-area" ref={videoFocusCanvasRef} />
-            <canvas className="focus-area-pose" ref={videoPoseCanvasRef} />
 
-            <Webcam className="camera-elements" />
-            <canvas className="camera-elements" />
+            <Webcam className="camera-elements" onUserMedia={processWebcam} ref={webcamRef} />
+            <canvas className="camera-elements" ref={webcamPoseCanvasRef} />
 
             <button className="video-button" onClick={togglePlay}>
                 Play/Pause Video
             </button>
+
+            <p className="score">{score}</p>
         </div>
     );
 }
