@@ -32,6 +32,11 @@ function VideoPose(props: videoPoseProps) {
     const [volume, setVolume] = useState(100);
     const [isMirrored, setMirrored] = useState(true);
 
+    const [isFocused, setIsFocused] = useState(false);
+    const [controlsHovered, setControlsHovered] = useState(false);
+    const [showControls, setShowControls] = useState(true);
+    const controlsTimeout = useRef<number | null>(null);
+
     /**
      * Return the x value of the mouse scaled to the focus area
      */
@@ -69,13 +74,15 @@ function VideoPose(props: videoPoseProps) {
     }
 
     /**
-     * Place the beginning corner of the focus area and enable drawing of a focus area
+     * Place the beginning corner of the focus area and enable drawing of a focus area or finish
+     * the rectangle
      * @param e: mouse event that has the x and y coordinates of the mouse
      * pre: mouseDown.current = false, videoFocusSelectionCanvasRef.current != null
      * post: rect startX and startY updated to the scaled mouse values
      */
-    const setRectStart = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const setFocusRect = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!mouseDown.current) {
+            setIsFocused(true);
             mouseDown.current = true;
             const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
             if (vidFocusSelectionCanvas !== null) {
@@ -87,6 +94,9 @@ function VideoPose(props: videoPoseProps) {
                     height: 1
                 }))
             }
+        } else {
+            setIsFocused(false);
+            finalizeRect();
         }
     }
 
@@ -160,8 +170,8 @@ function VideoPose(props: videoPoseProps) {
     }
 
     /**
- * Make the focus area canvas start drawing the updated focus area rectangle
- */
+    * Make the focus area canvas start drawing the updated focus area rectangle
+    */
     useEffect(() => {
         if (rect.updatedRect) {
             const drawVideoDance = () => {
@@ -247,6 +257,8 @@ function VideoPose(props: videoPoseProps) {
                 height: video.videoHeight / bounds.height * videoFocusSelectionCanvas.height,
                 updatedRect: true
             }))
+
+            //TODO: draw rectangle
         }
 
         const videoCanvasPoseModel = getPoseModel();
@@ -255,6 +267,10 @@ function VideoPose(props: videoPoseProps) {
         if (videoFocusCanvasRef.current !== null) {
             startPoseEstimation(videoCanvasPoseModel, videoFocusCanvasRef.current)
         }
+
+        //TODO: turn off video canvas
+
+        //TODO: update time input range element to the length of this video / 1000
     }
 
     /**
@@ -345,12 +361,37 @@ function VideoPose(props: videoPoseProps) {
         props.onUpdateMirror(isMirrored);
     })
 
+    /**
+     * Master function that handles whether or not the video controls should be shown
+     */
+    const toggleVideoControls = () => {
+        if (controlsTimeout.current !== null) {
+            window.clearTimeout(controlsTimeout.current);
+        }
+        if (isFocused) {
+            setShowControls(false);
+        } else if (!isPlaying) {
+            setShowControls(true);
+        } else if (controlsHovered) {
+            setShowControls(true);
+        } else {
+            //the video must be playing and the mouse is moving on top of video content
+            setShowControls(true);
+            controlsTimeout.current = window.setTimeout(() => { setShowControls(false) }, 2000);
+        }
+    }
+
+    useEffect(() => {
+        toggleVideoControls();
+    }, [isFocused, isPlaying, controlsHovered])
+
     return (
-        <div>
+        <div onMouseMove={toggleVideoControls}>
             <canvas className="video-focus-selection-canvas" ref={videoFocusSelectionCanvasRef}
-                onMouseDown={setRectStart} onMouseMove={dragRect} onMouseUp={finalizeRect} />
+                onMouseDown={setFocusRect} onMouseMove={dragRect} />
             <canvas className="focus-area" ref={videoFocusCanvasRef} />
             <canvas className="focus-area" ref={videoPoseCanvasRef} />
+
             <div className="video-container">
                 <video crossOrigin="Anonymous" className="video-element" ref={videoRef}
                     onLoadedData={initVideoCanvas} onTimeUpdate={handleOnTimeUpdate}>
@@ -358,7 +399,7 @@ function VideoPose(props: videoPoseProps) {
                 </video>
             </div>
 
-            <div className="video-controls">
+            <div className={showControls ? "video-controls" : "video-controls-hidden"} onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
                 <input type="range" min="0" max="100" value={progress} onChange={(e) => handleVideoProgress(e)} />
                 <button className="video-button" onClick={togglePlay}>
                     Play/Pause Video
