@@ -1,0 +1,10 @@
+.camera-elements {
+    transform: rotateY(180deg);
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+}
