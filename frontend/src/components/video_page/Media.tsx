@@ -25,6 +25,13 @@ function Media(props: any, ref: Ref<unknown>) {
     const [score, setScore] = useState(0);
 
     /**
+     * Update whether the video is mirrored
+     */
+    const updateMirrored = (mirrorState: boolean) => {
+        mirrored.current = mirrorState;
+    }
+
+    /**
      * Receive the results from the video pose model and process it
      */
     const videoPoseOnResults = (results: any) => {
@@ -132,7 +139,7 @@ function Media(props: any, ref: Ref<unknown>) {
 
     return (
         <div className="media-container">
-            <VideoPose onPoseResults={videoPoseOnResults} />
+            <VideoPose onPoseResults={videoPoseOnResults} onUpdateMirror={updateMirrored} />
             <WebcamPose onPoseResults={webcamPoseOnResults} onWebcamReady={webcamLoaded} />
             <Score score={score} />
         </div>

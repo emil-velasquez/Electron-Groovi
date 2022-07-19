@@ -5,7 +5,8 @@ import React, { useState, useRef, useEffect } from "react";
 import usePose from "../../hooks/usePose";
 
 type videoPoseProps = {
-    onPoseResults: (results: any) => void
+    onPoseResults: (results: any) => void,
+    onUpdateMirror: (mirrorState: boolean) => void
 }
 
 function VideoPose(props: videoPoseProps) {
@@ -25,14 +26,26 @@ function VideoPose(props: videoPoseProps) {
 
     const { getPoseModel, startPoseEstimation, drawResults } = usePose();
 
+    const [isPlaying, setPlaying] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [speed, setSpeed] = useState(1);
+    const [volume, setVolume] = useState(100);
+    const [isMirrored, setMirrored] = useState(true);
+
     /**
      * Return the x value of the mouse scaled to the focus area
      */
     const getFocusAreaXScaled = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
-        let bounds = vidFocusSelectionCanvas?.getBoundingClientRect();
+        const bounds = vidFocusSelectionCanvas?.getBoundingClientRect();
+        let tempMouseX = e.clientX;
+        if (bounds !== undefined) {
+            if (tempMouseX > bounds.width / 2) {
+                tempMouseX = bounds.width / 2;
+            }
+        }
         if (bounds !== null && bounds !== undefined && vidFocusSelectionCanvas !== null) {
-            return (e.clientX - bounds.left) * vidFocusSelectionCanvas.width / bounds.width;
+            return (tempMouseX - bounds.left) * vidFocusSelectionCanvas.width / bounds.width;
         }
         return 0;
     }
@@ -42,7 +55,13 @@ function VideoPose(props: videoPoseProps) {
      */
     const getFocusAreaYScaled = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
-        let bounds = vidFocusSelectionCanvas?.getBoundingClientRect();
+        const bounds = vidFocusSelectionCanvas?.getBoundingClientRect();
+        let tempMouseY = e.clientY;
+        if (bounds !== undefined) {
+            if (tempMouseY > bounds.height) {
+                tempMouseY = bounds.height;
+            }
+        }
         if (bounds !== null && bounds !== undefined && vidFocusSelectionCanvas !== null) {
             return (e.clientY - bounds.top) * vidFocusSelectionCanvas.height / bounds.height;
         }
@@ -56,14 +75,18 @@ function VideoPose(props: videoPoseProps) {
      * post: rect startX and startY updated to the scaled mouse values
      */
     const setRectStart = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        mouseDown.current = true;
-        const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
-        if (vidFocusSelectionCanvas !== null) {
-            setRect(prevRect => ({
-                ...prevRect,
-                startX: getFocusAreaXScaled(e),
-                startY: getFocusAreaYScaled(e)
-            }))
+        if (!mouseDown.current) {
+            mouseDown.current = true;
+            const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
+            if (vidFocusSelectionCanvas !== null) {
+                setRect(prevRect => ({
+                    ...prevRect,
+                    startX: getFocusAreaXScaled(e),
+                    startY: getFocusAreaYScaled(e),
+                    width: 1,
+                    height: 1
+                }))
+            }
         }
     }
 
@@ -108,30 +131,32 @@ function VideoPose(props: videoPoseProps) {
      * is the same from the user's perspective, mouseDown = false
      */
     const finalizeRect = () => {
-        let newWidth = rect.width;
-        let newHeight = rect.height;
-        let newStartX = rect.startX;
-        let newStartY = rect.startY;
+        if (mouseDown.current) {
+            let newWidth = rect.width;
+            let newHeight = rect.height;
+            let newStartX = rect.startX;
+            let newStartY = rect.startY;
 
-        if (rect.width < 0) {
-            newWidth = Math.abs(rect.width);
-            newStartX = rect.startX - newWidth;
+            if (rect.width < 0) {
+                newWidth = Math.abs(rect.width);
+                newStartX = rect.startX - newWidth;
+            }
+
+            if (rect.height < 0) {
+                newHeight = Math.abs(rect.height);
+                newStartY = rect.startY - newHeight;
+            }
+
+            setRect(prevRect => ({
+                startX: newStartX,
+                startY: newStartY,
+                width: newWidth,
+                height: newHeight,
+                updatedRect: true
+            }))
+
+            mouseDown.current = false;
         }
-
-        if (rect.height < 0) {
-            newHeight = Math.abs(rect.height);
-            newStartY = rect.startY - newHeight;
-        }
-
-        setRect(prevRect => ({
-            startX: newStartX,
-            startY: newStartY,
-            width: newWidth,
-            height: newHeight,
-            updatedRect: true
-        }))
-
-        mouseDown.current = false;
     }
 
     /**
@@ -243,6 +268,83 @@ function VideoPose(props: videoPoseProps) {
         }
     }
 
+    /**
+     * Play or pause the video
+     */
+    const togglePlay = () => {
+        setPlaying(prevPlaying => !prevPlaying);
+    }
+
+    useEffect(() => {
+        if (videoRef.current !== null) {
+            isPlaying ? videoRef.current.play() : videoRef.current.pause();
+        }
+    }, [isPlaying, videoRef])
+
+    /**
+     * keep track of the progress of the video
+     */
+    const handleOnTimeUpdate = () => {
+        if (videoRef.current !== null) {
+            const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+            setProgress(progress);
+        }
+    }
+
+    /**
+     * manually updates video progress
+     */
+    const handleVideoProgress = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const manualChange = Number(event.target.value);
+        if (videoRef.current !== null) {
+            videoRef.current.currentTime = (videoRef.current.duration / 100) * manualChange;
+        }
+        setProgress(manualChange);
+    }
+
+    /**
+     * manually adjust video speed
+     */
+    const handleVideoSpeed = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const speed = Number(event.target.value);
+        if (videoRef.current !== null) {
+            videoRef.current.playbackRate = speed;
+        }
+        setSpeed(speed);
+    }
+
+    /**
+     * manually adjust volume
+     */
+    const handleVolume = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const volumeChange = Number(event.target.value) / 100;
+        if (videoRef.current !== null) {
+            videoRef.current.volume = volumeChange;
+        }
+        setVolume(volumeChange * 100);
+    }
+
+    /**
+     * toggle mirroring the video
+     */
+    const toggleMirror = () => {
+        setMirrored(prevMirrored => !prevMirrored);
+    }
+
+    useEffect(() => {
+        if (videoRef.current !== null && videoPoseCanvasRef.current !== null) {
+            if (isMirrored) {
+                videoRef.current.style.setProperty("transform", "rotateY(180deg)");
+                videoPoseCanvasRef.current.style.setProperty("transform", "rotateY(180deg)");
+            } else {
+                videoRef.current.style.setProperty("transform", "rotateY(0deg)");
+                videoPoseCanvasRef.current.style.setProperty("transform", "rotateY(0deg)");
+            }
+        }
+        mirrored.current = isMirrored;
+        props.onUpdateMirror(isMirrored);
+    })
+
     return (
         <div>
             <canvas className="video-focus-selection-canvas" ref={videoFocusSelectionCanvasRef}
@@ -250,9 +352,35 @@ function VideoPose(props: videoPoseProps) {
             <canvas className="focus-area" ref={videoFocusCanvasRef} />
             <canvas className="focus-area" ref={videoPoseCanvasRef} />
             <div className="video-container">
-                <video crossOrigin="Anonymous" className="video-element" ref={videoRef} onLoadedData={initVideoCanvas}>
+                <video crossOrigin="Anonymous" className="video-element" ref={videoRef}
+                    onLoadedData={initVideoCanvas} onTimeUpdate={handleOnTimeUpdate}>
                     <source src="./videos/BTBT.mp4" type="video/mp4" />
                 </video>
+            </div>
+
+            <div className="video-controls">
+                <input type="range" min="0" max="100" value={progress} onChange={(e) => handleVideoProgress(e)} />
+                <button className="video-button" onClick={togglePlay}>
+                    Play/Pause Video
+                </button>
+                <select value={speed} onChange={(e) => handleVideoSpeed(e)}>
+                    <option value="0.3">0.3</option>
+                    <option value="0.4">0.4</option>
+                    <option value="0.5">0.5</option>
+                    <option value="0.6">0.6</option>
+                    <option value="0.7">0.7</option>
+                    <option value="0.8">0.8</option>
+                    <option value="0.9">0.9</option>
+                    <option value="1">1</option>
+                    <option value="1.25">1.25</option>
+                    <option value="1.5">1.5</option>
+                    <option value="1.75">1.75</option>
+                    <option value="2">2</option>
+                </select>
+                <input type="range" min="0" max="100" value={volume} onChange={(e) => handleVolume(e)} />
+                <button onClick={toggleMirror}>
+                    Mirror
+                </button>
             </div>
         </div>
     )
