@@ -48,7 +48,14 @@
     background-color: rgba(28, 22, 34, 0.5);
     z-index: 3;
     overflow: hidden;
+
+    display: flex;
+    color: white;
+    justify-content: center;
 }
+
+
+.video-controls-shown {}
 
 .video-controls-hidden {
     display: none;

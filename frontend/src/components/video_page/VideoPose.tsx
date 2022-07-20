@@ -2,6 +2,8 @@ import "../../styles/video_page/VideoPoseStyle.css";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
+import ChapterList from "./Chapters/ChapterList";
+
 import usePose from "../../hooks/usePose";
 
 type videoPoseProps = {
@@ -402,6 +404,35 @@ function VideoPose(props: videoPoseProps) {
         toggleVideoControls();
     }, [isFocused, isPlaying, controlsHovered, toggleVideoControls])
 
+    /**
+     * Given a number of seconds (in either number of string form), calculate the HH:MM:SS equivalent
+     * as a string and return that
+     */
+    const secondToHourMinuteSecond = (seconds: number | string) => {
+        const TIME_SEP = ":";
+
+        if (typeof seconds === "string") {
+            seconds = Number(seconds);
+        }
+
+        seconds = Math.round(seconds);
+
+        let minutes = seconds % 3600;
+        const hours = (seconds - minutes) / 3600;
+        let secs = minutes % 60;
+        minutes = (minutes - secs) / 60;
+
+        let time = "";
+        if (hours !== 0) {
+            time += hours.toString() + TIME_SEP;
+        }
+        time += minutes.toString() + TIME_SEP + secs.toString();
+        if (secs < 10) {
+            time += "0";
+        }
+        return time;
+    }
+
     return (
         <div onMouseMove={toggleVideoControls}>
             <canvas className={isFocused ? "video-focus-selection-canvas" : "focus-area-hidden"}
@@ -417,32 +448,37 @@ function VideoPose(props: videoPoseProps) {
                 </video>
             </div>
 
-            <div className={showControls ? "video-controls" : "video-controls-hidden"} onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
-                <input type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
-                <button className="video-button" onClick={togglePlay}>
-                    Play/Pause Video
-                </button>
-                <select value={speed} onChange={(e) => handleVideoSpeed(e)}>
-                    <option value="0.3">0.3</option>
-                    <option value="0.4">0.4</option>
-                    <option value="0.5">0.5</option>
-                    <option value="0.6">0.6</option>
-                    <option value="0.7">0.7</option>
-                    <option value="0.8">0.8</option>
-                    <option value="0.9">0.9</option>
-                    <option value="1">1</option>
-                    <option value="1.25">1.25</option>
-                    <option value="1.5">1.5</option>
-                    <option value="1.75">1.75</option>
-                    <option value="2">2</option>
-                </select>
-                <input type="range" min="0" max="100" value={volume} onChange={(e) => handleVolume(e)} />
-                <button onClick={toggleMirror}>
-                    Mirror
-                </button>
-                <button onClick={() => setIsFocused(true)}>
-                    Focus
-                </button>
+            <div className={showControls ? "video-controls-shown" : "video-controls-hidden"}
+                onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
+                <ChapterList />
+                <div className="video-controls">
+                    <p>{secondToHourMinuteSecond(progress) + " / " + secondToHourMinuteSecond(videoLength)}</p>
+                    <input type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
+                    <button className="video-button" onClick={togglePlay}>
+                        Play/Pause Video
+                    </button>
+                    <select value={speed} onChange={(e) => handleVideoSpeed(e)}>
+                        <option value="0.3">0.3</option>
+                        <option value="0.4">0.4</option>
+                        <option value="0.5">0.5</option>
+                        <option value="0.6">0.6</option>
+                        <option value="0.7">0.7</option>
+                        <option value="0.8">0.8</option>
+                        <option value="0.9">0.9</option>
+                        <option value="1">1</option>
+                        <option value="1.25">1.25</option>
+                        <option value="1.5">1.5</option>
+                        <option value="1.75">1.75</option>
+                        <option value="2">2</option>
+                    </select>
+                    <input type="range" min="0" max="100" value={volume} onChange={(e) => handleVolume(e)} />
+                    <button onClick={toggleMirror}>
+                        Mirror
+                    </button>
+                    <button onClick={() => setIsFocused(true)}>
+                        Focus
+                    </button>
+                </div>
             </div>
         </div>
     )
