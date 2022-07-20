@@ -35,6 +35,8 @@ function VideoPose(props: videoPoseProps) {
     const [showControls, setShowControls] = useState(true);
     const controlsTimeout = useRef<number | null>(null);
 
+    const [videoLength, setVideoLength] = useState("100");
+
     /**
      * Return the x value of the mouse scaled to the focus area
      */
@@ -274,6 +276,8 @@ function VideoPose(props: videoPoseProps) {
                 height: (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height,
                 updatedRect: true
             }))
+
+            setVideoLength(video.duration.toString())
         }
 
         const videoCanvasPoseModel = getPoseModel();
@@ -284,8 +288,6 @@ function VideoPose(props: videoPoseProps) {
         }
 
         setIsFocused(false);
-
-        //TODO: update time input range element to the length of this video / 1000
     }
 
     /**
@@ -317,7 +319,7 @@ function VideoPose(props: videoPoseProps) {
      */
     const handleOnTimeUpdate = () => {
         if (videoRef.current !== null) {
-            const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+            const progress = (videoRef.current.currentTime / videoRef.current.duration) * Number(videoLength);
             setProgress(progress);
         }
     }
@@ -328,7 +330,7 @@ function VideoPose(props: videoPoseProps) {
     const handleVideoProgress = (event: React.ChangeEvent<HTMLInputElement>) => {
         const manualChange = Number(event.target.value);
         if (videoRef.current !== null) {
-            videoRef.current.currentTime = (videoRef.current.duration / 100) * manualChange;
+            videoRef.current.currentTime = (videoRef.current.duration / Number(videoLength)) * manualChange;
         }
         setProgress(manualChange);
     }
@@ -416,7 +418,7 @@ function VideoPose(props: videoPoseProps) {
             </div>
 
             <div className={showControls ? "video-controls" : "video-controls-hidden"} onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
-                <input type="range" min="0" max="100" value={progress} onChange={(e) => handleVideoProgress(e)} />
+                <input type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
                 <button className="video-button" onClick={togglePlay}>
                     Play/Pause Video
                 </button>
