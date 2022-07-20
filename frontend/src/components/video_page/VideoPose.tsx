@@ -1,6 +1,6 @@
 import "../../styles/video_page/VideoPoseStyle.css";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
 import usePose from "../../hooks/usePose";
 
@@ -10,8 +10,6 @@ type videoPoseProps = {
 }
 
 function VideoPose(props: videoPoseProps) {
-    const HALF_HIDDEN_VIDEO_WIDTH = 0.22;
-
     const videoRef = useRef<HTMLVideoElement>(null);
     const videoFocusSelectionCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -32,7 +30,7 @@ function VideoPose(props: videoPoseProps) {
     const [volume, setVolume] = useState(100);
     const [isMirrored, setMirrored] = useState(true);
 
-    const [isFocused, setIsFocused] = useState(false);
+    const [isFocused, setIsFocused] = useState(true);
     const [controlsHovered, setControlsHovered] = useState(false);
     const [showControls, setShowControls] = useState(true);
     const controlsTimeout = useRef<number | null>(null);
@@ -68,7 +66,7 @@ function VideoPose(props: videoPoseProps) {
             }
         }
         if (bounds !== null && bounds !== undefined && vidFocusSelectionCanvas !== null) {
-            return (e.clientY - bounds.top) * vidFocusSelectionCanvas.height / bounds.height;
+            return (tempMouseY - bounds.top) * vidFocusSelectionCanvas.height / bounds.height;
         }
         return 0;
     }
@@ -82,7 +80,6 @@ function VideoPose(props: videoPoseProps) {
      */
     const setFocusRect = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!mouseDown.current) {
-            setIsFocused(true);
             mouseDown.current = true;
             const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
             if (vidFocusSelectionCanvas !== null) {
@@ -124,11 +121,7 @@ function VideoPose(props: videoPoseProps) {
                     height: curHeight
                 }))
 
-                vidFocusSelectionCanvasCtx.beginPath();
-                vidFocusSelectionCanvasCtx.rect(rect.startX, rect.startY, rect.width, rect.height);
-                vidFocusSelectionCanvasCtx.strokeStyle = "red";
-                vidFocusSelectionCanvasCtx.lineWidth = 2;
-                vidFocusSelectionCanvasCtx.stroke();
+                drawRect();
             }
         }
     }
@@ -168,6 +161,23 @@ function VideoPose(props: videoPoseProps) {
             mouseDown.current = false;
         }
     }
+
+    /**
+     * Draws the bounding rectangle on the focus selection canvas
+     */
+    const drawRect = useCallback(() => {
+        const videoFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
+        if (videoFocusSelectionCanvas !== null) {
+            const vidFocusSelectionCanvasCtx = videoFocusSelectionCanvas.getContext("2d");
+            if (vidFocusSelectionCanvasCtx !== null) {
+                vidFocusSelectionCanvasCtx.beginPath();
+                vidFocusSelectionCanvasCtx.rect(rect.startX, rect.startY, rect.width, rect.height);
+                vidFocusSelectionCanvasCtx.strokeStyle = "red";
+                vidFocusSelectionCanvasCtx.lineWidth = 2;
+                vidFocusSelectionCanvasCtx.stroke();
+            }
+        }
+    }, [rect.startX, rect.startY, rect.width, rect.height])
 
     /**
     * Make the focus area canvas start drawing the updated focus area rectangle
@@ -234,11 +244,13 @@ function VideoPose(props: videoPoseProps) {
 
             focusInterval.current = window.setInterval(() => {
                 drawVideoDance();
-            }, 50);
+            }, 10);
+
+            drawRect();
 
             setRect(prevRect => ({ ...prevRect, updatedRect: false }))
         }
-    }, [rect])
+    }, [rect, drawRect])
 
     /**
      * When the video is loaded, set the focus area to the 50% actually shown to the user
@@ -246,19 +258,22 @@ function VideoPose(props: videoPoseProps) {
      * pre: video is loaded
      */
     const initVideoCanvas = () => {
+        console.log(isFocused);
         const video = videoRef.current;
         const videoFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
         if (videoFocusSelectionCanvas !== null && video !== null) {
             const bounds = videoFocusSelectionCanvas.getBoundingClientRect();
+
+            //(tempMouseX - bounds.left) * vidFocusSelectionCanvas.width / bounds.width
+            //(e.clientY - bounds.top) * vidFocusSelectionCanvas.height / bounds.height;
+
             setRect(prevRect => ({
                 startX: 0,
                 startY: 0,
-                width: HALF_HIDDEN_VIDEO_WIDTH * video.videoWidth,
-                height: video.videoHeight / bounds.height * videoFocusSelectionCanvas.height,
+                width: ((bounds.width / 2) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width,
+                height: (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height,
                 updatedRect: true
             }))
-
-            //TODO: draw rectangle
         }
 
         const videoCanvasPoseModel = getPoseModel();
@@ -268,7 +283,7 @@ function VideoPose(props: videoPoseProps) {
             startPoseEstimation(videoCanvasPoseModel, videoFocusCanvasRef.current)
         }
 
-        //TODO: turn off video canvas
+        setIsFocused(false);
 
         //TODO: update time input range element to the length of this video / 1000
     }
@@ -364,7 +379,7 @@ function VideoPose(props: videoPoseProps) {
     /**
      * Master function that handles whether or not the video controls should be shown
      */
-    const toggleVideoControls = () => {
+    const toggleVideoControls = useCallback(() => {
         if (controlsTimeout.current !== null) {
             window.clearTimeout(controlsTimeout.current);
         }
@@ -379,15 +394,16 @@ function VideoPose(props: videoPoseProps) {
             setShowControls(true);
             controlsTimeout.current = window.setTimeout(() => { setShowControls(false) }, 2000);
         }
-    }
+    }, [controlsHovered, isFocused, isPlaying]);
 
     useEffect(() => {
         toggleVideoControls();
-    }, [isFocused, isPlaying, controlsHovered])
+    }, [isFocused, isPlaying, controlsHovered, toggleVideoControls])
 
     return (
         <div onMouseMove={toggleVideoControls}>
-            <canvas className="video-focus-selection-canvas" ref={videoFocusSelectionCanvasRef}
+            <canvas className={isFocused ? "video-focus-selection-canvas" : "focus-area-hidden"}
+                ref={videoFocusSelectionCanvasRef}
                 onMouseDown={setFocusRect} onMouseMove={dragRect} />
             <canvas className="focus-area" ref={videoFocusCanvasRef} />
             <canvas className="focus-area" ref={videoPoseCanvasRef} />
@@ -421,6 +437,9 @@ function VideoPose(props: videoPoseProps) {
                 <input type="range" min="0" max="100" value={volume} onChange={(e) => handleVolume(e)} />
                 <button onClick={toggleMirror}>
                     Mirror
+                </button>
+                <button onClick={() => setIsFocused(true)}>
+                    Focus
                 </button>
             </div>
         </div>
