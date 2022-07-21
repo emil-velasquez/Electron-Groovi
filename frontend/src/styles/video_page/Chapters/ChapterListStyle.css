@@ -1,0 +1,30 @@
+.chapter-list-container {
+    position: fixed;
+    top: 10%;
+    right: 0;
+
+    width: 230px;
+    height: 80%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background-color: rgba(28, 22, 34, 0.5);
+    z-index: 3;
+}
+
+.header-section {
+    display: flex;
+    color: white;
+}
+
+.show-chapter-editor {
+    z-index: 4;
+}
+
+.hide-chapter-editor {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    visibility: none;
+    z-index: -1;
+}

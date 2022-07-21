@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import ChapterList from "./Chapters/ChapterList";
 
 import usePose from "../../hooks/usePose";
+import useTime from "../../hooks/useTime";
 
 type videoPoseProps = {
     onPoseResults: (results: any) => void,
@@ -25,6 +26,7 @@ function VideoPose(props: videoPoseProps) {
     const mirrored = useRef(true);
 
     const { getPoseModel, startPoseEstimation, drawResults } = usePose();
+    const secondToHourMinuteSecond = useTime();
 
     const [isPlaying, setPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -262,7 +264,6 @@ function VideoPose(props: videoPoseProps) {
      * pre: video is loaded
      */
     const initVideoCanvas = () => {
-        console.log(isFocused);
         const video = videoRef.current;
         const videoFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
         if (videoFocusSelectionCanvas !== null && video !== null) {
@@ -279,7 +280,7 @@ function VideoPose(props: videoPoseProps) {
                 updatedRect: true
             }))
 
-            setVideoLength(video.duration.toString())
+            setVideoLength(prevLength => video.duration.toString())
         }
 
         const videoCanvasPoseModel = getPoseModel();
@@ -404,37 +405,9 @@ function VideoPose(props: videoPoseProps) {
         toggleVideoControls();
     }, [isFocused, isPlaying, controlsHovered, toggleVideoControls])
 
-    /**
-     * Given a number of seconds (in either number of string form), calculate the HH:MM:SS equivalent
-     * as a string and return that
-     */
-    const secondToHourMinuteSecond = (seconds: number | string) => {
-        const TIME_SEP = ":";
-
-        if (typeof seconds === "string") {
-            seconds = Number(seconds);
-        }
-
-        seconds = Math.round(seconds);
-
-        let minutes = seconds % 3600;
-        const hours = (seconds - minutes) / 3600;
-        let secs = minutes % 60;
-        minutes = (minutes - secs) / 60;
-
-        let time = "";
-        if (hours !== 0) {
-            time += hours.toString() + TIME_SEP;
-        }
-        time += minutes.toString() + TIME_SEP + secs.toString();
-        if (secs < 10) {
-            time += "0";
-        }
-        return time;
-    }
-
     return (
         <div onMouseMove={toggleVideoControls}>
+            <canvas className="whole-screen" />
             <canvas className={isFocused ? "video-focus-selection-canvas" : "focus-area-hidden"}
                 ref={videoFocusSelectionCanvasRef}
                 onMouseDown={setFocusRect} onMouseMove={dragRect} />
@@ -450,9 +423,9 @@ function VideoPose(props: videoPoseProps) {
 
             <div className={showControls ? "video-controls-shown" : "video-controls-hidden"}
                 onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
-                <ChapterList />
+                <ChapterList ref={videoRef} vidLength={videoLength} />
                 <div className="video-controls">
-                    <p>{secondToHourMinuteSecond(progress) + " / " + secondToHourMinuteSecond(videoLength)}</p>
+                    <p>{secondToHourMinuteSecond(progress).time + " / " + secondToHourMinuteSecond(videoLength).time}</p>
                     <input type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
                     <button className="video-button" onClick={togglePlay}>
                         Play/Pause Video

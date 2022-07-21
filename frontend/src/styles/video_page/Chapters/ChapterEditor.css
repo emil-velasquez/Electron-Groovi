@@ -1,0 +1,26 @@
+.chapter-editor-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 200px;
+    margin-left: -150px;
+    margin-top: -100px;
+    background-color: rgba(28, 22, 34, 0.5);
+    color: white;
+    z-index: 4;
+
+    float: left;
+}
+
+.header {
+    display: flex;
+}
+
+.time {
+    display: flex;
+}
+
+.time-input {
+    width: 40px;
+}
