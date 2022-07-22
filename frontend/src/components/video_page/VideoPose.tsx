@@ -298,7 +298,6 @@ function VideoPose(props: videoPoseProps) {
     */
     const videoOnResults = (results: any) => {
         if (videoPoseCanvasRef.current !== null) {
-            console.log("video results");
             props.onPoseResults(results);
             drawResults(results, videoPoseCanvasRef.current);
         }
@@ -328,14 +327,21 @@ function VideoPose(props: videoPoseProps) {
     }
 
     /**
-     * manually updates video progress
+     * manually updates video progress from input range
      */
     const handleVideoProgress = (event: React.ChangeEvent<HTMLInputElement>) => {
         const manualChange = Number(event.target.value);
+        jumpVideoProgress(manualChange);
+    }
+
+    /**
+     * manually updates video progress from the chapter list
+     */
+    const jumpVideoProgress = (time: number) => {
         if (videoRef.current !== null) {
-            videoRef.current.currentTime = (videoRef.current.duration / Number(videoLength)) * manualChange;
+            videoRef.current.currentTime = (videoRef.current.duration / Number(videoLength)) * time;
         }
-        setProgress(manualChange);
+        setProgress(time);
     }
 
     /**
@@ -423,7 +429,7 @@ function VideoPose(props: videoPoseProps) {
 
             <div className={showControls ? "video-controls-shown" : "video-controls-hidden"}
                 onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
-                <ChapterList ref={videoRef} vidLength={videoLength} />
+                <ChapterList vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} />
                 <div className="video-controls">
                     <p>{secondToHourMinuteSecond(progress).time + " / " + secondToHourMinuteSecond(videoLength).time}</p>
                     <input type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />

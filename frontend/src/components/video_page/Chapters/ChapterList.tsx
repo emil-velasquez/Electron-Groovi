@@ -1,6 +1,6 @@
 import "../../../styles/video_page/Chapters/ChapterListStyle.css"
 
-import React, { useEffect, useState, useRef, forwardRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import ChapterEditor from "./ChapterEditor";
 import Chapter from "./Chapter";
@@ -12,13 +12,15 @@ type ChapterType = {
 }
 
 type ChapterListProps = {
-    vidLength: string
+    vidLength: string,
+    jumper: (time: number) => void,
+    vidProgress: number
 }
 
-function ChapterList(props: ChapterListProps, ref: any) {
-    const [chapters, setChapters] = useState<ChapterType[]>([{ name: "test", start: 0, end: 100 }]);
+function ChapterList(props: ChapterListProps) {
+    const [chapters, setChapters] = useState<ChapterType[]>([{ name: "test", start: 0, end: 5 }]);
     const [activeChapters, setActiveChapters] = useState<number[]>([]);
-    const [currentChapter, setCurrentChapter] = useState<number>(0);
+    const [currentChapter, setCurrentChapter] = useState(0);
 
     const [editorValues, setEditorValues] = useState({ name: "Untitled", start: 0, end: 1, index: -1 });
     const [showEditor, setShowEditor] = useState(false);
@@ -77,6 +79,72 @@ function ChapterList(props: ChapterListProps, ref: any) {
         setChapters(prevChapters => sortedChapters);
     }
 
+    /**
+     * If a chapter gets activated, add it to activeChapters (in sorted order)
+     * If a chapter gets deactivated, remove it from activateChapters and subtract 1 from currentChapter
+     * if currentChapter >= size of activateChapters
+     */
+    const toggleChapter = (isActivated: boolean, index: number) => {
+        if (isActivated) {
+            setActiveChapters(prevActiveChapters => [...prevActiveChapters, index]);
+        } else {
+            setActiveChapters(prevActiveChapters => {
+                const removedChapter = prevActiveChapters.filter((value) => value !== index);
+                return removedChapter;
+            });
+        }
+    }
+
+    useEffect(() => {
+        if (currentChapter >= activeChapters.length && currentChapter > 0) {
+            setCurrentChapter(prevChap => prevChap - 1);
+        }
+    }, [activeChapters, currentChapter])
+
+    /**
+     * If there are activated chapters, figure out based on progress and currentChapter when 
+     * and where to jump
+     */
+    useEffect(() => {
+        if (activeChapters.length > 0) {
+            const curActiveChap = chapters[activeChapters[currentChapter]];
+
+            //if progress is not within active chapter, figure out next active chapter after current progress
+            if (props.vidProgress < curActiveChap.start || props.vidProgress > curActiveChap.end + 1) {
+                let foundNewActive = false;
+                let potentialNewActiveIdx = 0;
+                while (!foundNewActive && potentialNewActiveIdx < activeChapters.length) {
+                    const potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx]];
+                    if (potentialActiveChapter.start > props.vidProgress) {
+                        foundNewActive = true;
+                    }
+                    potentialNewActiveIdx++;
+                }
+                if (potentialNewActiveIdx >= activeChapters.length) {
+                    potentialNewActiveIdx = 0;
+                }
+                setCurrentChapter(prevChapter => potentialNewActiveIdx);
+            }
+
+            //checking if we are at the end of the current active chapter
+            //if so figure out the next active chapter and jump if necessary to its start
+            if (curActiveChap.end <= props.vidProgress && props.vidProgress <= curActiveChap.end + 1) {
+                console.log("here")
+                let nextActiveChapterIdx = currentChapter + 1;
+                if (nextActiveChapterIdx >= activeChapters.length) {
+                    nextActiveChapterIdx = 0;
+                }
+                const nextActiveChap = chapters[activeChapters[nextActiveChapterIdx]];
+                setCurrentChapter(prevChapter => nextActiveChapterIdx);
+                if (!(curActiveChap.start < nextActiveChap.start
+                    && nextActiveChap.start < curActiveChap.end
+                    && curActiveChap.end < nextActiveChap.end)) {
+                    props.jumper(nextActiveChap.start);
+                }
+            }
+        }
+    }, [props.vidProgress])
+
     return (
         <div>
             <div className={showEditor ? "show-chapter-editor" : "hide-chapter-editor"}>
@@ -91,10 +159,11 @@ function ChapterList(props: ChapterListProps, ref: any) {
                     </button>
                 </div>
                 {chapters.map((curElement, idx) => <Chapter name={curElement.name} start={curElement.start}
-                    end={curElement.end} index={idx} editor={resetChapterEditor} />)}
+                    end={curElement.end} index={idx} editor={resetChapterEditor} jumper={props.jumper}
+                    activator={toggleChapter} />)}
             </div>
         </div>
     )
 }
 
-export default forwardRef(ChapterList);
+export default ChapterList;

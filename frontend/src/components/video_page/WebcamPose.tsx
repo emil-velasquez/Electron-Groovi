@@ -33,7 +33,6 @@ function WebcamPose(props: webcamPoseProps) {
      */
     const webcamOnResults = (results: any) => {
         if (webcamPoseCanvasRef.current !== null) {
-            console.log('webcam results');
             props.onPoseResults(results);
             drawResults(results, webcamPoseCanvasRef.current);
         }
