@@ -2,9 +2,9 @@ import "./VideoLearnPageStyle.css";
 
 import React, { useRef, useState, Ref, useEffect } from "react";
 
-import Score from "../components/video_page/Score";
-import VideoPose from "../components/video_page/VideoPose";
-import WebcamPose from "../components/video_page/WebcamPose";
+import Score from "../../components/video_learn_page/Score";
+import VideoPose from "../../components/video_learn_page/VideoPose";
+import WebcamPose from "../../components/video_learn_page/WebcamPose";
 
 type landmark = {
     x: number,

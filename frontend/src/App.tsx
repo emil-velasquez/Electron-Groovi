@@ -1,10 +1,9 @@
 import './App.css';
 
 import React from "react";
-import VideoLearnPage from "./pages/VideoLearnPage"
+import VideoLearnPage from "./pages/video_learn_page/VideoLearnPage"
 
 function App() {
-
     return (
         <div className="App">
             <VideoLearnPage />
