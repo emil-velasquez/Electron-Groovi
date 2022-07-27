@@ -1,4 +1,4 @@
-import "../../styles/video_page/MediaStyle.css";
+import "../../styles/video_page/VideoLearnPageStyle.css";
 
 import React, { useRef, useState, Ref, useEffect } from "react";
 
