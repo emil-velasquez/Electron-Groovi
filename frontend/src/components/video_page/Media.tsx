@@ -1,6 +1,6 @@
 import "../../styles/video_page/MediaStyle.css";
 
-import React, { useRef, useState, Ref } from "react";
+import React, { useRef, useState, Ref, useEffect } from "react";
 
 import Score from "./Score";
 import VideoPose from "./VideoPose";
@@ -69,6 +69,13 @@ function Media(props: any, ref: Ref<unknown>) {
     }
 
     /**
+     * When the application is first loaded, we need to make sure that diffPoseAngles is initialized
+     */
+    useEffect(() => {
+        initializeDiffPoseAngles();
+    }, [])
+
+    /**
      * Calculates the angle for a given set of 3 coordinates
      * landmarks: array of 33 landmark JSON objects from pose model
      * landmarkIndices: list of 3 indices of the angle we are looking at
@@ -103,6 +110,7 @@ function Media(props: any, ref: Ref<unknown>) {
     function adjustDiffPoseAngles(results: any, scale: number) {
         const landmarks = results.poseWorldLandmarks;
         if (landmarks) {
+            console.log(diffPoseAngles);
             if (scale === 1 || mirrored.current) {
                 for (let angleIndex = 0; angleIndex < JOINTS.length; angleIndex++) {
                     const landmarkIndices = JOINTS[angleIndex];
