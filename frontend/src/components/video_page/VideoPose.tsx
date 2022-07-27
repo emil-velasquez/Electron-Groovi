@@ -35,6 +35,7 @@ function VideoPose(props: videoPoseProps) {
     const [isMirrored, setMirrored] = useState(true);
 
     const [isFocused, setIsFocused] = useState(true);
+    const [isFocusedDrawing, setIsFocusedDrawing] = useState(false);
     const [controlsHovered, setControlsHovered] = useState(false);
     const [showControls, setShowControls] = useState(true);
     const controlsTimeout = useRef<number | null>(null);
@@ -86,6 +87,7 @@ function VideoPose(props: videoPoseProps) {
      */
     const setFocusRect = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!mouseDown.current) {
+            setIsFocusedDrawing(true);
             mouseDown.current = true;
             const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
             if (vidFocusSelectionCanvas !== null) {
@@ -98,7 +100,7 @@ function VideoPose(props: videoPoseProps) {
                 }))
             }
         } else {
-            setIsFocused(false);
+            setIsFocusedDrawing(false);
             finalizeRect();
         }
     }
@@ -299,7 +301,7 @@ function VideoPose(props: videoPoseProps) {
     const videoOnResults = (results: any) => {
         if (videoPoseCanvasRef.current !== null) {
             props.onPoseResults(results);
-            drawResults(results, videoPoseCanvasRef.current);
+            //drawResults(results, videoPoseCanvasRef.current);
         }
     }
 
@@ -394,7 +396,7 @@ function VideoPose(props: videoPoseProps) {
         if (controlsTimeout.current !== null) {
             window.clearTimeout(controlsTimeout.current);
         }
-        if (isFocused) {
+        if (isFocusedDrawing) {
             setShowControls(false);
         } else if (!isPlaying) {
             setShowControls(true);
@@ -405,11 +407,11 @@ function VideoPose(props: videoPoseProps) {
             setShowControls(true);
             controlsTimeout.current = window.setTimeout(() => { setShowControls(false) }, 2000);
         }
-    }, [controlsHovered, isFocused, isPlaying]);
+    }, [controlsHovered, isFocusedDrawing, isPlaying]);
 
     useEffect(() => {
         toggleVideoControls();
-    }, [isFocused, isPlaying, controlsHovered, toggleVideoControls])
+    }, [isFocusedDrawing, isPlaying, controlsHovered, toggleVideoControls])
 
     return (
         <div onMouseMove={toggleVideoControls}>
@@ -423,7 +425,7 @@ function VideoPose(props: videoPoseProps) {
             <div className="video-container">
                 <video crossOrigin="Anonymous" className="video-element" ref={videoRef}
                     onLoadedData={initVideoCanvas} onTimeUpdate={handleOnTimeUpdate}>
-                    <source src="./videos/BTBT.mp4" type="video/mp4" />
+                    <source src="./videos/LoveShot.mp4" type="video/mp4" />
                 </video>
             </div>
 
@@ -454,7 +456,7 @@ function VideoPose(props: videoPoseProps) {
                     <button onClick={toggleMirror}>
                         Mirror
                     </button>
-                    <button onClick={() => setIsFocused(true)}>
+                    <button onClick={() => setIsFocused(prevFocus => !prevFocus)}>
                         Focus
                     </button>
                 </div>
