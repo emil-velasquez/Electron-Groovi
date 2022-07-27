@@ -1,3 +1,5 @@
+import "../../styles/video_page/WebcamPoseStyle.css"
+
 import React, { useRef } from "react";
 
 import Webcam from "react-webcam";
