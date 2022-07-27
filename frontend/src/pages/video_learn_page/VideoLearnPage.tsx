@@ -13,7 +13,7 @@ type landmark = {
 }
 
 //TODO: make sure to update props when we figure out what props to enter
-function Media(props: any, ref: Ref<unknown>) {
+function VideoLearnPage(props: any, ref: Ref<unknown>) {
     const webcamReady = useRef(false);
 
     const JOINTS = [[16, 14, 12], [14, 12, 11], [14, 12, 24], [12, 24, 26], [24, 26, 28],
@@ -154,4 +154,4 @@ function Media(props: any, ref: Ref<unknown>) {
     );
 }
 
-export default Media;
+export default VideoLearnPage;
