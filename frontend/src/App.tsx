@@ -1,7 +1,7 @@
 import './App.css';
 
 import React from "react";
-import VideoLearnPage from "./components/video_page/VideoLearnPage"
+import VideoLearnPage from "./pages/VideoLearnPage"
 
 function App() {
 
