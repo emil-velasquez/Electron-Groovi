@@ -1,12 +1,22 @@
 import './App.css';
 
-import React from "react";
-import VideoLearnPage from "./pages/video_learn_page/VideoLearnPage"
+import React, { useEffect } from "react";
+
+import { Link, Outlet } from 'react-router-dom';
 
 function App() {
+    useEffect(() => {
+        console.log("here");
+    }, [])
+
     return (
         <div className="App">
-            <VideoLearnPage />
+            <nav>
+                <Link to="/user">User</Link> | {" "}
+                <Link to="/playlist">Playlist</Link> | {" "}
+                <Link to="/song">Song</Link>
+            </nav>
+            <Outlet />
         </div>
     );
 }
