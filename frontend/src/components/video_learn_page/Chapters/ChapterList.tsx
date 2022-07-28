@@ -1,4 +1,4 @@
-import "../../../styles/video_page/Chapters/ChapterListStyle.css"
+import "../../../styles/video_learn_page/Chapters/ChapterListStyle.css"
 
 import React, { useEffect, useState, useRef } from "react";
 

@@ -1,3 +1,5 @@
+import "./PlaylistPageStyle.css"
+
 function PlaylistPage() {
     return (
         <div>

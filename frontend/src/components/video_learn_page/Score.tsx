@@ -1,4 +1,4 @@
-import "../../styles/video_page/ScoreStyle.css"
+import "../../styles/video_learn_page/ScoreStyle.css"
 
 type ScoreProps = {
     score: number

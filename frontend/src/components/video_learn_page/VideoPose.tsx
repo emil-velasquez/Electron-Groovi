@@ -1,4 +1,4 @@
-import "../../styles/video_page/VideoPoseStyle.css";
+import "../../styles/video_learn_page/VideoPoseStyle.css";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 

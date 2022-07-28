@@ -1,4 +1,4 @@
-import "../../styles/video_page/WebcamPoseStyle.css"
+import "../../styles/video_learn_page/WebcamPoseStyle.css"
 
 import React, { useRef } from "react";
 
