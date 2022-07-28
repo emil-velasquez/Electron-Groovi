@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import PlaylistPage from './pages/playlist_page/PlaylistPage';
-import SongPage from './pages/song_page/SongPage';
+import SongPage from './pages/video_info_page/VideoInfoPage';
 import UserPage from './pages/user_page/UserPage';
 import VideoLearnPage from './pages/video_learn_page/VideoLearnPage';
 
