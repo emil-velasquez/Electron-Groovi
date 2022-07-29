@@ -12,7 +12,7 @@ let users = [
     }
 ]
 
-export function getUser(inputID: string) {
+export function getUser(inputID: string | undefined) {
     return users.find(
         (user) => user.id === inputID
     );
