@@ -8,8 +8,13 @@ function PlaylistPage() {
     let params = useParams();
 
     return (
-        <div>
-            <p>Playlist Page: {getPlaylist(params.playlistID)?.name}</p>
+        <div className="playlist-page">
+            <div className="header">
+
+            </div>
+            <div className="video-cards-section">
+
+            </div>
         </div>
     )
 }

@@ -4,7 +4,9 @@ let videos = [
         videoName: "Love Shot Tutorial",
         choreographer: "123456",
         songName: "Love Shot",
-        artistName: "EXO"
+        artistName: "EXO",
+        thumbnail: "LoveShotThumbnail.PNG",
+        videoURL: "LoveShot.mp4",
     }
 ]
 
