@@ -4,15 +4,13 @@ let playlists = [
         name: "Test",
         owner: "abcdef",
         songs: [
-            "abc",
-            "def",
-            "ghi",
-            "jkl",
-            "mno",
-            "pqr",
-            "stu"
+            "abc"
         ]
     }
 ]
 
-export { }
+export function getPlaylist(inputID: string | undefined) {
+    return playlists.find(
+        (playlist) => playlist.id === inputID
+    );
+}

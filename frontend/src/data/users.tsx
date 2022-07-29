@@ -1,8 +1,19 @@
 let users = [
     {
         id: "abcdef",
-        name: "Emil"
+        name: "Emil",
+        playlists: [
+            "123456"
+        ]
+    },
+    {
+        id: "123456",
+        name: "Lisa Rhee"
     }
 ]
 
-export { }
+export function getUser(inputID: string) {
+    return users.find(
+        (user) => user.id === inputID
+    );
+}

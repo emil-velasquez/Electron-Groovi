@@ -19,7 +19,17 @@ root.render(
             <Routes>
                 <Route path="/" element={<App />}>
                     <Route path="user" element={<UserPage />} />
-                    <Route path="playlist" element={<PlaylistPage />} />
+                    <Route path="playlist">
+                        <Route
+                            index
+                            element={
+                                <main style={{ padding: "1rem" }}>
+                                    <p>We can't find that playlist. Sorry</p>
+                                </main>
+                            }
+                        />
+                        <Route path=":playlistID" element={<PlaylistPage />} />
+                    </Route>
                     <Route path="song" element={<SongPage />} />
                 </Route>
                 <Route path="/learn" element={<VideoLearnPage />} />
