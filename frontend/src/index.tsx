@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import PlaylistPage from './pages/playlist_page/PlaylistPage';
-import SongPage from './pages/video_info_page/VideoInfoPage';
+import VideoInfoPage from './pages/video_info_page/VideoInfoPage';
 import UserPage from './pages/user_page/UserPage';
 import VideoLearnPage from './pages/video_learn_page/VideoLearnPage';
 
@@ -30,7 +30,7 @@ root.render(
                         />
                         <Route path=":playlistID" element={<PlaylistPage />} />
                     </Route>
-                    <Route path="song" element={<SongPage />} />
+                    <Route path="videoinfo" element={<VideoInfoPage />} />
                 </Route>
                 <Route path="/learn" element={<VideoLearnPage />} />
             </Routes>

@@ -1,3 +1,12 @@
 .playlist-page {
     padding: 1rem;
 }
+
+.video-card-section {
+    display: flex;
+    width: calc(100vw - 200px);
+    flex-wrap: wrap;
+    justify-content: space-around;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

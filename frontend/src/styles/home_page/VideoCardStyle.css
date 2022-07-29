@@ -1,0 +1,13 @@
+.video-card {
+    margin: 5px;
+}
+
+.video-thumbnail {
+    width: 320px;
+    height: 180px;
+}
+
+.video-info {
+    margin: 0px;
+    font-size: 12px;
+}
