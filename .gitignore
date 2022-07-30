@@ -2,3 +2,4 @@ frontend/public/videos/*.mp4
 frontend/public/videos/*.png
 DanceStudioWorkspace.code-workspace
 node_modules
+server/dist
