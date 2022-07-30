@@ -12,7 +12,7 @@ export const collections: {
 } = {};
 
 export async function connectToDatabase() {
-    dotenv.config({ path: "../../config.env" });
+    dotenv.config();
 
     //create a client to the cluster at DB_CONN_STRING and connect to that cluster
     const client = new mongoDB.MongoClient(process.env.DB_CONN_STRING);
@@ -100,7 +100,7 @@ async function applyUserSchemaValidation(db: mongoDB.Db) {
                     description: "playlistIDs is required and must be an array of objectIds",
                     minItems: 0,
                     items: {
-                        bsonType: "objectIds"
+                        bsonType: "objectId"
                     }
                 },
                 profilePicHostID: {
