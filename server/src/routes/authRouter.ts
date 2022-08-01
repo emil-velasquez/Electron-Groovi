@@ -8,6 +8,7 @@ import { userCollection } from "../services/userConnection";
 import User from "../models/user";
 
 import verifyJWT from "../jwtVerification";
+import { IUserAuthRequest } from "../interfaces/IUserAuthRequest";
 
 export const authRouter = express.Router();
 
@@ -85,6 +86,6 @@ authRouter.post("/login", (req: Request, res: Response) => {
 /**
  * Check if a user is logged in
  */
-authRouter.get("/isUserAuth", verifyJWT, (req: Request, res: Response) => {
-    return res.json({ isLoggedIn: true, username: req.body.username })
+authRouter.get("/isUserAuth", verifyJWT, (req: IUserAuthRequest, res: Response) => {
+    return res.json({ isLoggedIn: true, username: req.user.username })
 })
