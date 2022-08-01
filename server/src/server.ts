@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser"
 import cors from "cors";
 
 import { connectToDatabase } from "./services/contentConnection";
@@ -23,7 +24,7 @@ connectToDatabase()
     .then(() => {
         app.use(cors());
         const urlEncodedParser = bodyParser.urlencoded({ extended: false });
-        app.use(bodyParser.json(), urlEncodedParser);
+        app.use(bodyParser.json(), urlEncodedParser, cookieParser());
 
         app.use("/playlist", playlistRouter);
         app.use("/user", userRouter);
