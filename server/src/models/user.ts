@@ -1,8 +1,11 @@
 import { ObjectId } from "mongodb";
 
 export default interface User {
-    id: ObjectId,
+    id?: ObjectId,
+    username: string,
+    password: string,
     name: string,
     playlistIDs: ObjectId[],
-    profilePicHostID: string
+    profilePicHostID: string,
+    bio: string
 }
