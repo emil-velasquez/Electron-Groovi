@@ -18,7 +18,7 @@ async function applySessionSchemaValidation(db: mongoDB.Db) {
     const jsonSchema = {
         $jsonSchema: {
             bsonType: "object",
-            required: ["sessionToken", "username"],
+            required: ["sessionToken", "userID"],
             additionalProperties: false,
             properties: {
                 _id: {},
@@ -26,9 +26,9 @@ async function applySessionSchemaValidation(db: mongoDB.Db) {
                     bsonType: "string",
                     description: "sessionToken is required and is a string"
                 },
-                username: {
-                    bsonType: "string",
-                    description: "username is required and is a string"
+                userID: {
+                    bsonType: "objectId",
+                    description: "userId is required and is a objectId"
                 }
             }
         }

@@ -9,7 +9,7 @@ import User from "../models/user";
 import { sessionCollection } from "../services/sessionConnection";
 import Session from "../models/session";
 
-import verifyJWT from "../jwtVerification";
+import verifySession from "../sessionVerification";
 import { IUserAuthRequest } from "../interfaces/IUserAuthRequest";
 
 export const authRouter = express.Router();
@@ -78,7 +78,7 @@ authRouter.post("/login", (req: Request, res: Response) => {
                                 if (!dbSession) {
                                     const newSession: Session = {
                                         sessionToken: newSessionToken,
-                                        username: dbUser.username
+                                        userID: dbUser._id
                                     }
                                     const result = await sessionCollection.insertOne(newSession);
                                     result
@@ -103,6 +103,6 @@ authRouter.post("/login", (req: Request, res: Response) => {
 /**
  * Check if a user is logged in and authorized
  */
-authRouter.get("/isUserAuth", verifyJWT, (req: IUserAuthRequest, res: Response) => {
+authRouter.get("/isUserAuth", verifySession, (req: IUserAuthRequest, res: Response) => {
     return res.json({ isLoggedIn: true, username: req.user.username })
 })
