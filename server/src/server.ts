@@ -13,6 +13,7 @@ import { videoRouter } from "./routes/videoRouter";
 
 import { connectToAuthDatbase } from "./services/authDBConnections";
 import { connectToUserCollection } from "./services/userConnection";
+import { connectToSessionCollection } from "./services/sessionConnection";
 import { userRouter } from "./routes/userRouter";
 
 import { authRouter } from "./routes/authRouter";
@@ -30,6 +31,7 @@ connectToClient()
         connectToAuthDatbase(client)
             .then((db) => {
                 connectToUserCollection(db);
+                connectToSessionCollection(db);
             })
     })
     .then(() => {
