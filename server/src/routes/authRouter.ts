@@ -1,11 +1,13 @@
-//https://github.com/SalarC123/Classius/blob/main/src/server/routes/authRoutes.js
+//Inspired by https://github.com/SalarC123/Classius/blob/main/src/server/routes/authRoutes.js
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken"
+import { v4 as uuidv4 } from 'uuid';
 
 import { ObjectId } from "mongodb";
 import { userCollection } from "../services/userConnection";
 import User from "../models/user";
+import { sessionCollection } from "../services/sessionConnection";
+import Session from "../models/session";
 
 import verifyJWT from "../jwtVerification";
 import { IUserAuthRequest } from "../interfaces/IUserAuthRequest";
@@ -13,7 +15,9 @@ import { IUserAuthRequest } from "../interfaces/IUserAuthRequest";
 export const authRouter = express.Router();
 
 /**
- * Allows the user to make an account 
+ * Allows the user to try to register
+ * input: req.body = {username: string, password: string, name: string}
+ * output: new user object inserted into userCollection
  */
 authRouter.post("/register", async (req: Request, res: Response) => {
     const user = req.body;
@@ -48,6 +52,9 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 
 /**
  * Allow the user to try to login
+ * input: req.body = {username: string, password: string}
+ * output: if successful, insert new session with unique id and username into sessionCollection
+ * and return the sessionID to user
  */
 authRouter.post("/login", (req: Request, res: Response) => {
     const userLoggingIn = req.body;
@@ -56,7 +63,8 @@ authRouter.post("/login", (req: Request, res: Response) => {
         return res.status(500).send("Server Error")
     }
 
-    userCollection.findOne({ username: userLoggingIn.username.toLowerCase() })
+    const sessionQuery = { username: userLoggingIn.username.toLowerCase() };
+    userCollection.findOne(sessionQuery)
         .then(dbUser => {
             if (!dbUser) {
                 return res.status(400).send("Invalid Username or Password")
@@ -64,18 +72,27 @@ authRouter.post("/login", (req: Request, res: Response) => {
             bcrypt.compare(userLoggingIn.password, dbUser.password)
                 .then(isCorrect => {
                     if (isCorrect) {
-                        const payload = {
-                            id: dbUser._id,
-                            username: dbUser.username,
-                        }
-                        jwt.sign(
-                            payload,
-                            process.env.PASSPORT_SECRET,
-                            { expiresIn: 86400 },
-                            (err, token) => {
-                                return res.json({ message: "Success", token: "Bearer " + token })
-                            }
-                        )
+                        sessionCollection.findOne(sessionQuery)
+                            .then(async (dbSession) => {
+                                const newSessionToken = uuidv4();
+                                if (!dbSession) {
+                                    const newSession: Session = {
+                                        sessionToken: newSessionToken,
+                                        username: dbUser.username
+                                    }
+                                    const result = await sessionCollection.insertOne(newSession);
+                                    result
+                                        ? res.json({ message: "Success", token: "Bearer " + newSessionToken })
+                                        : res.status(500).send("Failed to create new session");
+
+                                } else {
+                                    const newValues = { $set: { sessionToken: newSessionToken } };
+                                    const result = await sessionCollection.updateOne(sessionQuery, newValues);
+                                    result
+                                        ? res.json({ message: "Success", token: "Bearer " + newSessionToken })
+                                        : res.status(500).send("Failed to create new session");
+                                }
+                            })
                     } else {
                         return res.status(400).send("Invalid Username or Password")
                     }
@@ -84,7 +101,7 @@ authRouter.post("/login", (req: Request, res: Response) => {
 })
 
 /**
- * Check if a user is logged in
+ * Check if a user is logged in and authorized
  */
 authRouter.get("/isUserAuth", verifyJWT, (req: IUserAuthRequest, res: Response) => {
     return res.json({ isLoggedIn: true, username: req.user.username })
