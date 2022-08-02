@@ -104,5 +104,5 @@ authRouter.post("/login", (req: Request, res: Response) => {
  * Check if a user is logged in and authorized
  */
 authRouter.get("/isUserAuth", verifySession, (req: IUserAuthRequest, res: Response) => {
-    return res.json({ isLoggedIn: true, username: req.user.username })
+    return res.json({ isLoggedIn: true, username: req.user.userID })
 })
