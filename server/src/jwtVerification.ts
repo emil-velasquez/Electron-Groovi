@@ -4,7 +4,7 @@ import { Response } from "express";
 import { IUserAuthRequest } from "./interfaces/IUserAuthRequest";
 
 const verifyJWT = (req: IUserAuthRequest, res: Response, next: any) => {
-    const token = (req.headers["x-access-token"] as string)?.split(" ")[1];
+    const token = (req.cookies["x-access-token"] as string)?.split(" ")[1];
 
     if (token) {
         jwt.verify(token, process.env.PASSPORT_SECRET, (err, decoded) => {

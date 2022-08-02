@@ -13,6 +13,7 @@ function createWindow() {
     });
 
     mainWindow.loadFile(path.join(__dirname, "index.html"));
+    console.log(mainWindow.webContents.getURL());
 
     mainWindow.on("closed", () => {
         mainWindow = null;

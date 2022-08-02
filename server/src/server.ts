@@ -3,23 +3,34 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser"
 import cors from "cors";
 
-import { connectToDatabase } from "./services/contentConnection";
+import { connectToClient } from "./services/clientConnection";
+
+import { connectToContentDatbase } from "./services/contentDBConnection";
 import { connectToPlaylistCollection } from "./services/playlistConnection";
-import { connectToUserCollection } from "./services/userConnection";
 import { connectToVideoCollection } from "./services/videoConnection";
 import { playlistRouter } from "./routes/playlistRouter";
-import { userRouter } from "./routes/userRouter";
 import { videoRouter } from "./routes/videoRouter";
+
+import { connectToAuthDatbase } from "./services/authDBConnections";
+import { connectToUserCollection } from "./services/userConnection";
+import { userRouter } from "./routes/userRouter";
+
 import { authRouter } from "./routes/authRouter";
 
 const app = express();
 const port = 8080;
 
-connectToDatabase()
-    .then((db) => {
-        connectToPlaylistCollection(db);
-        connectToUserCollection(db);
-        connectToVideoCollection(db);
+connectToClient()
+    .then((client) => {
+        connectToContentDatbase(client)
+            .then((db) => {
+                connectToPlaylistCollection(db);
+                connectToVideoCollection(db);
+            })
+        connectToAuthDatbase(client)
+            .then((db) => {
+                connectToUserCollection(db);
+            })
     })
     .then(() => {
         app.use(cors());
