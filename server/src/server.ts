@@ -19,7 +19,6 @@ import { userRouter } from "./routes/userRouter";
 import { authRouter } from "./routes/authRouter";
 
 const app = express();
-const port = 8080;
 
 connectToClient()
     .then((client) => {
@@ -44,8 +43,8 @@ connectToClient()
         app.use("/video", videoRouter);
         app.use("/auth", authRouter)
 
-        app.listen(port, () => {
-            console.log(`Server started at http://localhost:${port}`);
+        app.listen(process.env.PORT, () => {
+            console.log(`Server started at http://localhost:${process.env.PORT}`);
         });
     })
     .catch((error: Error) => {
