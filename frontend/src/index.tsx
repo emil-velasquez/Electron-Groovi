@@ -9,6 +9,7 @@ import PlaylistPage from './pages/playlist_page/PlaylistPage';
 import VideoInfoPage from './pages/video_info_page/VideoInfoPage';
 import UserPage from './pages/user_page/UserPage';
 import VideoLearnPage from './pages/video_learn_page/VideoLearnPage';
+import ErrorAlert from './components/ErrorAlert';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -20,14 +21,7 @@ root.render(
                 <Route path="/" element={<App />}>
                     <Route path="user" element={<UserPage />} />
                     <Route path="playlist">
-                        <Route
-                            index
-                            element={
-                                <main style={{ padding: "1rem" }}>
-                                    <p>We can't find that playlist. Sorry</p>
-                                </main>
-                            }
-                        />
+                        <Route index element={<ErrorAlert />} />
                         <Route path=":playlistID" element={<PlaylistPage />} />
                     </Route>
                     <Route path="videoinfo" element={<VideoInfoPage />} />
