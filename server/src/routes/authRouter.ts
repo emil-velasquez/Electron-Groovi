@@ -74,8 +74,8 @@ authRouter.post("/login", (req: Request, res: Response) => {
                     if (isCorrect) {
                         sessionCollection.findOne(sessionQuery)
                             .then(async (dbSession) => {
-                                const newSessionToken = uuidv4();
                                 if (!dbSession) {
+                                    const newSessionToken = uuidv4();
                                     const newSession: Session = {
                                         sessionToken: newSessionToken,
                                         userID: dbUser._id
@@ -86,11 +86,7 @@ authRouter.post("/login", (req: Request, res: Response) => {
                                         : res.status(500).send("Failed to create new session");
 
                                 } else {
-                                    const newValues = { $set: { sessionToken: newSessionToken } };
-                                    const result = await sessionCollection.updateOne(sessionQuery, newValues);
-                                    result
-                                        ? res.json({ message: "Success", token: "Bearer " + newSessionToken })
-                                        : res.status(500).send("Failed to create new session");
+                                    res.json({ message: "Success", token: "Bearer " + dbSession.sessionToken });
                                 }
                             })
                     } else {
