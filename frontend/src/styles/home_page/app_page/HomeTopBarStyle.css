@@ -1,0 +1,18 @@
+.top-bar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 45px;
+    background-color: #181818;
+    border-bottom: 5px solid #404040;
+
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-bar-section {
+    display: flex;
+}
