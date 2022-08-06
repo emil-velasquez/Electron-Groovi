@@ -47,6 +47,7 @@
         ]
     },
     "devDependencies": {
+        "@types/react-router-dom": "^5.3.3",
         "cross-env": "^7.0.3",
         "electron": "^19.0.8"
     }
