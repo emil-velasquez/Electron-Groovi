@@ -8,15 +8,10 @@ import { connectToClient } from "./services/clientConnection";
 import { connectToContentDatbase } from "./services/contentDBConnection";
 import { connectToPlaylistCollection } from "./services/playlistConnection";
 import { connectToVideoCollection } from "./services/videoConnection";
-import { playlistRouter } from "./routes/playlistRouter";
-import { videoRouter } from "./routes/videoRouter";
-
-import { connectToAuthDatbase } from "./services/authDBConnections";
 import { connectToUserCollection } from "./services/userConnection";
-import { connectToSessionCollection } from "./services/sessionConnection";
+import { playlistRouter } from "./routes/playlistRouter";
+import { videoRouter } from "./routes/videoRouter"
 import { userRouter } from "./routes/userRouter";
-
-import { authRouter } from "./routes/authRouter";
 
 const app = express();
 
@@ -26,11 +21,7 @@ connectToClient()
             .then((db) => {
                 connectToPlaylistCollection(db);
                 connectToVideoCollection(db);
-            })
-        connectToAuthDatbase(client)
-            .then((db) => {
                 connectToUserCollection(db);
-                connectToSessionCollection(db);
             })
     })
     .then(() => {
@@ -41,7 +32,6 @@ connectToClient()
         app.use("/playlist", playlistRouter);
         app.use("/user", userRouter);
         app.use("/video", videoRouter);
-        app.use("/auth", authRouter)
 
         app.listen(process.env.PORT, () => {
             console.log(`Server started at http://localhost:${process.env.PORT}`);
