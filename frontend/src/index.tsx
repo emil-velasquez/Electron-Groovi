@@ -10,7 +10,6 @@ import VideoInfoPage from './pages/video_info_page/VideoInfoPage';
 import UserPage from './pages/user_page/UserPage';
 import VideoLearnPage from './pages/video_learn_page/VideoLearnPage';
 import ErrorAlert from './components/ErrorAlert';
-import AuthPage from './pages/auth_page/AuthPage';
 
 import axios from "axios";
 
@@ -30,7 +29,6 @@ root.render(
                         <Route path=":playlistID" element={<PlaylistPage />} />
                     </Route>
                     <Route path="videoinfo" element={<VideoInfoPage />} />
-                    <Route path="auth" element={<AuthPage />} />
                 </Route>
                 <Route path="/learn" element={<VideoLearnPage />} />
             </Routes>
