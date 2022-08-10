@@ -1,21 +1,26 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
+import { auth } from "express-oauth2-jwt-bearer";
 
-import { ObjectId } from "mongodb";
 import { userCollection } from "../services/userConnection";
 import User from "../models/user";
 
-import { auth0Domain, clientId, clientSecret } from "../../env_variables.json";
+import { auth0Domain, clientId, clientSecret, apiIdentifier } from "../../env_variables.json";
 
 export const userRouter = express.Router();
 userRouter.use(express.json());
+
+const checkJwt = auth({
+    audience: apiIdentifier,
+    issuerBaseURL: `https://${auth0Domain}/`
+})
 
 /**
  * When a user logins in, return their public data in MongoDB, creating a document for the user
  * if they aren't in the database
  * req: contains the user's auth0_id
  */
-userRouter.post("/loadProfile", async (req: Request, res: Response) => {
+userRouter.post("/loadProfile", checkJwt, async (req: Request, res: Response) => {
     const mgmtOptions = {
         method: 'POST',
         url: `https://${auth0Domain}/oauth/token`,
@@ -51,13 +56,6 @@ userRouter.post("/loadProfile", async (req: Request, res: Response) => {
         }
         await userCollection.insertOne(newUser)
         dbUser = await userCollection.findOne({ username: username });
-    }
-
-    //clean up dbUser here to only use strings
-    const cleanedDbUser = {
-        ...dbUser,
-        username: dbUser._id.toString(),
-        playlistIDs: dbUser.playlistIDs.forEach(id => id.toString())
     }
 
     res.json({ profileInfo: dbUser })

@@ -5,6 +5,7 @@ import { getPassword, setPassword, deletePassword } from "keytar";
 import { userInfo } from "os";
 import { randomBytes, createHash } from "crypto";
 import { ObjectId } from "mongodb";
+import { AxiosResponse } from "axios";
 
 import { apiIdentifier, auth0Domain, clientId, expressDomain } from "../env_variables.json";
 
@@ -95,6 +96,24 @@ const getAuthenticationURL = () => {
 }
 
 /**
+ * Grabs the profile information of the user trying to gain access to the application
+ */
+const requestProfileInformation = async (res: AxiosResponse) => {
+    const profile_info: ProfileInfo = jwtDecode(res.data.id_token);
+    const profileOptions = {
+        method: "POST",
+        url: `${expressDomain}/user/loadProfile`,
+        headers: { "Authorization": `Bearer ${accessToken}` },
+        data: {
+            id: profile_info.sub
+        }
+    }
+
+    const profileResult = await axios(profileOptions);
+    profile = profileResult.data.profileInfo;
+}
+
+/**
  * Attempts to find a refreshToken on the user's machine. If successful, uses that token to try
  * to get an access token for this current user session (assuming the refresh token is valid) and
  * log the user in. Otherwise clear any data that may be stored on the machine
@@ -117,10 +136,7 @@ const refreshTokens = async () => {
         try {
             const response = await axios(refreshOptions);
             accessToken = response.data.access_token;
-            const profile_info: ProfileInfo = jwtDecode(response.data.id_token);
-            const auth_profile_id = { id: profile_info.sub };
-            const profileResult = await axios.post(`${expressDomain}/user/loadProfile`, auth_profile_id);
-            profile = profileResult.data.profileInfo;
+            await requestProfileInformation(response);
         } catch (error) {
             await logout();
             throw error;
@@ -160,10 +176,7 @@ const loadTokens = async (callbackURL: string) => {
     try {
         const response = await axios(options);
         accessToken = response.data.access_token;
-        const profile_info: ProfileInfo = jwtDecode(response.data.id_token);
-        const auth_profile_id = { id: profile_info.sub };
-        const profileResult = await axios.post(`${expressDomain}/user/loadProfile`, auth_profile_id);
-        profile = profileResult.data.profileInfo;
+        requestProfileInformation(response);
         refreshToken = response.data.refresh_token;
         if (refreshToken) {
             await setPassword(keytarService, keytarAccount, refreshToken);
