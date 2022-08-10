@@ -4,3 +4,4 @@ DanceStudioWorkspace.code-workspace
 node_modules
 server/dist
 .env
+env_variables.json
