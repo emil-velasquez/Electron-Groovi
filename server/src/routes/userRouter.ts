@@ -10,6 +10,9 @@ import { auth0Domain, clientId, clientSecret, apiIdentifier } from "../../env_va
 export const userRouter = express.Router();
 userRouter.use(express.json());
 
+/**
+ * Middleware to be attached to any route that requires a valid authorization
+ */
 const checkJwt = auth({
     audience: apiIdentifier,
     issuerBaseURL: `https://${auth0Domain}/`
@@ -21,42 +24,50 @@ const checkJwt = auth({
  * req: contains the user's auth0_id
  */
 userRouter.post("/loadProfile", checkJwt, async (req: Request, res: Response) => {
-    const mgmtOptions = {
-        method: 'POST',
-        url: `https://${auth0Domain}/oauth/token`,
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        data: new URLSearchParams({
-            grant_type: 'client_credentials',
-            client_id: `${clientId}`,
-            client_secret: `${clientSecret}`,
-            audience: `https://${auth0Domain}/api/v2/`
-        })
-    }
-    const mgmtResponse = await axios.request(mgmtOptions);
-    const mgmtToken = mgmtResponse.data.access_token;
-    const auth0_id = req.body.id;
+    try {
+        if (req.auth.payload.sub === req.body.id) {
+            const mgmtOptions = {
+                method: 'POST',
+                url: `https://${auth0Domain}/oauth/token`,
+                headers: { 'content-type': 'application/x-www-form-urlencoded' },
+                data: new URLSearchParams({
+                    grant_type: 'client_credentials',
+                    client_id: `${clientId}`,
+                    client_secret: `${clientSecret}`,
+                    audience: `https://${auth0Domain}/api/v2/`
+                })
+            }
+            const mgmtResponse = await axios.request(mgmtOptions);
+            const mgmtToken = mgmtResponse.data.access_token;
+            const auth0_id = req.body.id;
 
-    const userInfoOptions = {
-        method: "GET",
-        url: `https://${auth0Domain}/api/v2/users/${auth0_id}`,
-        headers: { authorization: `Bearer ${mgmtToken}` }
-    };
-    const userInfoResponse = await axios.request(userInfoOptions);
-    const username = userInfoResponse.data.username;
-    const name = userInfoResponse.data.name;
+            const userInfoOptions = {
+                method: "GET",
+                url: `https://${auth0Domain}/api/v2/users/${auth0_id}`,
+                headers: { authorization: `Bearer ${mgmtToken}` }
+            };
+            const userInfoResponse = await axios.request(userInfoOptions);
+            const username = userInfoResponse.data.username;
+            const name = userInfoResponse.data.name;
 
-    let dbUser = await userCollection.findOne({ username: username });
-    if (!dbUser) {
-        const newUser: User = {
-            username: username,
-            name: name,
-            playlistIDs: [],
-            profilePicHostID: "https://res.cloudinary.com/projectd/image/upload/v1659199898/ProfilePicture_rv3oah",
-            bio: ""
+            let dbUser = await userCollection.findOne({ username: username });
+            if (!dbUser) {
+                const newUser: User = {
+                    username: username,
+                    name: name,
+                    playlistIDs: [],
+                    profilePicHostID: "https://res.cloudinary.com/projectd/image/upload/v1659199898/ProfilePicture_rv3oah",
+                    bio: ""
+                }
+                await userCollection.insertOne(newUser)
+                dbUser = await userCollection.findOne({ username: username });
+            }
+
+            res.json({ message: "Success", profileInfo: dbUser })
+        } else {
+            res.json({ message: "Failure: Mismatched IDs" })
         }
-        await userCollection.insertOne(newUser)
-        dbUser = await userCollection.findOne({ username: username });
+    } catch (error) {
+        res.json({ message: "Failure: " + error })
     }
-
-    res.json({ profileInfo: dbUser })
 })

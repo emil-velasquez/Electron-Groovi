@@ -110,7 +110,12 @@ const requestProfileInformation = async (res: AxiosResponse) => {
     }
 
     const profileResult = await axios(profileOptions);
-    profile = profileResult.data.profileInfo;
+    if (profileResult.data.message === "Success") {
+        profile = profileResult.data.profileInfo;
+    } else {
+        console.log(`Something went wrong when getting user information of ${profile_info.sub}`)
+        console.log(profileResult.data.message);
+    }
 }
 
 /**
