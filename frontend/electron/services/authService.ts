@@ -4,8 +4,9 @@ import { parse } from "url";
 import { getPassword, setPassword, deletePassword } from "keytar";
 import { userInfo } from "os";
 import { randomBytes, createHash } from "crypto";
+import { ObjectId } from "mongodb";
 
-import { apiIdentifier, auth0Domain, clientId } from "../env_variables.json";
+import { apiIdentifier, auth0Domain, clientId, expressDomain } from "../env_variables.json";
 
 type ProfileInfo = {
     username: string,
@@ -21,13 +22,22 @@ type ProfileInfo = {
     exp: number
 }
 
+type User = {
+    id?: ObjectId,
+    username: string,
+    name: string,
+    playlistIDs: ObjectId[],
+    profilePicHostID: string,
+    bio: string
+}
+
 const redirectUri = "http://localhost/callback";
 
 const keytarService = 'electron-openid-oauth';
 const keytarAccount = userInfo().username;
 
 let accessToken: string = null;
-let profile: ProfileInfo = null;
+let profile: User = null;
 let refreshToken: string = null;
 
 /**
@@ -107,7 +117,10 @@ const refreshTokens = async () => {
         try {
             const response = await axios(refreshOptions);
             accessToken = response.data.access_token;
-            profile = jwtDecode(response.data.id_token);
+            const profile_info: ProfileInfo = jwtDecode(response.data.id_token);
+            const auth_profile_id = { id: profile_info.sub };
+            const profileResult = await axios.post(`${expressDomain}/user/loadProfile`, auth_profile_id);
+            profile = profileResult.data.profileInfo;
         } catch (error) {
             await logout();
             throw error;
@@ -147,9 +160,11 @@ const loadTokens = async (callbackURL: string) => {
     try {
         const response = await axios(options);
         accessToken = response.data.access_token;
-        profile = jwtDecode(response.data.id_token);
+        const profile_info: ProfileInfo = jwtDecode(response.data.id_token);
+        const auth_profile_id = { id: profile_info.sub };
+        const profileResult = await axios.post(`${expressDomain}/user/loadProfile`, auth_profile_id);
+        profile = profileResult.data.profileInfo;
         refreshToken = response.data.refresh_token;
-
         if (refreshToken) {
             await setPassword(keytarService, keytarAccount, refreshToken);
         }
