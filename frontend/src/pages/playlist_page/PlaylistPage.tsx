@@ -1,9 +1,6 @@
 import "./PlaylistPageStyle.css"
 
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom"
-
-import VideoCard from "../../components/home_page/VideoCard";
+import { useParams } from "react-router-dom"
 
 function PlaylistPage() {
     let params = useParams();

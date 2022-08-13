@@ -4,6 +4,7 @@ import { createAuthWindow, createLogoutWindow } from "./main_processes/authProce
 import { createAppWindow } from "./main_processes/appProcess";
 
 import * as authService from "./services/authService";
+import * as playlistService from "./services/playlistService";
 
 /**
  * If the user has a valid refresh token on their machine, log them in.
@@ -19,11 +20,18 @@ const showWindow = async () => {
 }
 
 app.on("ready", () => {
-    //set up ipcMain here
+    //auth service handlers
     ipcMain.handle("auth:get-profile", authService.getProfile);
     ipcMain.on("auth:log-out", () => {
         BrowserWindow.getAllWindows().forEach(window => window.close());
         createLogoutWindow();
+    })
+
+    //playlist service handlers
+    ipcMain.handle("playlist:get-playlist", async (event, ...args) => {
+        const id = args[0].playlistID;
+        const result = await playlistService.getPlaylistInfo(id);
+        return result;
     })
 
     showWindow();

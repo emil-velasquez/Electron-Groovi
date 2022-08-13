@@ -1,7 +1,8 @@
-import type { ContextBridgeAPI } from "./electron/main_processes/preload";
+import type { AuthAPI, PlaylistAPI } from "./electron/main_processes/preload";
 
 declare global {
     interface Window {
-        electronAPI: ContextBridgeAPI
+        authAPI: AuthAPI,
+        playlistAPI: PlaylistAPI
     }
 }
