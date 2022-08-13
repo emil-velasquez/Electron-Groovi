@@ -5,6 +5,7 @@ import { createAppWindow } from "./main_processes/appProcess";
 
 import * as authService from "./services/authService";
 import * as playlistService from "./services/playlistService";
+import * as videoService from "./services/videoService";
 
 /**
  * If the user has a valid refresh token on their machine, log them in.
@@ -31,6 +32,13 @@ app.on("ready", () => {
     ipcMain.handle("playlist:get-playlist", async (event, ...args) => {
         const id = args[0].playlistID;
         const result = await playlistService.getPlaylistInfo(id);
+        return result;
+    })
+
+    //video service handlers
+    ipcMain.handle("video:get-video", async (event, ...args) => {
+        const id = args[0].videoID;
+        const result = videoService.getVideoInfo(id);
         return result;
     })
 
