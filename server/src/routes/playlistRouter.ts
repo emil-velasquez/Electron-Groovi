@@ -12,11 +12,11 @@ playlistRouter.post("/getPlaylist", async (req: Request, res: Response) => {
     try {
         const playlistResult = await playlistCollection.findOne({ _id: new ObjectId(req.body.id) });
         if (playlistResult) {
-            res.json({ message: "Success", playlistInfo: playlistResult })
+            res.json({ message: "Success", playlistInfo: playlistResult });
         } else {
-            res.json({ message: `Failure: Couldn't find playlist with id ${req.body.id}` })
+            res.json({ message: `Failure: Couldn't find playlist with id ${req.body.id}` });
         }
     } catch (error) {
-        res.json({ message: "Failure: " + error })
+        res.json({ message: "Failure: " + error });
     }
 })
