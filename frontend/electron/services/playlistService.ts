@@ -20,7 +20,7 @@ const getPlaylistInfo = async (playlistID: string) => {
     if (playlistResult.data.message === "Success") {
         return playlistResult.data.playlistInfo;
     } else {
-        console.log(`Something went wrong when getting playlist with id ${playlistID.toString()}`);
+        console.log(`Something went wrong when getting playlist with id ${playlistID}`);
         console.log(playlistResult.data.message);
     }
 }
