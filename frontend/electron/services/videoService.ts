@@ -10,7 +10,7 @@ import { expressDomain } from "../env_variables.json"
 const getVideoInfo = async (videoID: string) => {
     const getVideoOptions = {
         method: "POST",
-        url: `${expressDomain}/playlist/getVideo`,
+        url: `${expressDomain}/video/getVideo`,
         data: {
             id: videoID
         }
