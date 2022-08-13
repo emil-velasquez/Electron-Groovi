@@ -6,6 +6,7 @@ import { userCollection } from "../services/userConnection";
 import User from "../models/user";
 
 import { auth0Domain, clientId, clientSecret, apiIdentifier } from "../../env_variables.json";
+import { ObjectId } from "mongodb";
 
 export const userRouter = express.Router();
 userRouter.use(express.json());
@@ -69,5 +70,21 @@ userRouter.post("/loadProfile", checkJwt, async (req: Request, res: Response) =>
         }
     } catch (error) {
         res.json({ message: "Failure: " + error })
+    }
+})
+
+/**
+ * If found, returns the user with a certain ObjectId
+ */
+userRouter.post("/getUser", async (req: Request, res: Response) => {
+    try {
+        const userResult = await userCollection.findOne({ _id: new ObjectId(req.body.id) });
+        if (userResult) {
+            res.json({ message: "Success", userInfo: userResult });
+        } else {
+            res.json({ message: `Failure: Couldn't find playlist with id ${req.body.id}` });
+        }
+    } catch (error) {
+        res.json({ message: "Failure: " + error });
     }
 })
