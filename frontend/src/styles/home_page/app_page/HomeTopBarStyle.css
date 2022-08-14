@@ -3,10 +3,8 @@
     top: 0px;
     left: 0px;
     width: 100%;
-    height: 45px;
-    background-color: #181818;
-    border-bottom: 5px solid #404040;
-
+    height: 50px;
+    background-color: #0A0A0A;
 
     display: flex;
     align-items: center;
@@ -15,4 +13,16 @@
 
 .top-bar-section {
     display: flex;
+}
+
+.logo {
+    color: #FBC403;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 40px;
+}
+
+.top-bar-symbols {
+    margin: 12px;
+    font-size: 25px;
 }

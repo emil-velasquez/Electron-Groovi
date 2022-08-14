@@ -10,10 +10,10 @@ function HistoryButtons() {
     return (
         <div className="history-buttons-container">
             <button onClick={() => navigate(-1)}>
-                <IoIosArrowBack />
+                <IoIosArrowBack className="nav-buttons" />
             </button>
             <button onClick={() => navigate(1)}>
-                <IoIosArrowForward />
+                <IoIosArrowForward className="nav-buttons" />
             </button>
         </div>
     )

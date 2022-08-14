@@ -1,5 +1,9 @@
 .history-buttons-container {
     display: flex;
     justify-content: flex-end;
-    color: white
+    color: white,
+}
+
+.nav-buttons {
+    font-size: 25px;
 }

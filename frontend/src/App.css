@@ -5,8 +5,15 @@
 .outlet-section {
     position: fixed;
     top: 50px;
-    left: 200px;
-    width: calc(100vw - 200px);
+    left: 250px;
+    width: calc(100vw - 250px);
     height: calc(100vh - 50px);
-    background-color: #222831;
+    background-color: #151515;
+}
+
+button {
+    border: none;
+    padding: 0;
+    background: none;
+    color: white;
 }

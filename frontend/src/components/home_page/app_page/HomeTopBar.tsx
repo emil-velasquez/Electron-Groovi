@@ -1,18 +1,22 @@
 import "../../../styles/home_page/app_page/HomeTopBarStyle.css"
 
+import { BsFillDiscFill } from "react-icons/bs"
+import { GoGear } from "react-icons/go"
+import { FaSearch } from "react-icons/fa"
+
 function HomeTopBar() {
     return (
         <div className="top-bar">
             <div className="top-bar-section">
-                <p>Logo</p>
+                <BsFillDiscFill className="logo" />
             </div>
             <div className="top-bar-section search-elements">
                 <p>Search Bar</p>
-                <p>Submit Search</p>
+                <FaSearch className="top-bar-symbols" />
             </div>
             <div className="top-bar-section right-elements">
                 <p>Profile</p>
-                <p>Settings</p>
+                <GoGear className="top-bar-symbols" />
             </div>
         </div>
     )

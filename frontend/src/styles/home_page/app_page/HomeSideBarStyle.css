@@ -2,11 +2,14 @@
     position: fixed;
     top: 50px;
     left: 0px;
-    width: 200px;
+    width: 250px;
     height: calc(100vh - 50px);
-    background-color: #181818;
+    background-color: #0A0A0A;
 }
 
+.side-bar-content {
+    margin-left: 5px;
+}
 
 .side-bar-link {
     text-decoration: none;

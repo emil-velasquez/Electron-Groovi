@@ -58,18 +58,20 @@ function HomeSideBar(props: HomeSideBarProps) {
 
     return (
         <div className="side-bar">
-            <Link className="side-bar-link" to="/playlist">
-                <p>Home</p>
-            </Link>
-            <p>Trending</p>
-            <p>Liked</p>
-            <hr />
-            <button>
-                + New Playlist
-            </button>
-            {playlistList.map(playlistInfo => createPlaylistLink(playlistInfo))}
-            <hr />
-            <p>Subscribed</p>
+            <div className="side-bar-content">
+                <Link className="side-bar-link" to="/playlist">
+                    <p>Home</p>
+                </Link>
+                <p>Trending</p>
+                <p>Liked</p>
+                <hr />
+                <button>
+                    + New Playlist
+                </button>
+                {playlistList.map(playlistInfo => createPlaylistLink(playlistInfo))}
+                <hr />
+                <p>Subscribed</p>
+            </div>
         </div>
     )
 }
