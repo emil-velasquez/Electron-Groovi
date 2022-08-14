@@ -14,7 +14,7 @@ const authAPI: AuthAPI = {
 
 //Playlist API
 export type PlaylistAPI = {
-    getPlaylist: (playlistID: ObjectId) => Promise<any>
+    getPlaylist: (playlistID: string) => Promise<any>
 }
 
 const playlistAPI: PlaylistAPI = {
@@ -23,7 +23,7 @@ const playlistAPI: PlaylistAPI = {
 
 //Video API
 export type VideoAPI = {
-    getVideo: (videoID: ObjectId) => Promise<any>
+    getVideo: (videoID: string) => Promise<any>
 }
 
 const videoAPI: VideoAPI = {
@@ -32,7 +32,7 @@ const videoAPI: VideoAPI = {
 
 //User API
 export type UserAPI = {
-    getUser: (userID: ObjectId) => Promise<any>
+    getUser: (userID: string) => Promise<any>
 }
 
 const userAPI: UserAPI = {
