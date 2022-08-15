@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import User from "../../../models/user";
 import Playlist from "../../../models/playlist";
 
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { ObjectId } from "mongodb";
 
 type HomeSideBarProps = {
@@ -43,6 +43,15 @@ function HomeSideBar(props: HomeSideBarProps) {
     }, [props.user])
 
     /**
+     * Returns class name for links depending on if they are the active link
+     * @param active :boolean that describes if the link is the current active one in the outlet
+     * @returns :name of the style for active and unactive links based on active
+     */
+    const setActiveLink = (active: boolean) => {
+        return active ? "active-side-bar-link" : "side-bar-link"
+    }
+
+    /**
      * Generates the links for all of the current user's playlists
      * @param playlistInfo : KeyPlaylistInfo => contains the ObjectId and name of the playlist
      * @returns :ReactRouter Link element that links to the playlist's page and display the playlist's
@@ -50,18 +59,18 @@ function HomeSideBar(props: HomeSideBarProps) {
      */
     const createPlaylistLink = (playlistInfo: KeyPlaylistInfo) => {
         return (
-            <Link className="side-bar-link" to={`/playlist/${playlistInfo._id.toString()}`}>
+            <NavLink className={({ isActive }) => setActiveLink(isActive)} to={`/playlist/${playlistInfo._id.toString()}`}>
                 <p>{playlistInfo.name}</p>
-            </Link>
+            </NavLink>
         )
     }
 
     return (
         <div className="side-bar">
             <div className="side-bar-content">
-                <Link className="side-bar-link" to="/playlist">
+                <NavLink className={({ isActive }) => setActiveLink(isActive)} to="/user">
                     <p>Home</p>
-                </Link>
+                </NavLink>
                 <p>Trending</p>
                 <p>Liked</p>
                 <hr />

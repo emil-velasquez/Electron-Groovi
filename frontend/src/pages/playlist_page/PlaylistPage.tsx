@@ -20,9 +20,6 @@ function PlaylistPage() {
      * When this page mounts, load the information of the current playlist
      */
     useEffect(() => {
-        /**
-        * Makes a call to the backend to receive all information on the current playlist
-        */
         const loadPlaylist = async () => {
             if (params.playlistID !== undefined) {
                 const playlistInfo: Playlist = await window.playlistAPI.getPlaylist(params.playlistID);

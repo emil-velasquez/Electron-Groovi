@@ -1,0 +1,43 @@
+.video-page {
+    padding: 1rem;
+}
+
+.overflow-container {
+    height: calc(100vh - 50px - 25px - 1rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.header {
+    display: flex;
+}
+
+.video-preview {
+    width: calc((100vw - 250px - 1rem - 40px) / 2)
+}
+
+.header-info {
+    width: calc((100vw - 250px - 1rem - 40px) / 2);
+    margin-left: 10px;
+    position: relative;
+}
+
+.header-info-content {
+    position: absolute;
+    bottom: 0px;
+}
+
+.like-heart {
+    font-size: 40px;
+}
+
+.video-name {
+    font-size: 35px;
+    margin: 0px;
+}
+
+.header-song-info {
+    margin: 0px;
+    font-size: 15px;
+    color: #CDCDCD
+}

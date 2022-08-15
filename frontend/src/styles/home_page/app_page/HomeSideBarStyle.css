@@ -15,3 +15,8 @@
     text-decoration: none;
     color: white;
 }
+
+.active-side-bar-link {
+    text-decoration: none;
+    color: #FBC403
+}
