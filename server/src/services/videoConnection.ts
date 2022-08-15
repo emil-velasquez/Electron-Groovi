@@ -20,7 +20,7 @@ async function applyVideoSchemaValidation(db: mongoDB.Db) {
     const jsonSchema = {
         $jsonSchema: {
             bsonType: "object",
-            required: ["videoName", "choreographerID", "videoHostID", "thumbnailHostID"],
+            required: ["videoName", "choreographerID", "videoHostID", "thumbnailHostID", "vidDescription"],
             additionalProperties: false,
             properties: {
                 _id: {},
@@ -47,6 +47,10 @@ async function applyVideoSchemaValidation(db: mongoDB.Db) {
                 thumbnailHostID: {
                     bsonType: "string",
                     description: "thumbnailHostID is required and is a string"
+                },
+                vidDescription: {
+                    bsonType: "string",
+                    description: "vidDescription is required and is a string"
                 }
             }
         }

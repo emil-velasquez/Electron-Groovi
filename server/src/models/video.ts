@@ -7,5 +7,6 @@ export default interface Video {
     songName: string,
     artistName: string,
     videoHostID: string,
-    thumbnailHostID: string
+    thumbnailHostID: string,
+    vidDescription: string
 }

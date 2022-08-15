@@ -11,6 +11,7 @@ import HistoryButtons from "../../components/home_page/HistoryButtons";
 import { useParams } from "react-router-dom";
 
 import { RiHeartLine, RiHeartFill } from "react-icons/ri";
+import { AiOutlineStar, AiFillStar } from "react-icons/ai"
 
 function SongPage() {
     const params = useParams();
@@ -51,6 +52,21 @@ function SongPage() {
                                 <p className="header-song-info">{curVideo.songName}</p>
                                 <p className="header-song-info">{curVideo.artistName}</p>
                             </div>
+                        </div>
+                    </div>
+                    <div className="body">
+                        <div className="left-body">
+                            <div className="vid-buttons-section">
+                                <Link className="vid-link" to={`/learn/${curVideo._id?.toString()}`}>
+                                    <p className="vid-buttons">Learn</p>
+                                </Link>
+                                <p className="vid-buttons">Perform</p>
+                            </div>
+                            <p className="personal-best">Personal Best: XXXXX</p>
+                            <AiOutlineStar className="star" /><AiOutlineStar className="star" /><AiOutlineStar className="star" /><AiOutlineStar className="star" /><AiOutlineStar className="star" />
+                        </div>
+                        <div className="description-box">
+                            <p className="vid-description">{curVideo.vidDescription}</p>
                         </div>
                     </div>
                 </div>

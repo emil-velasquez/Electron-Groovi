@@ -41,3 +41,61 @@
     font-size: 15px;
     color: #CDCDCD
 }
+
+.body {
+    margin-top: 1px;
+    display: flex
+}
+
+.left-body {
+    width: calc((100vw - 250px - 1rem - 40px) / 2);
+    text-align: center;
+}
+
+.vid-buttons-section {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.vid-buttons {
+    border-style: solid;
+    border-width: 3px;
+    border-color: white;
+    background-color: #151515;
+    color: #FBC403;
+    border-radius: 15px;
+    height: 40px;
+    width: calc((100vw - 250px - 1rem - 40px - 10px) / 6);
+    text-align: center;
+    padding: 10px;
+    font-size: 25px;
+    margin-bottom: 5px;
+}
+
+.description-box {
+    width: calc((100vw - 250px - 1rem - 40px - 20px) / 2);
+    height: calc((100vh - 50px - 60px - 25px) / 2);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overflow-wrap: break-word;
+    margin-left: 10px;
+}
+
+.vid-description {
+    color: #CDCDCD;
+    font-size: 15px;
+}
+
+.personal-best {
+    margin: 0px;
+    font-size: 25px;
+}
+
+.star {
+    font-size: 25px;
+    color: white;
+}
+
+.vid-link {
+    text-decoration: none;
+}
