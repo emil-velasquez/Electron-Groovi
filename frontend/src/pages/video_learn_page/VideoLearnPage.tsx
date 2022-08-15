@@ -110,7 +110,6 @@ function VideoLearnPage(props: any, ref: Ref<unknown>) {
     function adjustDiffPoseAngles(results: any, scale: number) {
         const landmarks = results.poseWorldLandmarks;
         if (landmarks) {
-            console.log(diffPoseAngles);
             if (scale === 1 || mirrored.current) {
                 for (let angleIndex = 0; angleIndex < JOINTS.length; angleIndex++) {
                     const landmarkIndices = JOINTS[angleIndex];
