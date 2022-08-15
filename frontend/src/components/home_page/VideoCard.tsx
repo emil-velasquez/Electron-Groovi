@@ -1,6 +1,7 @@
 import "../../styles/home_page/VideoCardStyle.css"
 
 import React, { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 
 import Video from "../../models/video"
 
@@ -29,11 +30,15 @@ function VideoCard(props: videoCardProps) {
     } else {
         return (
             <div className="video-card">
-                <img className="video-thumbnail" src={curVideo.thumbnailHostID} alt="video thumbnail" />
-                <p className="video-info">{curVideo.videoName}</p>
+                <Link className="video-link" to={`/videoinfo/${curVideo._id?.toString()}`}>
+                    <img className="video-thumbnail" src={curVideo.thumbnailHostID} alt="video thumbnail" />
+                    <p className="video-info">{curVideo.videoName}</p>
+                </Link>
                 <ProfileBanner userID={curVideo.choreographerID.toString()} size={15} />
-                <p className="song-info">{curVideo.songName}</p>
-                <p className="song-info">{curVideo.artistName}</p>
+                <Link className="video-link" to={`/videoinfo/${curVideo._id?.toString()}`}>
+                    <p className="song-info">{curVideo.songName}</p>
+                    <p className="song-info">{curVideo.artistName}</p>
+                </Link>
             </div>
         )
     }

@@ -18,3 +18,8 @@
     font-size: 15px;
     color: #CDCDCD
 }
+
+.video-link {
+    text-decoration: none;
+    color: white;
+}
