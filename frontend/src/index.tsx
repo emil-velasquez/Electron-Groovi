@@ -19,14 +19,23 @@ root.render(
         <HashRouter>
             <Routes>
                 <Route path="/" element={<App />}>
-                    <Route path="user" element={<UserPage />} />
+                    <Route path="user" >
+                        <Route index element={<ErrorAlert />} />
+                        <Route path=":userID" element={<UserPage />} />
+                    </Route>
                     <Route path="playlist">
                         <Route index element={<ErrorAlert />} />
                         <Route path=":playlistID" element={<PlaylistPage />} />
                     </Route>
-                    <Route path="videoinfo" element={<VideoInfoPage />} />
+                    <Route path="videoinfo" >
+                        <Route index element={<ErrorAlert />} />
+                        <Route path=":videoID" element={<VideoInfoPage />} />
+                    </Route>
                 </Route>
-                <Route path="/learn" element={<VideoLearnPage />} />
+                <Route path="/learn" element={<VideoLearnPage />} >
+                    <Route index element={<ErrorAlert />} />
+                    <Route path=":videoID" element={<VideoInfoPage />} />
+                </Route>
             </Routes>
         </HashRouter>
     </React.StrictMode>
