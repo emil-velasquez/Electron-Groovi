@@ -1,13 +1,20 @@
 .video-card {
-    margin: 5px;
+    margin-right: 5px;
+    margin-bottom: 20px;
 }
 
 .video-thumbnail {
-    width: 320px;
-    height: 180px;
+    height: auto;
+    width: calc((100vw - 250px - 1rem - 15px - 40px) / 3)
 }
 
 .video-info {
     margin: 0px;
-    font-size: 12px;
+    font-size: 15px;
+}
+
+.song-info {
+    margin: 0px;
+    font-size: 15px;
+    color: #CDCDCD
 }

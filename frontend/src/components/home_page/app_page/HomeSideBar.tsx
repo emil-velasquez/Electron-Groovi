@@ -29,7 +29,7 @@ function HomeSideBar(props: HomeSideBarProps) {
             if (props.user !== null) {
                 let newPlaylistList: KeyPlaylistInfo[] = [];
                 for (const id of props.user.playlistIDs) {
-                    const playlistInfo: Playlist = await window.playlistAPI.getPlaylist(id);
+                    const playlistInfo: Playlist = await window.playlistAPI.getPlaylist(id.toString());
                     if (playlistInfo._id !== undefined) {
                         newPlaylistList.push({ _id: playlistInfo._id, name: playlistInfo.name });
                     }

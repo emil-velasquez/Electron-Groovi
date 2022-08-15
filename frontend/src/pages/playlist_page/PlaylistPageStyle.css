@@ -2,11 +2,46 @@
     padding: 1rem;
 }
 
-.video-card-section {
-    display: flex;
-    width: calc(100vw - 200px);
-    flex-wrap: wrap;
-    justify-content: space-around;
+.overflow-container {
+    height: calc(100vh - 50px - 25px - 1rem);
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.video-card-section {
+    display: flex;
+    width: calc(100vw - 250px);
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.playlist-logo {
+    width: 300px;
+    height: 300px;
+}
+
+.header-info {
+    margin-left: 10px;
+    position: relative;
+}
+
+.header-info-content {
+    position: absolute;
+    bottom: 0px;
+}
+
+.like-heart {
+    font-size: 40px;
+}
+
+.header-name {
+    font-size: 75px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
 }
