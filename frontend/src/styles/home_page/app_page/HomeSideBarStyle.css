@@ -20,3 +20,18 @@
     text-decoration: none;
     color: #FBC403
 }
+
+.side-bar-icons {
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.default-options-container {
+    display: flex;
+    align-items: center;
+}
+
+.side-bar-text {
+    font-size: 20px;
+    margin: 5px;
+}

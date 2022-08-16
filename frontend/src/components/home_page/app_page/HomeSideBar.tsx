@@ -8,6 +8,10 @@ import Playlist from "../../../models/playlist";
 import { NavLink } from "react-router-dom";
 import { ObjectId } from "mongodb";
 
+import { RiHeartFill } from "react-icons/ri"
+import { BiTrendingUp } from "react-icons/bi"
+import { TiHome } from "react-icons/ti"
+
 type HomeSideBarProps = {
     user: User | null,
 }
@@ -60,7 +64,7 @@ function HomeSideBar(props: HomeSideBarProps) {
     const createPlaylistLink = (playlistInfo: KeyPlaylistInfo) => {
         return (
             <NavLink className={({ isActive }) => setActiveLink(isActive)} to={`/playlist/${playlistInfo._id.toString()}`}>
-                <p>{playlistInfo.name}</p>
+                <p className="side-bar-text">{playlistInfo.name}</p>
             </NavLink>
         )
     }
@@ -69,17 +73,23 @@ function HomeSideBar(props: HomeSideBarProps) {
         <div className="side-bar">
             <div className="side-bar-content">
                 <NavLink className={({ isActive }) => setActiveLink(isActive)} to="/user">
-                    <p>Home</p>
+                    <div className="default-options-container">
+                        <TiHome className="side-bar-icons" /><p className="side-bar-text">Home</p>
+                    </div>
                 </NavLink>
-                <p>Trending</p>
-                <p>Liked</p>
+                <div className="default-options-container">
+                    <BiTrendingUp className="side-bar-icons" /><p className="side-bar-text">Trending</p>
+                </div>
+                <div className="default-options-container">
+                    <RiHeartFill className="side-bar-icons" /><p className="side-bar-text">Liked</p>
+                </div>
                 <hr />
                 <button>
                     + New Playlist
                 </button>
                 {playlistList.map(playlistInfo => createPlaylistLink(playlistInfo))}
                 <hr />
-                <p>Subscribed</p>
+                <p className="side-bar-text">Subscribed</p>
             </div>
         </div>
     )
