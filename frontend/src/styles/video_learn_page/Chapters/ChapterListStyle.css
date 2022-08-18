@@ -9,7 +9,7 @@
     overflow-x: hidden;
 
     background-color: rgba(28, 22, 34, 0.5);
-    z-index: 3;
+    z-index: 5;
 }
 
 .header-section {

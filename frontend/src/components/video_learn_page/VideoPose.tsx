@@ -14,12 +14,17 @@ import ChapterList from "./Chapters/ChapterList";
 import usePose from "../../hooks/usePose";
 import useTime from "../../hooks/useTime";
 
+import { useNavigate } from "react-router-dom";
+import { IoIosArrowBack } from "react-icons/io";
+
 type videoPoseProps = {
     onPoseResults: (results: any) => void,
     onUpdateMirror: (mirrorState: boolean) => void
 }
 
 function VideoPose(props: videoPoseProps) {
+    const navigate = useNavigate();
+
     const params = useParams();
     const [curVideo, setCurVideo] = useState<Video | null>(null);
 
@@ -484,6 +489,12 @@ function VideoPose(props: videoPoseProps) {
 
             <div className={showControls ? "video-controls-shown" : "video-controls-hidden"}
                 onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
+                <div className="top-header">
+                    <button onClick={() => navigate(-1)}>
+                        <IoIosArrowBack className="video-back-button" />
+                    </button>
+                    <p className="top-header-video-name">{curVideo.videoName}</p>
+                </div>
                 <ChapterList vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} />
                 <div className="video-controls">
                     <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />

@@ -174,3 +174,27 @@ option {
     height: 100%;
     z-index: 3;
 }
+
+.top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    background-color: rgba(28, 22, 34, 0.5);
+    width: 100%;
+    font-size: 30px;
+    color: white;
+    align-items: center;
+    z-index: 5;
+}
+
+.top-header-video-name {
+    margin: 8px;
+}
+
+.video-back-button {
+    font-size: 30px;
+    margin-right: 10px;
+    padding-top: 5px;
+}
