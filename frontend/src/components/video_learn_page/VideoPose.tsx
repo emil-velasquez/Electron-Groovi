@@ -2,6 +2,13 @@ import "../../styles/video_learn_page/VideoPoseStyle.css";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
+import { BsFillPlayFill, BsFillPauseFill, BsVolumeOffFill } from "react-icons/bs";
+import { VscMirror } from "react-icons/vsc";
+import { MdCenterFocusWeak } from "react-icons/md";
+
+import { useParams } from "react-router-dom";
+import Video from "../../models/video";
+
 import ChapterList from "./Chapters/ChapterList";
 
 import usePose from "../../hooks/usePose";
@@ -13,6 +20,24 @@ type videoPoseProps = {
 }
 
 function VideoPose(props: videoPoseProps) {
+    const params = useParams();
+    const [curVideo, setCurVideo] = useState<Video | null>(null);
+
+    /**
+    * When this page mounts, load the information of the target video
+    */
+    useEffect(() => {
+        const loadVideo = async () => {
+            if (params.videoID !== undefined) {
+                const videoInfo: Video = await window.videoAPI.getVideo(params.videoID);
+                setCurVideo(prevVideo => videoInfo);
+            } else {
+                console.error("Invalid videoID");
+            }
+        }
+        loadVideo();
+    }, [params.videoID])
+
     const videoRef = useRef<HTMLVideoElement>(null);
     const videoFocusSelectionCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -30,8 +55,12 @@ function VideoPose(props: videoPoseProps) {
 
     const [isPlaying, setPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
+    const timeSlider = useRef<HTMLInputElement>(null);
+
     const [speed, setSpeed] = useState(1);
     const [volume, setVolume] = useState(100);
+    const volumeSlider = useRef<HTMLInputElement>(null);
+
     const [isMirrored, setMirrored] = useState(true);
 
     const [isFocused, setIsFocused] = useState(true);
@@ -347,6 +376,19 @@ function VideoPose(props: videoPoseProps) {
     }
 
     /**
+     * Whenever the progress of the video is updated, we need to update the style of the time
+     * bar
+     */
+    useEffect(() => {
+        if (videoRef.current !== null) {
+            const percentFinish = progress / Number(videoLength) * 100;
+            if (timeSlider.current !== null) {
+                timeSlider.current.style.backgroundSize = `${percentFinish}% 100%`;
+            }
+        }
+    }, [progress, videoLength])
+
+    /**
      * manually adjust video speed
      */
     const handleVideoSpeed = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -367,6 +409,15 @@ function VideoPose(props: videoPoseProps) {
         }
         setVolume(volumeChange * 100);
     }
+
+    /**
+     * Update the appearance of volume slider when volume changes
+     */
+    useEffect(() => {
+        if (volumeSlider.current !== null) {
+            volumeSlider.current.style.backgroundSize = `${volume}% 100%`
+        }
+    }, [volume])
 
     /**
      * toggle mirroring the video
@@ -413,7 +464,9 @@ function VideoPose(props: videoPoseProps) {
         toggleVideoControls();
     }, [isFocusedDrawing, isPlaying, controlsHovered, toggleVideoControls])
 
-    return (
+    if (curVideo === null) {
+        return (<div />);
+    } return (
         <div onMouseMove={toggleVideoControls}>
             <canvas className="whole-screen" />
             <canvas className={isFocused ? "video-focus-selection-canvas" : "focus-area-hidden"}
@@ -425,7 +478,7 @@ function VideoPose(props: videoPoseProps) {
             <div className="video-container">
                 <video crossOrigin="Anonymous" className="video-element" ref={videoRef}
                     onLoadedData={initVideoCanvas} onTimeUpdate={handleOnTimeUpdate}>
-                    <source src="./videos/LoveShot.mp4" type="video/mp4" />
+                    <source src={curVideo.videoHostID} type="video/mp4" />
                 </video>
             </div>
 
@@ -433,32 +486,40 @@ function VideoPose(props: videoPoseProps) {
                 onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
                 <ChapterList vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} />
                 <div className="video-controls">
-                    <p>{secondToHourMinuteSecond(progress).time + " / " + secondToHourMinuteSecond(videoLength).time}</p>
-                    <input type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
-                    <button className="video-button" onClick={togglePlay}>
-                        Play/Pause Video
-                    </button>
-                    <select value={speed} onChange={(e) => handleVideoSpeed(e)}>
-                        <option value="0.3">0.3</option>
-                        <option value="0.4">0.4</option>
-                        <option value="0.5">0.5</option>
-                        <option value="0.6">0.6</option>
-                        <option value="0.7">0.7</option>
-                        <option value="0.8">0.8</option>
-                        <option value="0.9">0.9</option>
-                        <option value="1">1</option>
-                        <option value="1.25">1.25</option>
-                        <option value="1.5">1.5</option>
-                        <option value="1.75">1.75</option>
-                        <option value="2">2</option>
-                    </select>
-                    <input type="range" min="0" max="100" value={volume} onChange={(e) => handleVolume(e)} />
-                    <button onClick={toggleMirror}>
-                        Mirror
-                    </button>
-                    <button onClick={() => setIsFocused(prevFocus => !prevFocus)}>
-                        Focus
-                    </button>
+                    <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
+                    <div className="bottom-half-controls">
+                        <div className="bottom-half-controls-section">
+                            <p className="current-time">{secondToHourMinuteSecond(progress).time + " / " + secondToHourMinuteSecond(videoLength).time}</p>
+                            <button onClick={togglePlay}>
+                                {isPlaying ? <BsFillPauseFill className="play-pause-button" /> :
+                                    <BsFillPlayFill className="play-pause-button" />}
+                            </button>
+                            <BsVolumeOffFill className="control-bar-icon" />
+                            <input ref={volumeSlider} className="volume-slider" type="range" min="0" max="100" value={volume} onChange={(e) => handleVolume(e)} />
+                            <select className="select-speed" value={speed} onChange={(e) => handleVideoSpeed(e)}>
+                                <option value="0.3">0.3x</option>
+                                <option value="0.4">0.4x</option>
+                                <option value="0.5">0.5x</option>
+                                <option value="0.6">0.6x</option>
+                                <option value="0.7">0.7x</option>
+                                <option value="0.8">0.8x</option>
+                                <option value="0.9">0.9x</option>
+                                <option value="1">1x</option>
+                                <option value="1.25">1.25x</option>
+                                <option value="1.5">1.5x</option>
+                                <option value="1.75">1.75x</option>
+                                <option value="2">2x</option>
+                            </select>
+                        </div>
+                        <div className="bottom-half-controls-section">
+                            <button onClick={toggleMirror}>
+                                <VscMirror className={isMirrored ? "toggle-buttons-activated" : "toggle-buttons-deactivated"} />
+                            </button>
+                            <button onClick={() => setIsFocused(prevFocus => !prevFocus)}>
+                                <MdCenterFocusWeak className={isFocused ? "toggle-buttons-activated" : "toggle-buttons-deactivated"} />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
