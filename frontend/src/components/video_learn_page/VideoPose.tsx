@@ -210,13 +210,15 @@ function VideoPose(props: videoPoseProps) {
     const drawRect = useCallback(() => {
         const videoFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
         if (videoFocusSelectionCanvas !== null) {
+            const bounds = videoFocusSelectionCanvas.getBoundingClientRect();
             const vidFocusSelectionCanvasCtx = videoFocusSelectionCanvas.getContext("2d");
             if (vidFocusSelectionCanvasCtx !== null) {
-                vidFocusSelectionCanvasCtx.beginPath();
-                vidFocusSelectionCanvasCtx.rect(rect.startX, rect.startY, rect.width, rect.height);
-                vidFocusSelectionCanvasCtx.strokeStyle = "red";
-                vidFocusSelectionCanvasCtx.lineWidth = 2;
-                vidFocusSelectionCanvasCtx.stroke();
+                vidFocusSelectionCanvasCtx.fillStyle = "#0000007A"
+                vidFocusSelectionCanvasCtx.fillRect(0, 0,
+                    ((bounds.width / 2) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width + 3,
+                    (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height);
+
+                vidFocusSelectionCanvasCtx.clearRect(rect.startX, rect.startY, rect.width, rect.height);
             }
         }
     }, [rect.startX, rect.startY, rect.width, rect.height])
