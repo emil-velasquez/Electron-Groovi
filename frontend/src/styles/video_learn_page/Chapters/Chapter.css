@@ -1,14 +1,47 @@
 .chapter-container {
     width: 210px;
-    height: 90px;
+    height: 65px;
     padding: 10px;
     outline: 2px solid white;
     outline-offset: -10px;
+    display: flex;
 }
 
-.row {
+.chapter-container-activated {
+    width: 210px;
+    height: 65px;
+    padding: 10px;
+    outline: 2px solid #FBC403;
+    outline-offset: -10px;
     display: flex;
-    justify-content: center;
-    align-content: center;
+}
+
+.chapter-card-left {
+    margin-left: 5px;
+    text-align: left;
+    width: 185px;
+}
+
+.chapter-card-text {
     color: white;
+    font-size: 15px;
+    margin: 0px;
+}
+
+.chapter-card-text-activated {
+    color: #FBC403;
+    font-size: 15px;
+    margin: 0px;
+}
+
+.chapter-card-icon {
+    color: white;
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+.chapter-card-icon-activated {
+    color: #FBC403;
+    font-size: 15px;
+    margin-top: 10px;
 }

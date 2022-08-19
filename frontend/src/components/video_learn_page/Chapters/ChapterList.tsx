@@ -5,6 +5,8 @@ import React, { useEffect, useState, useRef } from "react";
 import ChapterEditor from "./ChapterEditor";
 import Chapter from "./Chapter";
 
+import { FiPlus } from "react-icons/fi";
+
 type ChapterType = {
     name: string,
     start: number,
@@ -155,7 +157,7 @@ function ChapterList(props: ChapterListProps) {
                 <div className="header-section">
                     <p className="header">Chapters</p>
                     <button onClick={() => resetChapterEditor("Untitled", 0, 1, -1)}>
-                        Plus
+                        <FiPlus className="plus-button" />
                     </button>
                 </div>
                 {chapters.map((curElement, idx) => <Chapter name={curElement.name} start={curElement.start}

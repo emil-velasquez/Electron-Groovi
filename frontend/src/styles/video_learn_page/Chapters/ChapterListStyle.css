@@ -14,7 +14,19 @@
 
 .header-section {
     display: flex;
+    justify-content: space-around;
     color: white;
+    font-size: 25px;
+    margin: 5px;
+}
+
+.header {
+    margin: 0px;
+}
+
+.plus-button {
+    color: white;
+    font-size: 25px;
 }
 
 .show-chapter-editor {
