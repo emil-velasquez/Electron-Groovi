@@ -64,12 +64,27 @@
     background-color: #151515;
     color: #FBC403;
     border-radius: 15px;
-    height: 40px;
+    height: 20px;
     width: calc((100vw - 250px - 1rem - 40px - 10px) / 6);
     text-align: center;
-    padding: 10px;
-    font-size: 25px;
-    margin-bottom: 5px;
+    font-size: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-right: 5px;
+}
+
+.vid-button-perform {
+    border-style: solid;
+    border-width: 3px;
+    border-color: white;
+    background-color: #151515;
+    color: #FBC403;
+    border-radius: 15px;
+    height: 35px;
+    width: calc((100vw - 250px - 1rem - 40px - 10px) / 6);
+    text-align: center;
+    padding: 8px;
+    font-size: 15px;
 }
 
 .description-box {

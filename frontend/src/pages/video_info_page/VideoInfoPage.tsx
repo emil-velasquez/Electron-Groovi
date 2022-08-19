@@ -51,19 +51,19 @@ function SongPage() {
                                 <ProfileBanner userID={curVideo.choreographerID.toString()} size={35} />
                                 <p className="header-song-info">{curVideo.songName}</p>
                                 <p className="header-song-info">{curVideo.artistName}</p>
+                                <div className="vid-buttons-section">
+                                    <Link className="vid-link" to={`/learn/${curVideo._id?.toString()}`}>
+                                        <p className="vid-buttons">Learn</p>
+                                    </Link>
+                                    <p className="vid-button-perform">Perform <br /> PB: XXXXX</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="body">
                         <div className="left-body">
-                            <div className="vid-buttons-section">
-                                <Link className="vid-link" to={`/learn/${curVideo._id?.toString()}`}>
-                                    <p className="vid-buttons">Learn</p>
-                                </Link>
-                                <p className="vid-buttons">Perform</p>
-                            </div>
-                            <p className="personal-best">Personal Best: XXXXX</p>
-                            <AiOutlineStar className="star" /><AiOutlineStar className="star" /><AiOutlineStar className="star" /><AiOutlineStar className="star" /><AiOutlineStar className="star" />
+                            <p>Stage:</p>
+                            <p>Put user recordings of the dance here</p>
                         </div>
                         <div className="description-box">
                             <p className="vid-description">{curVideo.vidDescription}</p>
