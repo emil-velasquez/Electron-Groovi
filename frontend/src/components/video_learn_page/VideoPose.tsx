@@ -215,7 +215,7 @@ function VideoPose(props: videoPoseProps) {
             if (vidFocusSelectionCanvasCtx !== null) {
                 vidFocusSelectionCanvasCtx.fillStyle = "#0000007A"
                 vidFocusSelectionCanvasCtx.fillRect(0, 0,
-                    ((bounds.width / 2) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width + 3,
+                    ((bounds.width / 2) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width + 1,
                     (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height);
 
                 vidFocusSelectionCanvasCtx.clearRect(rect.startX, rect.startY, rect.width, rect.height);
