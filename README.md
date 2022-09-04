@@ -18,6 +18,7 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 	- ![playlist page](https://media.giphy.com/media/CC85BBm2xItararUFy/giphy.gif)
 - Video Info Page
 	- View a dance and its information through a video info page
+	- ![video page](https://media.giphy.com/media/yUyhaJoEbY8AVouLVP/giphy.gif)
 - Dance Features
 	- Learn a dance by dancing side-by-side with the video
 	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance)
