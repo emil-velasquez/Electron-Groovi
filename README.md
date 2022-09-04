@@ -27,6 +27,7 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 	- If the scoring seems off, define a focus are of the main instructor you want to follow to guide the pose model
 	- ![focus area function](https://media.giphy.com/media/OA2sDDDdXCIHDd5agv/giphy.gif)
 	- Define and activate chapters to partition, practice, and repeat certain segments of the dance
+	- ![chapter function](https://media.giphy.com/media/IdXxOWUEqHd8NPCXpF/giphy.gif)
 	- Additional Video Controls: speed control, volume control, and progress bar
 
 ## Todo
