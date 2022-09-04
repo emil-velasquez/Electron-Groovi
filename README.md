@@ -27,7 +27,7 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance) (currently only shows raw angle difference between poses)
 	- Mirror the video and follow along
 	- ![mirror function](https://media.giphy.com/media/qsTKvZvuSz3pdA34Hs/giphy.gif)
-	- If the scoring seems off, define a focus are of the main instructor you want to follow to guide the pose model
+	- If the scoring seems off, define a focus area of the main instructor you want to follow to guide the pose model
 	- ![focus area function](https://media.giphy.com/media/OA2sDDDdXCIHDd5agv/giphy.gif)
 	- Define and activate chapters to partition, practice, and repeat certain segments of the dance
 	- ![chapter function](https://media.giphy.com/media/IdXxOWUEqHd8NPCXpF/giphy.gif)
