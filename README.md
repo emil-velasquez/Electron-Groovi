@@ -6,7 +6,10 @@
 
 Groovi is the social media platform being built for dance tutorials. Using pose model technology, users can dance along to their favorite dance tutorials and receive scoring like if they were playing popular dance games like Just Dance and Dance Central.
 
-Note: I do not own any of the dance videos shown here. I am just using them to test the application. You can find the videos displayed here at: 
+Note: I do not own any of the dance videos shown here. I am just using them to test the application.
+Videos shown:
+ - EXO 엑소 "Love Shot" Lisa Rhee Dance Tutorial - imlisarhee - https://www.youtube.com/watch?v=zC3CsPgGkUQ&list=PLf1Ei5U4wOt7iYyAn6Xlk05p9MjyAgyXf&index=15
+ - TAEMIN 태민 'Advice' Dance Practice - SMP FLOOR - https://www.youtube.com/watch?v=LC_6Bzz1wpw
 
 Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, Mediapipe, Typescript, Auth0
 
