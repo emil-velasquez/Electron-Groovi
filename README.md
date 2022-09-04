@@ -29,6 +29,7 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 	- Define and activate chapters to partition, practice, and repeat certain segments of the dance
 	- ![chapter function](https://media.giphy.com/media/IdXxOWUEqHd8NPCXpF/giphy.gif)
 	- Additional Video Controls: progress bar, speed control, and volume control
+	- ![video controls](https://media.giphy.com/media/pfXDtGaAFQZGeJFBab/giphy.gif)
 
 ## Todo
 - General
