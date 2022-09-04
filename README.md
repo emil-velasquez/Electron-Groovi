@@ -1,7 +1,7 @@
 ## Groovi
 
 <div align="center">
-	<img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GrooviLogo.PNG" alt="Groovi Logo" width=80 height=80 />
+	<img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GrooviLogo.PNG" alt="Groovi Logo" width=160 height=160 />
 </div>
 
 
