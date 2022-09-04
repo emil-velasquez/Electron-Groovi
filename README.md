@@ -1,7 +1,7 @@
 ## Groovi
 
 <div align="center">
-	<img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GrooviLogo.PNG" alt="Groovi Logo" width=160 height=160 />
+	<img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GrooviLogo.PNG" alt="Groovi Logo" width=160 height=170 />
 </div>
 
 Groovi is the social media platform being built for dance tutorials. Using pose model technology, users can dance along to their favorite dance tutorials and receive scoring like if they were playing popular dance games like Just Dance and Dance Central.
