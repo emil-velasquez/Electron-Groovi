@@ -1,8 +1,9 @@
 ## Groovi
 
 <div align="center">
-	Groovi Logo
+	<img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GrooviLogo.PNG" alt="Groovi Logo" width=80 height=80 />
 </div>
+
 
 Note: I do not own any of the dance videos shown here. I am just using them to test the application. You can find the videos displayed here at: 
 
