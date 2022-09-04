@@ -14,6 +14,7 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 - User Features
 	- Authenticate and authorize through Auth0
 - Playlists
+![playlist page](https://giphy.com/gifs/CC85BBm2xItararUFy)
 	- Display a collection of videos through a playlist page
 - Video Info Page
 	- View a dance and its information through a video info page
