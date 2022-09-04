@@ -17,7 +17,7 @@
 }
 
 .header-info {
-    width: calc((100vw - 250px - 1rem - 40px) / 2);
+    min-width: calc((100vw - 250px - 1rem - 40px) / 2);
     margin-left: 10px;
     position: relative;
 }
@@ -55,6 +55,7 @@
 .vid-buttons-section {
     display: flex;
     justify-content: space-evenly;
+    min-width: calc((100vw - 250px - 1rem - 40px) / 2);
 }
 
 .vid-buttons {
