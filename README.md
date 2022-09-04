@@ -23,6 +23,7 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 	- Learn a dance by dancing side-by-side with the video
 	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance)
 	- Mirror the video and follow along
+	- ![mirror function](https://media.giphy.com/media/QmyMKPfOzYFuaoXMGX/giphy.gif)
 	- If the scoring seems off, define a focus zone of the main instructor you want to follow to guide the pose model
 	- Define and activate chapters to partition, practice, and repeat certain segments of the dance
 	- Additional Video Controls: speed control, volume control, and progress bar
