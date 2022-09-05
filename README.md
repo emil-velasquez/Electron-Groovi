@@ -1,10 +1,16 @@
 ## Groovi
 
 <div align="center">
-	Groovi Logo
+	<img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GrooviLogo.PNG" alt="Groovi Logo" width=160 height=150 />
 </div>
 
-Note: I do not own any of the dance videos shown here. I am just using them to test the application. You can find the videos displayed here at: 
+Groovi is the social media platform being built for dance tutorials. Using pose model technology, users can dance along to their favorite dance tutorials and receive scoring like if they were playing popular dance games like Just Dance and Dance Central.
+
+Note: I do not own any of the dance videos shown here. I am just using them to test the application.
+Videos shown:
+ - EXO 엑소 "Love Shot" Lisa Rhee Dance Tutorial - imlisarhee - https://www.youtube.com/watch?v=zC3CsPgGkUQ&list=PLf1Ei5U4wOt7iYyAn6Xlk05p9MjyAgyXf&index=15
+ - TAEMIN 태민 'Advice' Dance Practice - SMP FLOOR - https://www.youtube.com/watch?v=LC_6Bzz1wpw
+ - [CHOREOGRAPHY] BTS (방탄소년단) 'I NEED U' Dance Practice - BANGTANTV - https://www.youtube.com/watch?v=hvUZb9NT7EY
 
 Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, Mediapipe, Typescript, Auth0
 
@@ -13,15 +19,21 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 	- Authenticate and authorize through Auth0
 - Playlists
 	- Display a collection of videos through a playlist page
+	- ![playlist page](https://media.giphy.com/media/CC85BBm2xItararUFy/giphy.gif)
 - Video Info Page
 	- View a dance and its information through a video info page
+	- ![video page](https://media.giphy.com/media/yUyhaJoEbY8AVouLVP/giphy.gif)
 - Dance Features
 	- Learn a dance by dancing side-by-side with the video
-	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance)
+	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance) (currently only shows raw angle difference between poses)
 	- Mirror the video and follow along
-	- If the scoring seems off, define a focus zone of the main instructor you want to follow to guide the pose model
+	- ![mirror function](https://media.giphy.com/media/qsTKvZvuSz3pdA34Hs/giphy.gif)
+	- If the scoring seems off, define a focus area of the main instructor you want to follow to guide the pose model
+	- ![focus area function](https://media.giphy.com/media/OA2sDDDdXCIHDd5agv/giphy.gif)
 	- Define and activate chapters to partition, practice, and repeat certain segments of the dance
-	- Additional Video Controls: speed control, volume control, and progress bar
+	- ![chapter function](https://media.giphy.com/media/IdXxOWUEqHd8NPCXpF/giphy.gif)
+	- Additional Video Controls: progress bar, speed control, and volume control
+	- ![video controls](https://media.giphy.com/media/pfXDtGaAFQZGeJFBab/giphy.gif)
 
 ## Todo
 - General
