@@ -26,7 +26,7 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 - Dance Features
 	- Learn a dance by dancing side-by-side with the video
 	- <img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GithubNoPosePicture.PNG" alt="dancing" width=475/>
-	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance) (currently only shows raw angle difference between poses)
+	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance) (currently only shows raw angle difference between poses in top right corner)
 	- <img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GithubPose.PNG" alt="dancing with pose drawn on top" width=475/>
 	- Mirror the video and follow along
 	- ![mirror function](https://media.giphy.com/media/qsTKvZvuSz3pdA34Hs/giphy.gif)
