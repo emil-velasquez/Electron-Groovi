@@ -10,6 +10,7 @@ Note: I do not own any of the dance videos shown here. I am just using them to t
 Videos shown:
  - EXO 엑소 "Love Shot" Lisa Rhee Dance Tutorial - imlisarhee - https://www.youtube.com/watch?v=zC3CsPgGkUQ&list=PLf1Ei5U4wOt7iYyAn6Xlk05p9MjyAgyXf&index=15
  - TAEMIN 태민 'Advice' Dance Practice - SMP FLOOR - https://www.youtube.com/watch?v=LC_6Bzz1wpw
+ - [CHOREOGRAPHY] BTS (방탄소년단) 'I NEED U' Dance Practice - BANGTANTV - https://www.youtube.com/watch?v=hvUZb9NT7EY
 
 Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, Mediapipe, Typescript, Auth0
 
