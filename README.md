@@ -1,7 +1,7 @@
 ## Groovi
 
 <div align="center">
-	<img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GrooviLogo.PNG" alt="Groovi Logo" width=160 height=150 />
+	<img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GrooviLogo.PNG" alt="Groovi Logo" width=160 height=145 />
 </div>
 
 Groovi is the social media platform being built for dance tutorials. Using pose model technology, users can dance along to their favorite dance tutorials and receive scoring like if they were playing popular dance games like Just Dance and Dance Central.
@@ -25,7 +25,9 @@ Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, M
 	- ![video page](https://media.giphy.com/media/yUyhaJoEbY8AVouLVP/giphy.gif)
 - Dance Features
 	- Learn a dance by dancing side-by-side with the video
-	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance) (currently only shows raw angle difference between poses)
+	- <img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GithubNoPosePicture.PNG" alt="dancing" width=475/>
+	- Use Mediapipe’s pose models to compare how well you are following along with the video (like Just Dance) (currently only shows raw angle difference between poses in top right corner)
+	- <img src="https://github.com/emil-velasquez/Groovi/blob/master/media/GithubPose.PNG" alt="dancing with pose drawn on top" width=475/>
 	- Mirror the video and follow along
 	- ![mirror function](https://media.giphy.com/media/qsTKvZvuSz3pdA34Hs/giphy.gif)
 	- If the scoring seems off, define a focus area of the main instructor you want to follow to guide the pose model
