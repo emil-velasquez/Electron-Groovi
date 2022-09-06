@@ -11,7 +11,7 @@ Videos shown:
  - EXO 엑소 "Love Shot" Lisa Rhee Dance Tutorial - imlisarhee - https://www.youtube.com/watch?v=zC3CsPgGkUQ&list=PLf1Ei5U4wOt7iYyAn6Xlk05p9MjyAgyXf&index=15
  - TAEMIN 태민 'Advice' Dance Practice - SMP FLOOR - https://www.youtube.com/watch?v=LC_6Bzz1wpw
 
-Built with: Electron, React, MongoDB (hosted at MongoAtlas), Express, Node.JS, Mediapipe, Typescript, Auth0
+Built with: Electron, React, MongoDB (hosted at MongoDB Atlas), Express, Node.JS, Mediapipe, Typescript, Auth0
 
 ## Completed
 - User Features
