@@ -14,7 +14,7 @@ videoRouter.post("/getVideo", async (req: Request, res: Response) => {
         if (videoResult) {
             res.json({ message: "Success", videoInfo: videoResult });
         } else {
-            res.json({ message: `Failure: Couldn't find playlist with id ${req.body.id}` });
+            res.json({ message: `Failure: Couldn't find video with id ${req.body.id}` });
         }
     } catch (error) {
         res.json({ message: "Failure: " + error });

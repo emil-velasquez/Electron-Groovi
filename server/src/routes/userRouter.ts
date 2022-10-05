@@ -82,7 +82,7 @@ userRouter.post("/getUser", async (req: Request, res: Response) => {
         if (userResult) {
             res.json({ message: "Success", userInfo: userResult });
         } else {
-            res.json({ message: `Failure: Couldn't find playlist with id ${req.body.id}` });
+            res.json({ message: `Failure: Couldn't find user with id ${req.body.id}` });
         }
     } catch (error) {
         res.json({ message: "Failure: " + error });
