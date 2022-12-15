@@ -26,9 +26,15 @@ const usePose = () => {
      * Accepts either a video element or a canvas element
      */
     const startPoseEstimation = (poseModel: Pose, mediaElement: HTMLCanvasElement | HTMLVideoElement) => {
+        // const poseDetectionFrame = async () => {
+        //     await poseModel.send({ image: mediaElement });
+        //     requestAnimationFrame(poseDetectionFrame);
+        // }
+        // poseDetectionFrame();
+
         setInterval(async () => {
             await poseModel.send({ image: mediaElement });
-        }, 100)
+        }, 1000)
     }
 
     /**
