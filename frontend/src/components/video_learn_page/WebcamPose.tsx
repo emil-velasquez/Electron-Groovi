@@ -8,7 +8,8 @@ import usePose from "../../hooks/usePose";
 
 type webcamPoseProps = {
     onPoseResults: (results: any) => void,
-    onWebcamReady: () => void
+    onWebcamReady: () => void,
+    viewState: number
 }
 
 function WebcamPose(props: webcamPoseProps) {
@@ -40,10 +41,24 @@ function WebcamPose(props: webcamPoseProps) {
         }
     }
 
+    /**
+     * Decide which style to use depending on the view state
+     */
+    const chooseStyleName = (viewStyle: number) => {
+        console.log(viewStyle)
+        if (viewStyle === 0) {
+            return "camera-hid";
+        } else if (viewStyle === 1) {
+            return "camera-popout";
+        } else {
+            return "camera-half"
+        }
+    }
+
     return (
         <div>
-            <Webcam className="camera-elements" onUserMedia={processWebcam} ref={webcamRef} />
-            <canvas className="camera-elements" ref={webcamPoseCanvasRef} />
+            <Webcam className={chooseStyleName(props.viewState)} onUserMedia={processWebcam} ref={webcamRef} />
+            <canvas className={chooseStyleName(props.viewState)} ref={webcamPoseCanvasRef} />
         </div>
     )
 }

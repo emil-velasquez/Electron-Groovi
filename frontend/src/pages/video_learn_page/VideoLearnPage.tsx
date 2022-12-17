@@ -24,6 +24,8 @@ function VideoLearnPage(props: any, ref: Ref<unknown>) {
     const diffPoseAngles = useRef<number[][]>([]);
     const [score, setScore] = useState(0);
 
+    const [viewState, setViewState] = useState(2);
+
     /**
      * Update whether the video is mirrored
      */
@@ -144,10 +146,19 @@ function VideoLearnPage(props: any, ref: Ref<unknown>) {
         curScore = 0;
     }
 
+    /**
+     * Listens to changes in the view state that happens in VideoPose
+     */
+    function onViewStateChange(newView: number) {
+        setViewState(newView);
+    }
+
     return (
         <div className="media-container">
-            <VideoPose onPoseResults={videoPoseOnResults} onUpdateMirror={updateMirrored} />
-            <WebcamPose onPoseResults={webcamPoseOnResults} onWebcamReady={webcamLoaded} />
+            <VideoPose onPoseResults={videoPoseOnResults} onUpdateMirror={updateMirrored}
+                onViewStateChange={onViewStateChange} />
+            <WebcamPose onPoseResults={webcamPoseOnResults} onWebcamReady={webcamLoaded}
+                viewState={viewState} />
             <Score score={score} />
         </div>
     );

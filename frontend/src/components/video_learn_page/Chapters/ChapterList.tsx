@@ -16,7 +16,8 @@ type ChapterType = {
 type ChapterListProps = {
     vidLength: string,
     jumper: (time: number) => void,
-    vidProgress: number
+    vidProgress: number,
+    viewState: number
 }
 
 function ChapterList(props: ChapterListProps) {
@@ -147,13 +148,21 @@ function ChapterList(props: ChapterListProps) {
         }
     }, [props.vidProgress])
 
+    const chapterListHeightSelector = (viewState: number) => {
+        if (viewState === 1) {
+            return "chapter-list-container-short";
+        } else {
+            return "chapter-list-container";
+        }
+    }
+
     return (
         <div>
             <div className={showEditor ? "show-chapter-editor" : "hide-chapter-editor"}>
                 <ChapterEditor values={editorValues} key={props.vidLength} maxVideoLength={props.vidLength}
                     closer={closeEditor} updater={updateChapters} />
             </div>
-            <div className="chapter-list-container">
+            <div className={chapterListHeightSelector(props.viewState)}>
                 <div className="header-section">
                     <p className="header">Chapters</p>
                     <button onClick={() => resetChapterEditor("Untitled", 0, 1, -1)}>

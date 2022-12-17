@@ -19,7 +19,8 @@ import { IoIosArrowBack } from "react-icons/io";
 
 type videoPoseProps = {
     onPoseResults: (results: any) => void,
-    onUpdateMirror: (mirrorState: boolean) => void
+    onUpdateMirror: (mirrorState: boolean) => void,
+    onViewStateChange: (newView: number) => void
 }
 
 function VideoPose(props: videoPoseProps) {
@@ -76,6 +77,12 @@ function VideoPose(props: videoPoseProps) {
 
     const [videoLength, setVideoLength] = useState("100");
 
+    const [viewState, setViewState] = useState(2);
+    const initialSetUp = useRef(true);
+
+    const boundsScale = useRef(2);
+    const boundsOffset = useRef(0.25);
+
     /**
      * Return the x value of the mouse scaled to the focus area
      */
@@ -84,8 +91,8 @@ function VideoPose(props: videoPoseProps) {
         const bounds = vidFocusSelectionCanvas?.getBoundingClientRect();
         let tempMouseX = e.clientX;
         if (bounds !== undefined) {
-            if (tempMouseX > bounds.width / 2) {
-                tempMouseX = bounds.width / 2;
+            if (tempMouseX > bounds.width / boundsScale.current) {
+                tempMouseX = bounds.width / boundsScale.current;
             }
         }
         if (bounds !== null && bounds !== undefined && vidFocusSelectionCanvas !== null) {
@@ -126,11 +133,11 @@ function VideoPose(props: videoPoseProps) {
             const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
             if (vidFocusSelectionCanvas !== null) {
                 setRect(prevRect => ({
-                    ...prevRect,
                     startX: getFocusAreaXScaled(e),
                     startY: getFocusAreaYScaled(e),
                     width: 1,
-                    height: 1
+                    height: 1,
+                    updatedRect: false
                 }))
             }
         } else {
@@ -213,9 +220,11 @@ function VideoPose(props: videoPoseProps) {
             const bounds = videoFocusSelectionCanvas.getBoundingClientRect();
             const vidFocusSelectionCanvasCtx = videoFocusSelectionCanvas.getContext("2d");
             if (vidFocusSelectionCanvasCtx !== null) {
+                vidFocusSelectionCanvasCtx.clearRect(0, 0, videoFocusSelectionCanvas.width,
+                    videoFocusSelectionCanvas.height);
                 vidFocusSelectionCanvasCtx.fillStyle = "#0000007A"
                 vidFocusSelectionCanvasCtx.fillRect(0, 0,
-                    ((bounds.width / 2) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width + 1,
+                    ((bounds.width / boundsScale.current) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width,
                     (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height);
 
                 vidFocusSelectionCanvasCtx.clearRect(rect.startX, rect.startY, rect.width, rect.height);
@@ -239,21 +248,26 @@ function VideoPose(props: videoPoseProps) {
 
                     const videoFocusCanvas = videoFocusCanvasRef.current;
                     const video = videoRef.current;
+
                     if (videoFocusCanvas !== null && video != null) {
                         const focusCanvasContext = videoFocusCanvas.getContext("2d");
 
-                        let focusX = rect.startX * scaleX + video.videoWidth * .22;
-                        let focusY = rect.startY * scaleY;
-                        const focusWidth = rect.width * scaleX;
-                        const focusHeight = rect.height * scaleY;
+                        const videoWidthScale = video.videoWidth / window.screen.availWidth;
 
+                        let focusX = (rect.startX * scaleX + window.screen.availWidth * boundsOffset.current) * videoWidthScale;
+                        let focusY = rect.startY * scaleY * videoWidthScale;
+
+                        const focusWidth = rect.width * scaleX * videoWidthScale;
+                        const focusHeight = rect.height * scaleY * videoWidthScale;
+
+                        //Just flips the focus area around the center if mirrored (does not need change)
                         if (mirrored.current) {
-                            if (focusX < video.videoWidth * .5) {
+                            if (focusX < video.videoWidth / 2) {
                                 let topRightX = focusX + focusWidth;
-                                let distance = video.videoWidth * .5 - topRightX;
+                                let distance = video.videoWidth / 2 - topRightX;
                                 focusX = focusX + 2 * distance + focusWidth;
                             } else {
-                                let distance = focusX - video.videoWidth * .5;
+                                let distance = focusX - video.videoWidth / 2;
                                 focusX = focusX - 2 * distance - focusWidth;
                             }
                         }
@@ -313,7 +327,7 @@ function VideoPose(props: videoPoseProps) {
             setRect(prevRect => ({
                 startX: 0,
                 startY: 0,
-                width: ((bounds.width / 2) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width,
+                width: ((bounds.width / boundsScale.current) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width,
                 height: (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height,
                 updatedRect: true
             }))
@@ -436,6 +450,7 @@ function VideoPose(props: videoPoseProps) {
     useEffect(() => {
         if (videoRef.current !== null && videoPoseCanvasRef.current !== null) {
             if (isMirrored) {
+                console.log("here");
                 videoRef.current.style.setProperty("transform", "rotateY(180deg)");
                 videoPoseCanvasRef.current.style.setProperty("transform", "rotateY(180deg)");
             } else {
@@ -445,7 +460,7 @@ function VideoPose(props: videoPoseProps) {
         }
         mirrored.current = isMirrored;
         props.onUpdateMirror(isMirrored);
-    })
+    }, [isMirrored])
 
     /**
      * Master function that handles whether or not the video controls should be shown
@@ -471,6 +486,54 @@ function VideoPose(props: videoPoseProps) {
         toggleVideoControls();
     }, [isFocusedDrawing, isPlaying, controlsHovered, toggleVideoControls])
 
+    /**
+     * Switches between the different view states
+     */
+    const toggleViewStates = () => {
+        if (viewState === 0) {
+            setViewState(1);
+        } else if (viewState === 1) {
+            setViewState(2);
+        } else {
+            setViewState(0);
+        }
+    }
+
+    useEffect(() => {
+        if (!initialSetUp.current) {
+            props.onViewStateChange(viewState);
+            const video = videoRef.current;
+            const videoFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
+            if (video != null && videoFocusSelectionCanvas !== null) {
+                const bounds = videoFocusSelectionCanvas.getBoundingClientRect();
+                const shift = window.screen.availWidth * 0.25 * videoFocusSelectionCanvas.width / bounds.width;
+                if (viewState === 0) {
+                    boundsScale.current = 1;
+                    boundsOffset.current = 0;
+
+                    setRect(prevRect =>
+                    ({
+                        ...prevRect,
+                        startX: prevRect.startX + shift,
+                        updatedRect: true
+                    }))
+                } else if (viewState === 2) {
+                    boundsScale.current = 2;
+                    boundsOffset.current = 0.25;
+                    setRect(prevRect =>
+                    ({
+                        ...prevRect,
+                        startX: prevRect.startX - shift,
+                        updatedRect: true
+                    }))
+
+                }
+            }
+        } else {
+            initialSetUp.current = false;
+        }
+    }, [viewState])
+
     if (curVideo === null) {
         return (<div />);
     } return (
@@ -482,9 +545,9 @@ function VideoPose(props: videoPoseProps) {
             <canvas className="focus-area" ref={videoFocusCanvasRef} />
             <canvas className="focus-area" ref={videoPoseCanvasRef} />
 
-            <div className="video-container">
-                <video crossOrigin="Anonymous" className="video-element" ref={videoRef}
-                    onLoadedData={initVideoCanvas} onTimeUpdate={handleOnTimeUpdate}>
+            <div className={viewState === 2 ? "video-container-half" : "video-container-full"}>
+                <video crossOrigin="Anonymous" className={viewState === 2 ? "video-element-half" : "video-element-full"}
+                    ref={videoRef} onLoadedData={initVideoCanvas} onTimeUpdate={handleOnTimeUpdate}>
                     <source src={curVideo.videoHostID} type="video/mp4" />
                 </video>
             </div>
@@ -497,9 +560,9 @@ function VideoPose(props: videoPoseProps) {
                     </button>
                     <p className="top-header-video-name">{curVideo.videoName}</p>
                 </div>
-                <ChapterList vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} />
+                <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} />
                 <div className="video-controls">
-                    <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
+                    <input ref={timeSlider} className={"time-slider " + (viewState === 2 ? "full-time-slider" : "shortened-time-slider")} type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
                     <div className="bottom-half-controls">
                         <div className="bottom-half-controls-section">
                             <p className="current-time">{secondToHourMinuteSecond(progress).time + " / " + secondToHourMinuteSecond(videoLength).time}</p>
@@ -530,6 +593,9 @@ function VideoPose(props: videoPoseProps) {
                             </button>
                             <button onClick={() => setIsFocused(prevFocus => !prevFocus)}>
                                 <MdCenterFocusWeak className={isFocused ? "toggle-buttons-activated" : "toggle-buttons-deactivated"} />
+                            </button>
+                            <button onClick={toggleViewStates}>
+                                ToggleView
                             </button>
                         </div>
                     </div>

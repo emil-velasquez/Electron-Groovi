@@ -7,8 +7,8 @@ import * as path from "path";
  */
 const createAppWindow = () => {
     let appWindow = new BrowserWindow({
-        width: 1920,
-        height: 1080,
+        autoHideMenuBar: true,
+        fullscreen: true,
         webPreferences: {
             preload: path.join(__dirname, "preload.js")
         }

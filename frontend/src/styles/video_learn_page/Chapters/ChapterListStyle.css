@@ -11,6 +11,19 @@
     z-index: 5;
 }
 
+.chapter-list-container-short {
+    position: fixed;
+    top: 42vh;
+    right: 0;
+
+    width: 230px;
+    height: 55%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    z-index: 5;
+}
+
 .header-section {
     display: flex;
     justify-content: space-around;
