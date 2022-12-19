@@ -3,6 +3,7 @@ import "../../styles/video_learn_page/VideoPoseStyle.css";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
 import { BsFillPlayFill, BsFillPauseFill, BsVolumeOffFill } from "react-icons/bs";
+import { TbLayoutColumns, TbRectangle, TbPictureInPictureTop } from "react-icons/tb"
 import { VscMirror } from "react-icons/vsc";
 import { MdCenterFocusWeak } from "react-icons/md";
 
@@ -402,10 +403,14 @@ function VideoPose(props: videoPoseProps) {
      */
     useEffect(() => {
         if (videoRef.current !== null) {
-            const percentFinish = progress / Number(videoLength) * 100;
+            const percentFinish = Math.max(progress / Number(videoLength) * 100,
+                Math.min(10.5, Math.max(progress / Number(videoLength) * 100 + 0.5, 1.5)));
             if (timeSlider.current !== null) {
                 timeSlider.current.style.backgroundSize = `${percentFinish}% 100%`;
             }
+        }
+        if (progress / Number(videoLength) === 1) {
+            setPlaying(false);
         }
     }, [progress, videoLength])
 
@@ -471,20 +476,18 @@ function VideoPose(props: videoPoseProps) {
         }
         if (isFocusedDrawing) {
             setShowControls(false);
-        } else if (!isPlaying) {
-            setShowControls(true);
         } else if (controlsHovered) {
             setShowControls(true);
         } else {
             //the video must be playing and the mouse is moving on top of video content
             setShowControls(true);
-            controlsTimeout.current = window.setTimeout(() => { setShowControls(false) }, 2000);
+            controlsTimeout.current = window.setTimeout(() => { setShowControls(false) }, 1500);
         }
-    }, [controlsHovered, isFocusedDrawing, isPlaying]);
+    }, [controlsHovered, isFocusedDrawing]);
 
     useEffect(() => {
         toggleVideoControls();
-    }, [isFocusedDrawing, isPlaying, controlsHovered, toggleVideoControls])
+    }, [isFocusedDrawing, controlsHovered, toggleVideoControls])
 
     /**
      * Switches between the different view states
@@ -534,6 +537,19 @@ function VideoPose(props: videoPoseProps) {
         }
     }, [viewState])
 
+    /**
+     * Chooses the icon to show based on view state
+     */
+    const viewStateIcon = (viewState: number) => {
+        if (viewState === 0) {
+            return (<TbRectangle className="toggle-buttons-deactivated" />);
+        } else if (viewState === 1) {
+            return (<TbPictureInPictureTop className="toggle-buttons-deactivated" />)
+        } else {
+            return (<TbLayoutColumns className="toggle-buttons-deactivated" />)
+        }
+    }
+
     if (curVideo === null) {
         return (<div />);
     } return (
@@ -562,7 +578,7 @@ function VideoPose(props: videoPoseProps) {
                 </div>
                 <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} />
                 <div className="video-controls">
-                    <input ref={timeSlider} className={"time-slider " + (viewState === 2 ? "full-time-slider" : "shortened-time-slider")} type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
+                    <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
                     <div className="bottom-half-controls">
                         <div className="bottom-half-controls-section">
                             <p className="current-time">{secondToHourMinuteSecond(progress).time + " / " + secondToHourMinuteSecond(videoLength).time}</p>
@@ -595,7 +611,7 @@ function VideoPose(props: videoPoseProps) {
                                 <MdCenterFocusWeak className={isFocused ? "toggle-buttons-activated" : "toggle-buttons-deactivated"} />
                             </button>
                             <button onClick={toggleViewStates}>
-                                ToggleView
+                                {viewStateIcon(viewState)}
                             </button>
                         </div>
                     </div>
