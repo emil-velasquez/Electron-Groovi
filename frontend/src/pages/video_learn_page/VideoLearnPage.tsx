@@ -20,11 +20,11 @@ function VideoLearnPage(props: any, ref: Ref<unknown>) {
     [26, 24, 23], [25, 23, 24], [23, 25, 27], [11, 23, 25], [13, 11, 23],
     [13, 11, 12], [15, 13, 11]];
 
-    const mirrored = useRef(true);
+    const mirrored = useRef(false);
     const diffPoseAngles = useRef<number[][]>([]);
     const [score, setScore] = useState(0);
 
-    const [viewState, setViewState] = useState(2);
+    const [viewState, setViewState] = useState(0);
 
     /**
      * Update whether the video is mirrored

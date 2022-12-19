@@ -55,7 +55,7 @@ function VideoPose(props: videoPoseProps) {
     const focusInterval = useRef<number | null>(null);
     const [rect, setRect] = useState({ startX: 0, startY: 0, width: 0, height: 0, updatedRect: false });
 
-    const mirrored = useRef(true);
+    const mirrored = useRef(false);
 
     const { getPoseModel, startPoseEstimation, drawResults } = usePose();
     const secondToHourMinuteSecond = useTime();
@@ -68,7 +68,7 @@ function VideoPose(props: videoPoseProps) {
     const [volume, setVolume] = useState(100);
     const volumeSlider = useRef<HTMLInputElement>(null);
 
-    const [isMirrored, setMirrored] = useState(true);
+    const [isMirrored, setMirrored] = useState(false);
 
     const [isFocused, setIsFocused] = useState(true);
     const [isFocusedDrawing, setIsFocusedDrawing] = useState(false);
@@ -78,11 +78,11 @@ function VideoPose(props: videoPoseProps) {
 
     const [videoLength, setVideoLength] = useState("100");
 
-    const [viewState, setViewState] = useState(2);
+    const [viewState, setViewState] = useState(0);
     const initialSetUp = useRef(true);
 
-    const boundsScale = useRef(2);
-    const boundsOffset = useRef(0.25);
+    const boundsScale = useRef(1);
+    const boundsOffset = useRef(0);
 
     /**
      * Return the x value of the mouse scaled to the focus area

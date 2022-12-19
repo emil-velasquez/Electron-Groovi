@@ -17,7 +17,7 @@
 }
 
 .video-element-half {
-    transform: rotateY(180deg);
+    transform: rotateY(0deg);
     height: 100%;
     margin-left: -25vw;
     z-index: 1;
@@ -26,7 +26,7 @@
 
 .video-element-full {
     display: inline-block;
-    transform: rotateY(180deg);
+    transform: rotateY(0deg);
     width: 99.6vw;
     height: 99.6vh;
     object-fit: fill;
