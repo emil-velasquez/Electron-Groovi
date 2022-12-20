@@ -13,9 +13,16 @@
     transform: rotateY(180deg);
     position: fixed;
     z-index: 6;
-    top: 10%;
-    right: 20px;
-    height: 30vh;
+    top: calc(1vh + 85px);
+    right: 2vh;
+    height: 25vh;
+
+    border-radius: 15px;
+    border-style: solid;
+    border-color: white;
+    border-width: 5px;
+
+    margin: 0px;
 }
 
 .camera-half {
@@ -27,4 +34,10 @@
     width: 50%;
     height: 100%;
     object-fit: cover;
+}
+
+.webcam-pose-canvas {
+    position: fixed;
+    left: 100%;
+    top: 0;
 }

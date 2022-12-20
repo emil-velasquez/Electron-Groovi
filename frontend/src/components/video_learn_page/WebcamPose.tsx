@@ -58,7 +58,7 @@ function WebcamPose(props: webcamPoseProps) {
     return (
         <div>
             <Webcam className={chooseStyleName(props.viewState)} onUserMedia={processWebcam} ref={webcamRef} />
-            <canvas className={chooseStyleName(props.viewState)} ref={webcamPoseCanvasRef} />
+            <canvas className={"webcam-pose-canvas"} ref={webcamPoseCanvasRef} />
         </div>
     )
 }
