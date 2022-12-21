@@ -223,7 +223,7 @@ function VideoPose(props: videoPoseProps) {
             if (vidFocusSelectionCanvasCtx !== null) {
                 vidFocusSelectionCanvasCtx.clearRect(0, 0, videoFocusSelectionCanvas.width,
                     videoFocusSelectionCanvas.height);
-                vidFocusSelectionCanvasCtx.fillStyle = "#0000007A"
+                vidFocusSelectionCanvasCtx.fillStyle = "#000000C0"
                 vidFocusSelectionCanvasCtx.fillRect(0, 0,
                     ((bounds.width / boundsScale.current) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width,
                     (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height);
@@ -404,7 +404,7 @@ function VideoPose(props: videoPoseProps) {
     useEffect(() => {
         if (videoRef.current !== null) {
             const percentFinish = Math.max(progress / Number(videoLength) * 100,
-                Math.min(10.5, Math.max(progress / Number(videoLength) * 100 + 0.5, 1.5)));
+                Math.min(15, Math.max(progress / Number(videoLength) * 100 + 1, 1.5)));
             if (timeSlider.current !== null) {
                 timeSlider.current.style.backgroundSize = `${percentFinish}% 100%`;
             }
@@ -578,7 +578,7 @@ function VideoPose(props: videoPoseProps) {
                 </div>
                 <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} />
                 <div className="video-controls">
-                    <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} value={progress} onChange={(e) => handleVideoProgress(e)} />
+                    <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} step="0.1" value={progress} onChange={(e) => handleVideoProgress(e)} />
                     <div className="bottom-half-controls">
                         <div className="bottom-half-controls-section">
                             <p className="current-time">{secondToHourMinuteSecond(progress).time + " / " + secondToHourMinuteSecond(videoLength).time}</p>
