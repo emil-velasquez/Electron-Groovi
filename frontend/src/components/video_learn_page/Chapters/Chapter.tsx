@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 
 import { RiPencilFill } from "react-icons/ri";
 import { BsFillTrashFill } from "react-icons/bs";
+import { ImLoop2 } from "react-icons/im";
 
 import useTime from "../../../hooks/useTime";
 
@@ -38,9 +39,12 @@ function Chapter(props: chapterProps) {
             <div className="chapter-card-left">
                 <p className={activated ? "chapter-card-text-activated" : "chapter-card-text"}>{props.name}</p>
                 <p className={activated ? "chapter-card-text-activated" : "chapter-card-text"}>{secondToHourMinuteSecond(props.start).time + " - " + secondToHourMinuteSecond(props.end).time} </p>
-                <label className={activated ? "chapter-card-text-activated" : "chapter-card-text"}><input type="checkbox" checked={activated} onChange={toggleActivated} />Loop</label>
             </div>
             <div>
+                <button onClick={toggleActivated}>
+                    <ImLoop2 className={activated ? "chapter-card-icon-activated" : "chapter-card-icon"} />
+                </button>
+                <br />
                 <button onClick={() => props.editor(props.name, props.start, props.end, props.index)}>
                     <RiPencilFill className={activated ? "chapter-card-icon-activated" : "chapter-card-icon"} />
                 </button>

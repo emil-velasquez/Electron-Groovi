@@ -169,9 +169,12 @@ function ChapterList(props: ChapterListProps) {
                         <FiPlus className="plus-button" />
                     </button>
                 </div>
-                {chapters.map((curElement, idx) => <Chapter name={curElement.name} start={curElement.start}
-                    end={curElement.end} index={idx} editor={resetChapterEditor} jumper={props.jumper}
-                    activator={toggleChapter} />)}
+                <hr />
+                <div className={props.viewState === 1 ? "chapter-section-short" : "chapter-section"}>
+                    {chapters.map((curElement, idx) => <Chapter name={curElement.name} start={curElement.start}
+                        end={curElement.end} index={idx} editor={resetChapterEditor} jumper={props.jumper}
+                        activator={toggleChapter} />)}
+                </div>
             </div>
         </div>
     )

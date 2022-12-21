@@ -1,45 +1,61 @@
 .chapter-container {
-    width: 210px;
-    padding: 10px;
-    outline: 2px solid white;
-    outline-offset: -10px;
+    width: 190px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border: 2px solid white;
     display: flex;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-left: calc((230px - 214px) / 2);
+    margin-right: calc((230px - 214px) / 2);
 }
 
 .chapter-container-activated {
-    width: 210px;
-    padding: 10px;
-    outline: 2px solid #FBC403;
-    outline-offset: -10px;
+    width: 190px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border: 2px solid white;
+    background-color: #C17767;
     display: flex;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    margin-left: calc((230px - 214px) / 2);
+    margin-right: calc((230px - 214px) / 2);
 }
 
 .chapter-card-left {
-    margin-left: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-left: 2px;
+    margin-right: 5px;
     text-align: left;
-    width: 185px;
+    width: 170px;
+    position: relative;
+    overflow: hidden;
+    overflow-wrap: break-word;
 }
 
 .chapter-card-text {
     color: white;
-    font-size: 15px;
+    font-size: 20px;
     margin: 0px;
 }
 
 .chapter-card-text-activated {
-    color: #FBC403;
-    font-size: 15px;
+    color: black;
+    font-size: 20px;
     margin: 0px;
 }
 
 .chapter-card-icon {
     color: white;
-    font-size: 15px;
-    margin-top: 10px;
+    font-size: 20px;
+    margin-top: 5px;
 }
 
 .chapter-card-icon-activated {
-    color: #FBC403;
-    font-size: 15px;
-    margin-top: 10px;
+    color: black;
+    font-size: 20px;
+    margin-top: 5px;
 }

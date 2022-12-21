@@ -1,27 +1,47 @@
 .chapter-list-container {
     position: fixed;
-    top: 10%;
-    right: 0;
+    top: calc(1vh + 85px);
+    right: 2vw;
 
-    width: 230px;
-    height: 80%;
-    overflow-y: auto;
+    min-width: 230px;
+    height: calc(100vh - 3vh - 185px);
+    overflow-y: hidden;
     overflow-x: hidden;
 
+    background-color: #151515;
+    border-radius: 15px;
+    border-style: solid;
+    border-color: white;
+    border-width: 5px;
+
+    box-shadow: 10px 10px black;
+
     z-index: 5;
+
+    justify-content: center;
 }
 
 .chapter-list-container-short {
     position: fixed;
-    top: 42vh;
-    right: 0;
+    top: calc(1vh + 85px + 25vh + 20px);
+    right: 2vw;
 
-    width: 230px;
-    height: 55%;
-    overflow-y: auto;
+    min-width: 230px;
+    height: calc(100vh - 3vh - 185px - 25vh - 20px);
+    overflow-y: hidden;
     overflow-x: hidden;
 
+    background-color: #151515;
+    border-radius: 15px;
+    border-style: solid;
+    border-color: white;
+    border-width: 5px;
+
+    box-shadow: 10px 10px black;
+
     z-index: 5;
+
+    justify-content: center;
 }
 
 .header-section {
@@ -39,6 +59,16 @@
 .plus-button {
     color: white;
     font-size: 25px;
+}
+
+.chapter-section {
+    overflow: auto;
+    height: calc(100vh - 3vh - 185px - 60px);
+}
+
+.chapter-section-short {
+    overflow: auto;
+    height: calc(100vh - 3vh - 185px - 25vh - 20px - 60px);
 }
 
 .show-chapter-editor {
