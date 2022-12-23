@@ -3,6 +3,8 @@ import "../../../styles/video_learn_page/Chapters/ChapterEditor.css"
 import React, { useEffect, useState, useRef } from "react"
 import { RiPencilFill } from "react-icons/ri";
 
+import { BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
+
 import MultiRangeSlider from "../../utility/MultiRangeSlider";
 import useTime from "../../../hooks/useTime";
 
@@ -31,6 +33,8 @@ type ChapterEditorProps = {
         index: number
     },
     videoSource: string,
+    mirrored: boolean,
+    volume: number,
     closer: () => void,
     updater: (chapter: ChapterType, index: number) => void
 }
@@ -49,6 +53,7 @@ function ChapterEditor(props: ChapterEditorProps) {
     const videoElement = useRef<HTMLVideoElement | null>(null);
 
     const [videoLength, setVideoLength] = useState(1);
+    const [isPlaying, setIsPlaying] = useState(false);
 
     /**
      * Handle resetting values at initialization
@@ -59,7 +64,24 @@ function ChapterEditor(props: ChapterEditorProps) {
         setStartDecomposed(prev => secondToHourMinuteSecond(props.values.start));
         setCurEnd(prevEnd => props.values.end);
         setEndDecomposed(prev => secondToHourMinuteSecond(props.values.end));
+        setIsPlaying(false);
     }, [props.values])
+
+    useEffect(() => {
+        if (videoElement.current !== null) {
+            videoElement.current.volume = props.volume / 100;
+        }
+    }, [props.volume])
+
+    useEffect(() => {
+        if (videoElement.current !== null) {
+            if (props.mirrored) {
+                videoElement.current.style.setProperty("transform", "rotateY(180deg)");
+            } else {
+                videoElement.current.style.setProperty("transform", "rotateY(0deg)");
+            }
+        }
+    }, [props.mirrored])
 
     /**
      * Allow the user to change the name of the video
@@ -97,7 +119,7 @@ function ChapterEditor(props: ChapterEditorProps) {
                 tempTime -= startDecomposed.seconds;
                 tempTime += newValue;
             }
-            if (tempTime < curEnd && tempTime < videoLength) {
+            if (tempTime <= curEnd && tempTime <= videoLength) {
                 setCurStart(tempTime);
             }
         } else {
@@ -112,7 +134,7 @@ function ChapterEditor(props: ChapterEditorProps) {
                 tempTime -= endDecomposed.seconds;
                 tempTime += newValue;
             }
-            if (tempTime > curStart && tempTime < videoLength) {
+            if (tempTime >= curStart && tempTime <= videoLength) {
                 setCurEnd(tempTime);
             }
         }
@@ -123,6 +145,7 @@ function ChapterEditor(props: ChapterEditorProps) {
      */
     useEffect(() => {
         setStartDecomposed(prev => secondToHourMinuteSecond(curStart));
+        jumpInVideo(curStart);
     }, [curStart])
 
     /**
@@ -130,8 +153,42 @@ function ChapterEditor(props: ChapterEditorProps) {
     */
     useEffect(() => {
         setEndDecomposed(prev => secondToHourMinuteSecond(curEnd));
+        jumpInVideo(curEnd);
     }, [curEnd])
 
+    /**
+     * Toggles whether the view is playing or is paused
+     */
+    const togglePlay = () => {
+        setIsPlaying(prev => !prev);
+    }
+
+    useEffect(() => {
+        if (videoElement.current !== null) {
+            isPlaying ? videoElement.current.play() : videoElement.current.pause();
+        }
+    }, [isPlaying, videoElement])
+
+    /**
+     * Causes the video to jump to the time (in seconds) passed in
+     */
+    const jumpInVideo = (time: number) => {
+        setIsPlaying(false);
+        if (videoElement.current !== null) {
+            videoElement.current.currentTime = time;
+        }
+    }
+
+    /**
+     * If the video reaches the end of the section defined by the bounds, jump back to the beginning
+     */
+    const handleVideoProgress = () => {
+        if (videoElement.current !== null) {
+            if (curEnd < videoElement.current.currentTime) {
+                videoElement.current.currentTime = curStart;
+            }
+        }
+    }
 
     /**
      * When user submits, check that startTime < endTime 
@@ -139,7 +196,8 @@ function ChapterEditor(props: ChapterEditorProps) {
      * name, start, and end to callback
      */
     const handleSubmit = () => {
-        if (curStart < curEnd) {
+        if (curStart <= curEnd) {
+            setIsPlaying(false);
             props.updater({ name: curName, start: curStart, end: curEnd }, props.values.index);
         } else {
             console.log("Invalid time input")
@@ -159,7 +217,12 @@ function ChapterEditor(props: ChapterEditorProps) {
             </div>
 
             <video ref={videoElement} className="edit-video" crossOrigin="Anonymous"
-                onLoadedData={() => { if (videoElement.current !== null) setVideoLength(videoElement.current?.duration) }}>
+                onLoadedData={() => {
+                    if (videoElement.current !== null) {
+                        setVideoLength(videoElement.current?.duration);
+                    }
+                }}
+                onTimeUpdate={handleVideoProgress}>
                 <source src={props.videoSource} type="video/mp4" />
             </video>
 
@@ -168,6 +231,9 @@ function ChapterEditor(props: ChapterEditorProps) {
             </div>
 
             <div className="time-text-container">
+                <button className="editor-play-pause" onClick={togglePlay}>
+                    {isPlaying ? <BsFillPauseFill /> : <BsFillPlayFill />}
+                </button>
                 <div className="time-text-border">
                     <input type="number" min="0" max="999" value={(startDecomposed.hours < 10 ? "0" : "") + startDecomposed.hours.toString()}
                         onChange={(event) => { handleManualTimeBoundsChange(Number(event.target.value), TimePos.START, TimeUnit.HOUR) }}
@@ -201,7 +267,7 @@ function ChapterEditor(props: ChapterEditorProps) {
                 <div className="time-text-border">
                     <input type="number" min="0" max="59" value={(endDecomposed.seconds < 10 ? "0" : "") + endDecomposed.seconds.toString()}
                         onChange={(event) => { handleManualTimeBoundsChange(Number(event.target.value), TimePos.END, TimeUnit.SECOND) }}
-                        className="time-text-input" />
+                        className="time-text-input" onBlur={() => { console.log("test") }} onSubmit={() => { console.log("submitted") }} />
                 </div>
             </div>
 

@@ -575,7 +575,7 @@ function VideoPose(props: videoPoseProps) {
                     </button>
                     <p className="top-header-video-name">{curVideo.videoName}</p>
                 </div>
-                <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} videoSource={curVideo.videoHostID} />
+                <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} videoSource={curVideo.videoHostID} mirrored={isMirrored} volume={volume} />
                 <div className="video-controls">
                     <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} step="0.1" value={progress} onChange={(e) => handleVideoProgress(e)} />
                     <div className="bottom-half-controls">

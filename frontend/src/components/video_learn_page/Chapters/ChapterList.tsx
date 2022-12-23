@@ -18,7 +18,9 @@ type ChapterListProps = {
     jumper: (time: number) => void,
     vidProgress: number,
     viewState: number,
-    videoSource: string
+    videoSource: string,
+    mirrored: boolean,
+    volume: number
 }
 
 function ChapterList(props: ChapterListProps) {
@@ -160,7 +162,8 @@ function ChapterList(props: ChapterListProps) {
         <div>
             <div className={showEditor ? "show-chapter-editor" : "hide-chapter-editor"}>
                 <ChapterEditor values={editorValues} key={props.vidLength}
-                    closer={closeEditor} updater={updateChapters} videoSource={props.videoSource} />
+                    closer={closeEditor} updater={updateChapters} videoSource={props.videoSource}
+                    mirrored={props.mirrored} volume={props.volume} />
             </div>
             <div className={chapterListHeightSelector(props.viewState)}>
                 <div className="header-section">

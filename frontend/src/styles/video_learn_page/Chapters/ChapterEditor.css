@@ -53,6 +53,7 @@
 }
 
 .edit-video {
+    transform: rotateY('0deg');
     margin-top: 10px;
     width: 40vw;
     left: 5vw;
@@ -94,6 +95,7 @@
 
 .save-button {
     margin-top: 20px;
+    margin-bottom: 20px;
     border: solid 2px white;
     border-radius: 5px;
     background-color: #C17767;
@@ -101,4 +103,10 @@
     font-size: 20px;
     width: 100px;
     height: 40px;
+}
+
+.editor-play-pause {
+    font-size: 25px;
+    margin-right: 5px;
+    margin-top: 10px;
 }
