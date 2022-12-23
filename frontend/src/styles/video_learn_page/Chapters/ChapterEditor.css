@@ -7,7 +7,7 @@
     bottom: 0;
 
     width: 50vw;
-    height: calc(245px + ((40vw * 9) / 16));
+    height: calc(265px + ((40vw * 9) / 16));
 
     background-color: #151515;
     border-radius: 15px;
@@ -94,7 +94,7 @@
 }
 
 .save-button {
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 20px;
     border: solid 2px white;
     border-radius: 5px;
@@ -109,4 +109,11 @@
     font-size: 25px;
     margin-right: 5px;
     margin-top: 10px;
+}
+
+.error-message {
+    margin-top: 5px;
+    margin-bottom: 0px;
+    font-size: 15px;
+    color: white;
 }

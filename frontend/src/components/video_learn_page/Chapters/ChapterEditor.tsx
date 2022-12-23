@@ -46,14 +46,21 @@ function ChapterEditor(props: ChapterEditorProps) {
 
     const [curStart, setCurStart] = useState(props.values.start);
     const [curEnd, setCurEnd] = useState(props.values.end);
+
     const [startDecomposed, setStartDecomposed] = useState(secondToHourMinuteSecond(props.values.start));
     const [endDecomposed, setEndDecomposed] = useState(secondToHourMinuteSecond(props.values.end));
+    const [displayStart, setDisplayStart] = useState(secondToHourMinuteSecond(props.values.start));
+    const [displayEnd, setDisplayEnd] = useState(secondToHourMinuteSecond(props.values.end));
 
     const titleInputElement = useRef<HTMLInputElement | null>(null);
     const videoElement = useRef<HTMLVideoElement | null>(null);
 
     const [videoLength, setVideoLength] = useState(1);
+    const [videoLengthDecomposed, setVideoLengthDecomposed] = useState(secondToHourMinuteSecond(videoLength));
     const [isPlaying, setIsPlaying] = useState(false);
+
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("Start Time must be before End Time")
 
     /**
      * Handle resetting values at initialization
@@ -62,10 +69,17 @@ function ChapterEditor(props: ChapterEditorProps) {
         setCurName(prevName => props.values.name);
         setCurStart(prevStart => props.values.start);
         setStartDecomposed(prev => secondToHourMinuteSecond(props.values.start));
+        setDisplayStart(prev => secondToHourMinuteSecond(props.values.start))
         setCurEnd(prevEnd => props.values.end);
         setEndDecomposed(prev => secondToHourMinuteSecond(props.values.end));
+        setDisplayEnd(prev => secondToHourMinuteSecond(props.values.end))
         setIsPlaying(false);
+        setShowError(false);
     }, [props.values])
+
+    useEffect(() => {
+        setVideoLengthDecomposed(secondToHourMinuteSecond(videoLength));
+    }, [videoLength])
 
     useEffect(() => {
         if (videoElement.current !== null) {
@@ -104,40 +118,95 @@ function ChapterEditor(props: ChapterEditorProps) {
     }
 
     /**
+     * Removes any decimals from the input
+     */
+    const cleanTimeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event !== null) {
+            let value = event.target.value;
+            console.log(value.slice(-1));
+            if (value.slice(-1) === ".") {
+                value = value.slice(0, -1)
+            }
+            return Number(value)
+        }
+        return 0;
+    }
+
+    /**
      * Error checks changes to the time bounds
      */
-    const handleManualTimeBoundsChange = (newValue: number, pos: TimePos, unit: TimeUnit) => {
+    const handleManualTimeBoundsChange = (pos: TimePos, unit: TimeUnit) => {
         if (pos === TimePos.START) {
             let tempTime = curStart;
             if (unit === TimeUnit.HOUR) {
                 tempTime -= startDecomposed.hours * 3600;
-                tempTime += newValue * 3600;
+                tempTime += displayStart.hours * 3600;
             } else if (unit === TimeUnit.MINUTE) {
                 tempTime -= startDecomposed.minutes * 60;
-                tempTime += newValue * 60;
+                tempTime += displayStart.minutes * 60;
             } else {
                 tempTime -= startDecomposed.seconds;
-                tempTime += newValue;
+                tempTime += displayStart.seconds;
             }
-            if (tempTime <= curEnd && tempTime <= videoLength) {
+
+            if (tempTime > curEnd) {
+                setErrorMessage("Start Time must be before End Time");
+                setShowError(true);
+                setDisplayStart(startDecomposed);
+            } else if (tempTime > videoLength) {
+                setErrorMessage("Max Time: " + getMaxLengthError());
+                setShowError(true);
+                setDisplayStart(startDecomposed);
+            } else {
+                setShowError(false);
                 setCurStart(tempTime);
             }
         } else {
             let tempTime = curEnd;
             if (unit === TimeUnit.HOUR) {
                 tempTime -= endDecomposed.hours * 3600;
-                tempTime += newValue * 3600;
+                tempTime += displayEnd.hours * 3600;
             } else if (unit === TimeUnit.MINUTE) {
                 tempTime -= endDecomposed.minutes * 60;
-                tempTime += newValue * 60;
+                tempTime += displayEnd.minutes * 60;
             } else {
                 tempTime -= endDecomposed.seconds;
-                tempTime += newValue;
+                tempTime += displayEnd.seconds;
             }
-            if (tempTime >= curStart && tempTime <= videoLength) {
+
+            if (tempTime < curStart) {
+                setErrorMessage("End Time must be after Start Time");
+                setShowError(true);
+                setDisplayEnd(endDecomposed)
+            } else if (tempTime > videoLength) {
+                setErrorMessage("Max Time: " + getMaxLengthError());
+                setShowError(true);
+                setDisplayEnd(endDecomposed)
+            } else {
+                setShowError(false);
                 setCurEnd(tempTime);
             }
         }
+    }
+
+    /**
+     * Returns the max length of the video for error message
+     */
+    const getMaxLengthError = () => {
+        let error = "";
+        if (videoLengthDecomposed.hours < 10) {
+            error += "0"
+        }
+        error += videoLengthDecomposed.hours.toString() + ":";
+        if (videoLengthDecomposed.minutes < 10) {
+            error += "0"
+        }
+        error += videoLengthDecomposed.minutes.toString() + ":";
+        if (videoLengthDecomposed.seconds < 10) {
+            error += "0"
+        }
+        error += videoLengthDecomposed.seconds.toString();
+        return error;
     }
 
     /**
@@ -148,6 +217,10 @@ function ChapterEditor(props: ChapterEditorProps) {
         jumpInVideo(curStart);
     }, [curStart])
 
+    useEffect(() => {
+        setDisplayStart(startDecomposed);
+    }, [startDecomposed])
+
     /**
     * Updates the endDecomposed values when curEnd changes
     */
@@ -155,6 +228,10 @@ function ChapterEditor(props: ChapterEditorProps) {
         setEndDecomposed(prev => secondToHourMinuteSecond(curEnd));
         jumpInVideo(curEnd);
     }, [curEnd])
+
+    useEffect(() => {
+        setDisplayEnd(endDecomposed)
+    }, [endDecomposed])
 
     /**
      * Toggles whether the view is playing or is paused
@@ -198,6 +275,7 @@ function ChapterEditor(props: ChapterEditorProps) {
     const handleSubmit = () => {
         if (curStart <= curEnd) {
             setIsPlaying(false);
+            setShowError(false);
             props.updater({ name: curName, start: curStart, end: curEnd }, props.values.index);
         } else {
             console.log("Invalid time input")
@@ -235,42 +313,62 @@ function ChapterEditor(props: ChapterEditorProps) {
                     {isPlaying ? <BsFillPauseFill /> : <BsFillPlayFill />}
                 </button>
                 <div className="time-text-border">
-                    <input type="number" min="0" max="999" value={(startDecomposed.hours < 10 ? "0" : "") + startDecomposed.hours.toString()}
-                        onChange={(event) => { handleManualTimeBoundsChange(Number(event.target.value), TimePos.START, TimeUnit.HOUR) }}
+                    <input type="number" min="0" max="999" value={(displayStart.hours < 10 ? "0" : "") + displayStart.hours.toString()}
+                        onChange={(event) => { setDisplayStart(prev => { return { ...prev, hours: cleanTimeInput(event) } }) }}
+                        onBlur={() => handleManualTimeBoundsChange(TimePos.START, TimeUnit.HOUR)}
+                        onKeyDown={(event => { if (event.key === "Enter") handleManualTimeBoundsChange(TimePos.START, TimeUnit.HOUR) })}
                         className="time-text-input" />
                 </div>
                 :
                 <div className="time-text-border">
-                    <input type="number" min="0" max="59" value={(startDecomposed.minutes < 10 ? "0" : "") + startDecomposed.minutes.toString()}
-                        onChange={(event) => { handleManualTimeBoundsChange(Number(event.target.value), TimePos.START, TimeUnit.MINUTE) }}
+                    <input type="number" min="0" max="59" value={(displayStart.minutes < 10 ? "0" : "") + displayStart.minutes.toString()}
+                        onChange={(event) => { setDisplayStart(prev => { return { ...prev, minutes: cleanTimeInput(event) } }) }}
+                        onBlur={() => handleManualTimeBoundsChange(TimePos.START, TimeUnit.MINUTE)}
+                        onKeyDown={(event => { if (event.key === "Enter") { handleManualTimeBoundsChange(TimePos.START, TimeUnit.MINUTE) } })}
                         className="time-text-input" />
                 </div>
                 :
                 <div className="time-text-border">
-                    <input type="number" min="0" max="59" value={(startDecomposed.seconds < 10 ? "0" : "") + startDecomposed.seconds.toString()}
-                        onChange={(event) => { handleManualTimeBoundsChange(Number(event.target.value), TimePos.START, TimeUnit.SECOND) }}
+                    <input type="number" min="0" max="59" value={(displayStart.seconds < 10 ? "0" : "") + displayStart.seconds.toString()}
+                        onChange={(event) => { setDisplayStart(prev => { return { ...prev, seconds: cleanTimeInput(event) } }) }}
+                        onBlur={() => handleManualTimeBoundsChange(TimePos.START, TimeUnit.SECOND)}
+                        onKeyDown={(event => { if (event.key === "Enter") handleManualTimeBoundsChange(TimePos.START, TimeUnit.SECOND) })}
                         className="time-text-input" />
                 </div>
                 &nbsp;-&nbsp;
                 <div className="time-text-border">
-                    <input type="number" min="0" max="999" value={(endDecomposed.hours < 10 ? "0" : "") + endDecomposed.hours.toString()}
-                        onChange={(event) => { handleManualTimeBoundsChange(Number(event.target.value), TimePos.END, TimeUnit.HOUR) }}
+                    <input type="number" min="0" max="999" value={(displayEnd.hours < 10 ? "0" : "") + displayEnd.hours.toString()}
+                        onChange={(event) => { setDisplayEnd(prev => { return { ...prev, hours: cleanTimeInput(event) } }) }}
+                        onBlur={() => handleManualTimeBoundsChange(TimePos.END, TimeUnit.HOUR)}
+                        onKeyDown={(event => { if (event.key === "Enter") handleManualTimeBoundsChange(TimePos.END, TimeUnit.HOUR) })}
                         className="time-text-input" />
                 </div>
                 :
                 <div className="time-text-border">
-                    <input type="number" min="0" max="59" value={(endDecomposed.minutes < 10 ? "0" : "") + endDecomposed.minutes.toString()}
-                        onChange={(event) => { handleManualTimeBoundsChange(Number(event.target.value), TimePos.END, TimeUnit.MINUTE) }}
+                    <input type="number" min="0" max="59" value={(displayEnd.minutes < 10 ? "0" : "") + displayEnd.minutes.toString()}
+                        onChange={(event) => { setDisplayEnd(prev => { return { ...prev, minutes: cleanTimeInput(event) } }) }}
+                        onBlur={() => handleManualTimeBoundsChange(TimePos.END, TimeUnit.MINUTE)}
+                        onKeyDown={(event => { if (event.key === "Enter") handleManualTimeBoundsChange(TimePos.END, TimeUnit.MINUTE) })}
                         className="time-text-input" />
                 </div>
                 :
                 <div className="time-text-border">
-                    <input type="number" min="0" max="59" value={(endDecomposed.seconds < 10 ? "0" : "") + endDecomposed.seconds.toString()}
-                        onChange={(event) => { handleManualTimeBoundsChange(Number(event.target.value), TimePos.END, TimeUnit.SECOND) }}
-                        className="time-text-input" onBlur={() => { console.log("test") }} onSubmit={() => { console.log("submitted") }} />
+                    <input type="number" min="0" max="59" value={(displayEnd.seconds < 10 ? "0" : "") + displayEnd.seconds.toString()}
+                        onChange={(event) => { setDisplayEnd(prev => { return { ...prev, seconds: cleanTimeInput(event) } }) }}
+                        onBlur={() => handleManualTimeBoundsChange(TimePos.END, TimeUnit.SECOND)}
+                        onKeyDown={(event => { if (event.key === "Enter") handleManualTimeBoundsChange(TimePos.END, TimeUnit.SECOND) })}
+                        className="time-text-input" />
                 </div>
             </div>
 
+            {
+                showError ?
+                    <p className="error-message">
+                        {errorMessage}
+                    </p>
+                    :
+                    <p></p>
+            }
 
             <button className="save-button" onClick={handleSubmit}>
                 Save
