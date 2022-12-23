@@ -1,26 +1,104 @@
 .chapter-editor-container {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 300px;
-    height: 200px;
-    margin-left: -150px;
-    margin-top: -100px;
-    background-color: rgba(28, 22, 34, 0.5);
-    color: white;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 50vw;
+    height: calc(245px + ((40vw * 9) / 16));
+
+    background-color: #151515;
+    border-radius: 15px;
+    border-style: solid;
+    border-color: white;
+    border-width: 5px;
+
+    box-shadow: 10px 10px black;
     z-index: 4;
-
-    float: left;
+    justify-items: center;
 }
 
-.header {
+.title-wrapper {
+    position: relative;
+    width: 40vw;
+    left: 5vw;
+    padding-top: 10px;
+    display: flex
+}
+
+.title-input-wrapper {
+    border-bottom: 2px solid #ffffff99;
+}
+
+.chp-text-input {
+    background-color: #151515;
+    outline: none;
+    border: 0;
+    text-align: center;
+    color: white;
+    font-size: 30px;
+}
+
+.title-input {
+    width: calc(40vw - 5px);
+    left: 5vw;
+}
+
+.edit-title {
+    color: white;
+    font-size: 30px;
+    margin-left: 10px;
+}
+
+.edit-video {
+    margin-top: 10px;
+    width: 40vw;
+    left: 5vw;
+}
+
+.time-bounds-slider {
+    margin-top: 20px;
+    width: 40vw;
+    left: 5vw;
+}
+
+.time-text-container {
     display: flex;
+    margin-top: 5px;
+    justify-content: center;
+    color: white;
+    font-size: 25px;
 }
 
-.time {
-    display: flex;
+.time-text-input {
+    width: 28px;
+
+    background-color: #151515;
+    border: none;
+
+    color: white;
+    font-size: 25px;
+
+    margin-top: 5px;
 }
 
-.time-input {
-    width: 40px;
+.time-text-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.time-text-border {
+    border-bottom: 2px solid #ffffff99;
+}
+
+.save-button {
+    margin-top: 20px;
+    border: solid 2px white;
+    border-radius: 5px;
+    background-color: #C17767;
+    color: black;
+    font-size: 20px;
+    width: 100px;
+    height: 40px;
 }

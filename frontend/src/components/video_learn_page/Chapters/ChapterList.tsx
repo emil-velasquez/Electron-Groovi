@@ -17,7 +17,8 @@ type ChapterListProps = {
     vidLength: string,
     jumper: (time: number) => void,
     vidProgress: number,
-    viewState: number
+    viewState: number,
+    videoSource: string
 }
 
 function ChapterList(props: ChapterListProps) {
@@ -132,7 +133,6 @@ function ChapterList(props: ChapterListProps) {
             //checking if we are at the end of the current active chapter
             //if so figure out the next active chapter and jump if necessary to its start
             if (curActiveChap.end <= props.vidProgress && props.vidProgress <= curActiveChap.end + 1) {
-                console.log("here")
                 let nextActiveChapterIdx = currentChapter + 1;
                 if (nextActiveChapterIdx >= activeChapters.length) {
                     nextActiveChapterIdx = 0;
@@ -159,8 +159,8 @@ function ChapterList(props: ChapterListProps) {
     return (
         <div>
             <div className={showEditor ? "show-chapter-editor" : "hide-chapter-editor"}>
-                <ChapterEditor values={editorValues} key={props.vidLength} maxVideoLength={props.vidLength}
-                    closer={closeEditor} updater={updateChapters} />
+                <ChapterEditor values={editorValues} key={props.vidLength}
+                    closer={closeEditor} updater={updateChapters} videoSource={props.videoSource} />
             </div>
             <div className={chapterListHeightSelector(props.viewState)}>
                 <div className="header-section">

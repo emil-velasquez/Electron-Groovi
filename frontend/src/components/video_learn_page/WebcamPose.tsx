@@ -45,7 +45,6 @@ function WebcamPose(props: webcamPoseProps) {
      * Decide which style to use depending on the view state
      */
     const chooseStyleName = (viewStyle: number) => {
-        console.log(viewStyle)
         if (viewStyle === 0) {
             return "camera-hid";
         } else if (viewStyle === 1) {

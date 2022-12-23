@@ -455,7 +455,6 @@ function VideoPose(props: videoPoseProps) {
     useEffect(() => {
         if (videoRef.current !== null && videoPoseCanvasRef.current !== null) {
             if (isMirrored) {
-                console.log("here");
                 videoRef.current.style.setProperty("transform", "rotateY(180deg)");
                 videoPoseCanvasRef.current.style.setProperty("transform", "rotateY(180deg)");
             } else {
@@ -576,7 +575,7 @@ function VideoPose(props: videoPoseProps) {
                     </button>
                     <p className="top-header-video-name">{curVideo.videoName}</p>
                 </div>
-                <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} />
+                <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} videoSource={curVideo.videoHostID} />
                 <div className="video-controls">
                     <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} step="0.1" value={progress} onChange={(e) => handleVideoProgress(e)} />
                     <div className="bottom-half-controls">

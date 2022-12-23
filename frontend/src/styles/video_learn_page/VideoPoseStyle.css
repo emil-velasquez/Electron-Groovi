@@ -90,7 +90,7 @@
     -webkit-appearance: none;
     height: 7px;
     width: 88vw;
-    background: rgba(255, 255, 255, 0.6);
+    background: #ffffff99;
     background-image: linear-gradient(#C17767, #C17767);
     background-size: 2% 100%;
     background-repeat: no-repeat;
@@ -165,7 +165,7 @@ option {
     -webkit-appearance: none;
     width: 200px;
     height: 7px;
-    background: rgba(255, 255, 255, 0.6);
+    background: #ffffff99;
     border-radius: 5px;
     background-image: linear-gradient(#C17767, #C17767);
     background-size: 100% 100%;
