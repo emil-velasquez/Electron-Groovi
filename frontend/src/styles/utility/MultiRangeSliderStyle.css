@@ -1,0 +1,72 @@
+/*
+followed this guide: https://dev.to/sandra_lewis/building-a-multi-range-slider-in-react-from-scratch-4dl1
+*/
+
+.multi-slider-container {
+    padding-bottom: 40px;
+    width: inherit;
+    left: inherit;
+}
+
+.slider {
+    position: relative;
+    width: inherit;
+    left: inherit;
+}
+
+.slider-track,
+.slider-range {
+    height: 30px;
+    position: absolute;
+}
+
+.slider-track {
+    background-color: #FFFFFF99;
+    width: inherit;
+    z-index: 1;
+}
+
+.slider-range {
+    background-color: #C17767;
+    z-index: 2;
+}
+
+.thumb,
+.thumb::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.thumb {
+    position: absolute;
+    left: inherit;
+    width: inherit;
+    pointer-events: none;
+    height: 0;
+    outline: none;
+}
+
+.thumb-zindex-3 {
+    z-index: 3;
+    margin-left: -2px;
+}
+
+.thumb-zindex-4 {
+    z-index: 4;
+}
+
+.thumb-zindex-5 {
+    z-index: 5;
+}
+
+.thumb::-webkit-slider-thumb {
+    background-color: #AE5A47;
+    border: white solid 1px;
+    cursor: pointer;
+    border-radius: 2px;
+    height: 40px;
+    width: 10px;
+    margin-top: 25px;
+    pointer-events: all;
+    position: relative;
+}
