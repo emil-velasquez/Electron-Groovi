@@ -28,7 +28,7 @@ function ChapterList(props: ChapterListProps) {
     const [activeChapters, setActiveChapters] = useState<number[]>([]);
     const [currentChapter, setCurrentChapter] = useState(0);
 
-    const [editorValues, setEditorValues] = useState({ name: "Untitled", start: 0, end: 1, index: -1 });
+    const [editorValues, setEditorValues] = useState({ name: "Untitled", start: 0, end: Number(props.vidLength), index: -1 });
     const [showEditor, setShowEditor] = useState(false);
     const firstRender = useRef(true);
 
@@ -79,7 +79,13 @@ function ChapterList(props: ChapterListProps) {
             } else if (chap1.start < chap2.start) {
                 return -1;
             } else {
-                return 0;
+                if (chap1.end > chap2.end) {
+                    return 1;
+                } else if (chap1.end < chap2.end) {
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
         });
         setChapters(prevChapters => sortedChapters);
@@ -168,7 +174,7 @@ function ChapterList(props: ChapterListProps) {
             <div className={chapterListHeightSelector(props.viewState)}>
                 <div className="header-section">
                     <p className="header">Chapters</p>
-                    <button onClick={() => resetChapterEditor("Untitled", 0, 1, -1)}>
+                    <button onClick={() => resetChapterEditor("Untitled", 0, Number(props.vidLength), -1)}>
                         <FiPlus className="plus-button" />
                     </button>
                 </div>

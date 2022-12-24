@@ -7,6 +7,7 @@ import { BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
 
 import MultiRangeSlider from "../../utility/MultiRangeSlider";
 import useTime from "../../../hooks/useTime";
+import { AiOutlineConsoleSql } from "react-icons/ai";
 
 type ChapterType = {
     name: string,
@@ -61,6 +62,10 @@ function ChapterEditor(props: ChapterEditorProps) {
 
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("Start Time must be before End Time")
+
+    const focusCanvasRef = useRef<HTMLCanvasElement>(null);
+    const [rect, setRect] = useState({ startX: 0, startY: 0, width: 0, height: 0, updatedRect: false })
+    const mouseDown = useRef(false);
 
     /**
      * Handle resetting values at initialization
@@ -268,6 +273,130 @@ function ChapterEditor(props: ChapterEditorProps) {
     }
 
     /**
+     * Starts and ends drawing a focus area on the focus canvas
+     */
+    const setFocusRect = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        const focusCanvas = focusCanvasRef.current;
+        if (!mouseDown.current && focusCanvas !== null) {
+            const bounds = focusCanvas.getBoundingClientRect();
+            console.log(bounds);
+            mouseDown.current = true;
+            setRect(prevRect => ({
+                startX: (e.clientX - bounds.left) / bounds.width,
+                startY: (e.clientY - bounds.top) / bounds.height,
+                width: 0.05,
+                height: 0.05,
+                updatedRect: false
+            }))
+        } else {
+            finalizeRect();
+        }
+    }
+
+    /**
+     * Allows the user to drag the focus rectangle to their desired size
+     */
+    const dragRect = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        const focusCanvas = focusCanvasRef.current;
+        if (focusCanvas !== null) {
+            const focusCanvasCtx = focusCanvas.getContext("2d");
+            const bounds = focusCanvas.getBoundingClientRect();
+            const mouseX = (e.clientX - bounds.left) / bounds.width;
+            const mouseY = (e.clientY - bounds.top) / bounds.height;
+
+            if (mouseDown.current && focusCanvasCtx !== null) {
+                focusCanvasCtx.clearRect(0, 0, focusCanvas.width, focusCanvas.height);
+                const curWidth = mouseX - rect.startX;
+                const curHeight = mouseY - rect.startY;
+                setRect(prevRect => ({
+                    ...prevRect,
+                    width: curWidth,
+                    height: curHeight
+                }))
+
+                drawRect();
+            }
+        }
+    }
+
+    /**
+     * Adjusts the rectangle drawn by the user such that StartX and StartY represent the top
+     * left corner of the rectangle
+     * pre: onMouseUp has been called
+     * post: rect updated such that startX and startY represent the top left corner, actual rectangle
+     * is the same from the user's perspective, mouseDown = false
+     */
+    const finalizeRect = () => {
+        if (mouseDown.current) {
+            let newWidth = rect.width;
+            let newHeight = rect.height;
+            let newStartX = rect.startX;
+            let newStartY = rect.startY;
+
+            if (rect.width < 0) {
+                newWidth = Math.abs(rect.width);
+                newStartX = rect.startX - newWidth;
+            }
+
+            if (rect.height < 0) {
+                newHeight = Math.abs(rect.height);
+                newStartY = rect.startY - newHeight;
+            }
+
+            setRect(prevRect => ({
+                startX: newStartX,
+                startY: newStartY,
+                width: newWidth,
+                height: newHeight,
+                updatedRect: true
+            }))
+
+            mouseDown.current = false;
+        }
+    }
+
+    /**
+     * Scales the rectangle to the canvas
+     */
+    const getCanvasRect = (x: number, y: number, width: number, height: number) => {
+        const focusCanvas = focusCanvasRef.current;
+        if (focusCanvas !== null) {
+            const bounds = focusCanvas.getBoundingClientRect();
+            const canvasX = x * bounds.width;
+            const canvasY = y * bounds.height;
+            const canvasWidth = width * bounds.width;
+            const canvasHeight = height * bounds.height;
+            return ({ canvasX, canvasY, canvasWidth, canvasHeight })
+        }
+        return ({ canvasX: 0, canvasY: 0, canvasWidth: 0, canvasHeight: 0 });
+    }
+
+    /**
+     * Draws the bounding rectangle on the focus selection canvas
+     */
+    const drawRect = () => {
+        const focusCanvas = focusCanvasRef.current;
+        if (focusCanvas !== null) {
+            const bounds = focusCanvas.getBoundingClientRect();
+            const focusCanvasCtx = focusCanvas.getContext("2d");
+            if (focusCanvasCtx !== null) {
+                focusCanvasCtx.clearRect(0, 0, focusCanvas.width, focusCanvas.height);
+                focusCanvasCtx.fillStyle = "#000000C0";
+                focusCanvasCtx.fillRect(0, 0, focusCanvas.width, focusCanvas.height);
+
+                console.log(`Canvas Width: ${focusCanvas.width}`);
+                console.log(`Bounds Width: ${bounds.width}`)
+
+                const xScale = focusCanvas.width / bounds.width;
+                const yScale = focusCanvas.height / bounds.height;
+                const scaledRect = getCanvasRect(rect.startX, rect.startY, rect.width, rect.height);
+                focusCanvasCtx.clearRect(scaledRect.canvasX * xScale, scaledRect.canvasY * yScale,
+                    scaledRect.canvasWidth * xScale, scaledRect.canvasHeight * yScale);
+            }
+        }
+    }
+
+    /**
      * When user submits, check that startTime < endTime 
      * If successful: calculate startTime and endTime in terms of seconds then pass
      * name, start, and end to callback
@@ -303,6 +432,8 @@ function ChapterEditor(props: ChapterEditorProps) {
                 onTimeUpdate={handleVideoProgress}>
                 <source src={props.videoSource} type="video/mp4" />
             </video>
+
+            <canvas className="editor-focus-area" ref={focusCanvasRef} onMouseDown={setFocusRect} onMouseMove={dragRect} />
 
             <div className="time-bounds-slider">
                 <MultiRangeSlider min={0} max={videoLength} onChange={handleTimeBoundsChange} minVal={curStart} maxVal={curEnd} />

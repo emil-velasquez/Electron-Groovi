@@ -59,6 +59,15 @@
     left: 5vw;
 }
 
+.editor-focus-area {
+    position: absolute;
+    top: 58px;
+    left: 5vw;
+
+    width: 40vw;
+    height: calc(40vw * 9 / 16);
+}
+
 .time-bounds-slider {
     margin-top: 20px;
     width: 40vw;
