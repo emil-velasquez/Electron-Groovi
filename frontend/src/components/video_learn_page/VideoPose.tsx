@@ -85,39 +85,14 @@ function VideoPose(props: videoPoseProps) {
     const boundsOffset = useRef(0);
 
     /**
-     * Return the x value of the mouse scaled to the focus area
+     * Given a rect object in screen proportions, returns an object of the true screen coordinates
      */
-    const getFocusAreaXScaled = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
-        const bounds = vidFocusSelectionCanvas?.getBoundingClientRect();
-        let tempMouseX = e.clientX;
-        if (bounds !== undefined) {
-            if (tempMouseX > bounds.width / boundsScale.current) {
-                tempMouseX = bounds.width / boundsScale.current;
-            }
-        }
-        if (bounds !== null && bounds !== undefined && vidFocusSelectionCanvas !== null) {
-            return (tempMouseX - bounds.left) * vidFocusSelectionCanvas.width / bounds.width;
-        }
-        return 0;
-    }
-
-    /**
-     * Return the y value of the mouse scaled to the focus area
-     */
-    const getFocusAreaYScaled = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
-        const bounds = vidFocusSelectionCanvas?.getBoundingClientRect();
-        let tempMouseY = e.clientY;
-        if (bounds !== undefined) {
-            if (tempMouseY > bounds.height) {
-                tempMouseY = bounds.height;
-            }
-        }
-        if (bounds !== null && bounds !== undefined && vidFocusSelectionCanvas !== null) {
-            return (tempMouseY - bounds.top) * vidFocusSelectionCanvas.height / bounds.height;
-        }
-        return 0;
+    const getScreenRect = (x: number, y: number, width: number, height: number) => {
+        const screenX = x * window.screen.width;
+        const screenY = y * window.screen.height;
+        const screenWidth = width * window.screen.width;
+        const screenHeight = height * window.screen.height;
+        return ({ screenX, screenY, screenWidth, screenHeight })
     }
 
     /**
@@ -131,16 +106,13 @@ function VideoPose(props: videoPoseProps) {
         if (!mouseDown.current) {
             setIsFocusedDrawing(true);
             mouseDown.current = true;
-            const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
-            if (vidFocusSelectionCanvas !== null) {
-                setRect(prevRect => ({
-                    startX: getFocusAreaXScaled(e),
-                    startY: getFocusAreaYScaled(e),
-                    width: 1,
-                    height: 1,
-                    updatedRect: false
-                }))
-            }
+            setRect(prevRect => ({
+                startX: Math.min(e.clientX / window.screen.width, boundsScale.current),
+                startY: e.clientY / window.screen.height,
+                width: 0.05,
+                height: 0.05,
+                updatedRect: false
+            }))
         } else {
             setIsFocusedDrawing(false);
             finalizeRect();
@@ -157,8 +129,8 @@ function VideoPose(props: videoPoseProps) {
         const vidFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
         if (vidFocusSelectionCanvas !== null) {
             const vidFocusSelectionCanvasCtx = vidFocusSelectionCanvas.getContext("2d");
-            const mouseX = getFocusAreaXScaled(e);
-            const mouseY = getFocusAreaYScaled(e);
+            const mouseX = Math.min(e.clientX / window.screen.width, boundsScale.current)
+            const mouseY = e.clientY / window.screen.height;
 
             if (mouseDown.current && vidFocusSelectionCanvasCtx !== null) {
                 vidFocusSelectionCanvasCtx.clearRect(0, 0, vidFocusSelectionCanvas.width,
@@ -221,14 +193,15 @@ function VideoPose(props: videoPoseProps) {
             const bounds = videoFocusSelectionCanvas.getBoundingClientRect();
             const vidFocusSelectionCanvasCtx = videoFocusSelectionCanvas.getContext("2d");
             if (vidFocusSelectionCanvasCtx !== null) {
-                vidFocusSelectionCanvasCtx.clearRect(0, 0, videoFocusSelectionCanvas.width,
-                    videoFocusSelectionCanvas.height);
-                vidFocusSelectionCanvasCtx.fillStyle = "#000000C0"
-                vidFocusSelectionCanvasCtx.fillRect(0, 0,
-                    ((bounds.width / boundsScale.current) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width,
-                    (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height);
+                vidFocusSelectionCanvasCtx.clearRect(0, 0, videoFocusSelectionCanvas.width, videoFocusSelectionCanvas.height);
+                vidFocusSelectionCanvasCtx.fillStyle = "#000000C0";
+                vidFocusSelectionCanvasCtx.fillRect(0, 0, videoFocusSelectionCanvas.width * boundsScale.current, videoFocusSelectionCanvas.height);
 
-                vidFocusSelectionCanvasCtx.clearRect(rect.startX, rect.startY, rect.width, rect.height);
+                const xScale = videoFocusSelectionCanvas.width / bounds.width;
+                const yScale = videoFocusSelectionCanvas.height / bounds.height;
+                const scaledRect = getScreenRect(rect.startX, rect.startY, rect.width, rect.height);
+                vidFocusSelectionCanvasCtx.clearRect(scaledRect.screenX * xScale,
+                    scaledRect.screenY * yScale, scaledRect.screenWidth * xScale, scaledRect.screenHeight * yScale);
             }
         }
     }, [rect.startX, rect.startY, rect.width, rect.height])
@@ -241,27 +214,21 @@ function VideoPose(props: videoPoseProps) {
             const drawVideoDance = () => {
                 const videoFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
                 if (videoFocusSelectionCanvas !== null) {
-                    const bounds = videoFocusSelectionCanvas.getBoundingClientRect();
-                    const scaleX = bounds.width / videoFocusSelectionCanvas.width;
-                    const scaleY = bounds.height / videoFocusSelectionCanvas.height;
-
-                    adjustFocusAndPoseCanvas(scaleX, scaleY);
+                    const scaledRect = getScreenRect(rect.startX, rect.startY, rect.width, rect.height);
+                    adjustFocusAndPoseCanvas(scaledRect.screenWidth, scaledRect.screenHeight);
 
                     const videoFocusCanvas = videoFocusCanvasRef.current;
                     const video = videoRef.current;
-
-                    if (videoFocusCanvas !== null && video != null) {
+                    if (videoFocusCanvas !== null && video !== null) {
                         const focusCanvasContext = videoFocusCanvas.getContext("2d");
+                        const videoScale = video.videoWidth / window.screen.availWidth;
 
-                        const videoWidthScale = video.videoWidth / window.screen.availWidth;
+                        let focusX = (scaledRect.screenX + window.screen.availWidth * boundsOffset.current) * videoScale;
+                        let focusY = scaledRect.screenY * videoScale;
 
-                        let focusX = (rect.startX * scaleX + window.screen.availWidth * boundsOffset.current) * videoWidthScale;
-                        let focusY = rect.startY * scaleY * videoWidthScale;
+                        const focusWidth = scaledRect.screenWidth * videoScale;
+                        const focusHeight = scaledRect.screenHeight * videoScale;
 
-                        const focusWidth = rect.width * scaleX * videoWidthScale;
-                        const focusHeight = rect.height * scaleY * videoWidthScale;
-
-                        //Just flips the focus area around the center if mirrored (does not need change)
                         if (mirrored.current) {
                             if (focusX < video.videoWidth / 2) {
                                 let topRightX = focusX + focusWidth;
@@ -274,26 +241,23 @@ function VideoPose(props: videoPoseProps) {
                         }
 
                         if (focusCanvasContext !== null) {
-                            focusCanvasContext.drawImage(video, focusX, focusY, focusWidth, focusHeight, 0, 0,
-                                videoFocusCanvas.width, videoFocusCanvas.height);
+                            focusCanvasContext.drawImage(video, focusX, focusY, focusWidth, focusHeight, 0, 0, videoFocusCanvas.width, videoFocusCanvas.height);
                         }
                     }
                 }
-
             }
 
-            //resizes the focus area and pose canvas according to the rectangle
-            const adjustFocusAndPoseCanvas = (scaleX: number, scaleY: number) => {
+            const adjustFocusAndPoseCanvas = (newWidth: number, newHeight: number) => {
                 const focusCanvas = videoFocusCanvasRef.current;
                 if (focusCanvas !== null) {
-                    focusCanvas.width = rect.width * scaleX;
-                    focusCanvas.height = rect.height * scaleY;
+                    focusCanvas.width = newWidth;
+                    focusCanvas.height = newHeight;
                 }
 
                 const poseCanvas = videoPoseCanvasRef.current;
                 if (poseCanvas !== null) {
-                    poseCanvas.width = rect.width * scaleX;
-                    poseCanvas.height = rect.height * scaleY;
+                    poseCanvas.width = newWidth;
+                    poseCanvas.height = newHeight;
                 }
             }
 
@@ -318,21 +282,15 @@ function VideoPose(props: videoPoseProps) {
      */
     const initVideoCanvas = () => {
         const video = videoRef.current;
-        const videoFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
+        const videoFocusSelectionCanvas = videoFocusCanvasRef.current;
         if (videoFocusSelectionCanvas !== null && video !== null) {
-            const bounds = videoFocusSelectionCanvas.getBoundingClientRect();
-
-            //(tempMouseX - bounds.left) * vidFocusSelectionCanvas.width / bounds.width
-            //(e.clientY - bounds.top) * vidFocusSelectionCanvas.height / bounds.height;
-
             setRect(prevRect => ({
                 startX: 0,
                 startY: 0,
-                width: ((bounds.width / boundsScale.current) - bounds.left) * videoFocusSelectionCanvas.width / bounds.width,
-                height: (bounds.height - bounds.top) * videoFocusSelectionCanvas.height / bounds.height,
+                width: 1,
+                height: 1,
                 updatedRect: true
             }))
-
             setVideoLength(prevLength => video.duration.toString())
         }
 
@@ -506,29 +464,24 @@ function VideoPose(props: videoPoseProps) {
             props.onViewStateChange(viewState);
             const video = videoRef.current;
             const videoFocusSelectionCanvas = videoFocusSelectionCanvasRef.current;
-            if (video != null && videoFocusSelectionCanvas !== null) {
-                const bounds = videoFocusSelectionCanvas.getBoundingClientRect();
-                const shift = window.screen.availWidth * 0.25 * videoFocusSelectionCanvas.width / bounds.width;
+            if (video !== null && videoFocusSelectionCanvas !== null) {
                 if (viewState === 0) {
                     boundsScale.current = 1;
                     boundsOffset.current = 0;
 
-                    setRect(prevRect =>
-                    ({
+                    setRect(prevRect => ({
                         ...prevRect,
-                        startX: prevRect.startX + shift,
+                        startX: prevRect.startX + 0.25,
                         updatedRect: true
                     }))
                 } else if (viewState === 2) {
-                    boundsScale.current = 2;
+                    boundsScale.current = 0.5;
                     boundsOffset.current = 0.25;
-                    setRect(prevRect =>
-                    ({
+                    setRect(prevRect => ({
                         ...prevRect,
-                        startX: prevRect.startX - shift,
+                        startX: prevRect.startX - 0.25,
                         updatedRect: true
                     }))
-
                 }
             }
         } else {
