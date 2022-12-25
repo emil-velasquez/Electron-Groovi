@@ -126,11 +126,6 @@ function ChapterList(props: ChapterListProps) {
     }
 
     useEffect(() => {
-        console.log(activeChapters);
-        console.log(curActiveChapterIdx);
-        //was this to see if the curActiveChapterIdx corresponds with the last active chapter
-        //in which case you would have to decrease the index
-        //CHECK: What happens when indices get scrambled by adding chapters?
         if (curActiveChapterIdx >= activeChapters.length && curActiveChapterIdx > 0) {
             setCurActiveChapterIdx(prevChap => prevChap - 1);
         }
@@ -144,7 +139,6 @@ function ChapterList(props: ChapterListProps) {
         //if there is no active chapters, make sure that the rect is the default one
         if (activeChapters.length === 0) {
             if (JSON.stringify({ ...props.rect, updatedRect: false }) !== JSON.stringify({ ...defaultRect.current, updatedRect: false })) {
-                console.log("setting default")
                 defaultRect.current = props.rect;
             }
         }
@@ -155,10 +149,6 @@ function ChapterList(props: ChapterListProps) {
             //if the rect is not correct, call the current rect the default and then update the rect
             if (props.vidProgress >= curActiveChap.start && props.vidProgress <= curActiveChap.end) {
                 if (JSON.stringify({ ...props.rect, updatedRect: false }) !== JSON.stringify({ ...curActiveChap.rect, updatedRect: false })) {
-                    //bug might be solved if i can figure out how to make it not jump while scrolling
-                    console.log("setting default")
-                    console.log(props.rect)
-                    console.log(curActiveChap.rect)
                     defaultRect.current = props.rect;
                     props.setRect({ ...curActiveChap.rect, updatedRect: true });
                 }
@@ -185,7 +175,6 @@ function ChapterList(props: ChapterListProps) {
                     //check if the user wants to define a new default
                     if (JSON.stringify({ ...defaultRect.current, updatedRect: false }) !== JSON.stringify({ ...props.rect, updatedRect: false })
                         && JSON.stringify({ ...curActiveChap.rect, updatedRect: false }) !== JSON.stringify({ ...props.rect, updatedRect: false })) {
-                        console.log("setting default")
                         defaultRect.current = props.rect;
                     }
                     props.setRect({ ...defaultRect.current, updatedRect: true });
