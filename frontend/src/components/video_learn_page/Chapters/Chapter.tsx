@@ -8,12 +8,21 @@ import { ImLoop2 } from "react-icons/im";
 
 import useTime from "../../../hooks/useTime";
 
+type RectType = {
+    startX: number,
+    startY: number,
+    width: number,
+    height: number,
+    updatedRect: boolean
+}
+
 type chapterProps = {
     name: string,
     start: number,
     end: number,
+    rect: RectType,
     index: number,
-    editor: (newName: string, newStart: number, newEnd: number, newIndex: number) => void
+    editor: (newName: string, newStart: number, newEnd: number, newRect: RectType, newIndex: number) => void
     jumper: (time: number) => void;
     activator: (isActivated: boolean, index: number) => void;
 }
@@ -45,7 +54,7 @@ function Chapter(props: chapterProps) {
                     <ImLoop2 className={activated ? "chapter-card-icon-activated" : "chapter-card-icon"} />
                 </button>
                 <br />
-                <button onClick={() => props.editor(props.name, props.start, props.end, props.index)}>
+                <button onClick={() => props.editor(props.name, props.start, props.end, props.rect, props.index)}>
                     <RiPencilFill className={activated ? "chapter-card-icon-activated" : "chapter-card-icon"} />
                 </button>
                 <br />

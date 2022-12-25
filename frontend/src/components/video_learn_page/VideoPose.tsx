@@ -18,6 +18,15 @@ import useTime from "../../hooks/useTime";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 
+type RectType = {
+    startX: number,
+    startY: number,
+    width: number,
+    height: number,
+    updatedRect: boolean
+}
+
+
 type videoPoseProps = {
     onPoseResults: (results: any) => void,
     onUpdateMirror: (mirrorState: boolean) => void,
@@ -63,6 +72,7 @@ function VideoPose(props: videoPoseProps) {
     const [isPlaying, setPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
     const timeSlider = useRef<HTMLInputElement>(null);
+    const [isSliding, setIsSliding] = useState(false);
 
     const [speed, setSpeed] = useState(1);
     const [volume, setVolume] = useState(100);
@@ -205,6 +215,13 @@ function VideoPose(props: videoPoseProps) {
             }
         }
     }, [rect.startX, rect.startY, rect.width, rect.height])
+
+    /**
+     * Allows the direct setting of the rect object from activated chapters
+     */
+    const setRectManually = (newRect: RectType) => {
+        setRect(newRect);
+    }
 
     /**
     * Make the focus area canvas start drawing the updated focus area rectangle
@@ -528,9 +545,12 @@ function VideoPose(props: videoPoseProps) {
                     </button>
                     <p className="top-header-video-name">{curVideo.videoName}</p>
                 </div>
-                <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress} vidProgress={progress} videoSource={curVideo.videoHostID} mirrored={isMirrored} volume={volume} />
+                <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress}
+                    vidProgress={progress} videoSource={curVideo.videoHostID} mirrored={isMirrored}
+                    volume={volume} rect={rect} setRect={setRectManually} isSliding={isSliding} />
                 <div className="video-controls">
-                    <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} step="0.1" value={progress} onChange={(e) => handleVideoProgress(e)} />
+                    <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} step="0.1" value={progress}
+                        onChange={(e) => handleVideoProgress(e)} onMouseDown={() => setIsSliding(true)} onMouseUp={() => setIsSliding(false)} />
                     <div className="bottom-half-controls">
                         <div className="bottom-half-controls-section">
                             <p className="current-time">{secondToHourMinuteSecond(progress).time + " / " + secondToHourMinuteSecond(videoLength).time}</p>

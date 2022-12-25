@@ -1,6 +1,6 @@
 import "../../../styles/video_learn_page/Chapters/ChapterEditor.css"
 
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, useCallback } from "react"
 import { RiPencilFill } from "react-icons/ri";
 
 import { BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
@@ -9,10 +9,19 @@ import MultiRangeSlider from "../../utility/MultiRangeSlider";
 import useTime from "../../../hooks/useTime";
 import { AiOutlineConsoleSql } from "react-icons/ai";
 
+type RectType = {
+    startX: number,
+    startY: number,
+    width: number,
+    height: number,
+    updatedRect: boolean
+}
+
 type ChapterType = {
     name: string,
     start: number,
-    end: number
+    end: number,
+    rect: RectType
 }
 
 enum TimePos {
@@ -31,13 +40,14 @@ type ChapterEditorProps = {
         name: string,
         start: number,
         end: number,
+        rect: RectType,
         index: number
     },
     videoSource: string,
     mirrored: boolean,
     volume: number,
     closer: () => void,
-    updater: (chapter: ChapterType, index: number) => void
+    updater: (chapter: ChapterType, index: number) => void,
 }
 
 function ChapterEditor(props: ChapterEditorProps) {
@@ -47,11 +57,13 @@ function ChapterEditor(props: ChapterEditorProps) {
 
     const [curStart, setCurStart] = useState(props.values.start);
     const [curEnd, setCurEnd] = useState(props.values.end);
+    const setEnd = useRef(true);
 
     const [startDecomposed, setStartDecomposed] = useState(secondToHourMinuteSecond(props.values.start));
     const [endDecomposed, setEndDecomposed] = useState(secondToHourMinuteSecond(props.values.end));
-    const [displayStart, setDisplayStart] = useState(secondToHourMinuteSecond(props.values.start));
     const [displayEnd, setDisplayEnd] = useState(secondToHourMinuteSecond(props.values.end));
+    const [displayStart, setDisplayStart] = useState(secondToHourMinuteSecond(props.values.start));
+
 
     const titleInputElement = useRef<HTMLInputElement | null>(null);
     const videoElement = useRef<HTMLVideoElement | null>(null);
@@ -72,15 +84,25 @@ function ChapterEditor(props: ChapterEditorProps) {
      */
     useEffect(() => {
         setCurName(prevName => props.values.name);
-        setCurStart(prevStart => props.values.start);
-        setStartDecomposed(prev => secondToHourMinuteSecond(props.values.start));
-        setDisplayStart(prev => secondToHourMinuteSecond(props.values.start))
-        setCurEnd(prevEnd => props.values.end);
-        setEndDecomposed(prev => secondToHourMinuteSecond(props.values.end));
-        setDisplayEnd(prev => secondToHourMinuteSecond(props.values.end))
+        setEnd.current = false;
+        initializeEnd();
+        initializeStart();
+        setRect(prevRect => props.values.rect);
         setIsPlaying(false);
         setShowError(false);
     }, [props.values])
+
+    const initializeEnd = () => {
+        setCurEnd(prevEnd => props.values.end);
+        setEndDecomposed(prev => secondToHourMinuteSecond(props.values.end));
+        setDisplayEnd(prev => secondToHourMinuteSecond(props.values.end));
+    }
+
+    const initializeStart = () => {
+        setCurStart(prevStart => props.values.start);
+        setStartDecomposed(prev => secondToHourMinuteSecond(props.values.start));
+        setDisplayStart(prev => secondToHourMinuteSecond(props.values.start))
+    }
 
     useEffect(() => {
         setVideoLengthDecomposed(secondToHourMinuteSecond(videoLength));
@@ -128,7 +150,6 @@ function ChapterEditor(props: ChapterEditorProps) {
     const cleanTimeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event !== null) {
             let value = event.target.value;
-            console.log(value.slice(-1));
             if (value.slice(-1) === ".") {
                 value = value.slice(0, -1)
             }
@@ -231,7 +252,12 @@ function ChapterEditor(props: ChapterEditorProps) {
     */
     useEffect(() => {
         setEndDecomposed(prev => secondToHourMinuteSecond(curEnd));
-        jumpInVideo(curEnd);
+        if (setEnd.current) {
+            jumpInVideo(curEnd);
+        } else {
+            setEnd.current = true;
+        }
+
     }, [curEnd])
 
     useEffect(() => {
@@ -266,7 +292,7 @@ function ChapterEditor(props: ChapterEditorProps) {
      */
     const handleVideoProgress = () => {
         if (videoElement.current !== null) {
-            if (curEnd < videoElement.current.currentTime) {
+            if (curEnd < videoElement.current.currentTime || videoElement.current.duration <= videoElement.current.currentTime) {
                 videoElement.current.currentTime = curStart;
             }
         }
@@ -279,7 +305,6 @@ function ChapterEditor(props: ChapterEditorProps) {
         const focusCanvas = focusCanvasRef.current;
         if (!mouseDown.current && focusCanvas !== null) {
             const bounds = focusCanvas.getBoundingClientRect();
-            console.log(bounds);
             mouseDown.current = true;
             setRect(prevRect => ({
                 startX: (e.clientX - bounds.left) / bounds.width,
@@ -348,7 +373,7 @@ function ChapterEditor(props: ChapterEditorProps) {
                 startY: newStartY,
                 width: newWidth,
                 height: newHeight,
-                updatedRect: true
+                updatedRect: false
             }))
 
             mouseDown.current = false;
@@ -374,7 +399,7 @@ function ChapterEditor(props: ChapterEditorProps) {
     /**
      * Draws the bounding rectangle on the focus selection canvas
      */
-    const drawRect = () => {
+    const drawRect = useCallback(() => {
         const focusCanvas = focusCanvasRef.current;
         if (focusCanvas !== null) {
             const bounds = focusCanvas.getBoundingClientRect();
@@ -383,10 +408,6 @@ function ChapterEditor(props: ChapterEditorProps) {
                 focusCanvasCtx.clearRect(0, 0, focusCanvas.width, focusCanvas.height);
                 focusCanvasCtx.fillStyle = "#000000C0";
                 focusCanvasCtx.fillRect(0, 0, focusCanvas.width, focusCanvas.height);
-
-                console.log(`Canvas Width: ${focusCanvas.width}`);
-                console.log(`Bounds Width: ${bounds.width}`)
-
                 const xScale = focusCanvas.width / bounds.width;
                 const yScale = focusCanvas.height / bounds.height;
                 const scaledRect = getCanvasRect(rect.startX, rect.startY, rect.width, rect.height);
@@ -394,7 +415,11 @@ function ChapterEditor(props: ChapterEditorProps) {
                     scaledRect.canvasWidth * xScale, scaledRect.canvasHeight * yScale);
             }
         }
-    }
+    }, [rect.startX, rect.startY, rect.width, rect.height])
+
+    useEffect(() => {
+        drawRect();
+    }, [rect, drawRect])
 
     /**
      * When user submits, check that startTime < endTime 
@@ -405,7 +430,7 @@ function ChapterEditor(props: ChapterEditorProps) {
         if (curStart <= curEnd) {
             setIsPlaying(false);
             setShowError(false);
-            props.updater({ name: curName, start: curStart, end: curEnd }, props.values.index);
+            props.updater({ name: curName, start: curStart, end: curEnd, rect: rect }, props.values.index);
         } else {
             console.log("Invalid time input")
         }

@@ -65,7 +65,7 @@
     left: 5vw;
 
     width: 40vw;
-    height: calc(40vw * 9 / 16);
+    height: calc(40vw * 9 / 16 + 1px);
 }
 
 .time-bounds-slider {
