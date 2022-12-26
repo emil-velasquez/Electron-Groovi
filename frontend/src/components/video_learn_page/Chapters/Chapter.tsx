@@ -16,15 +16,21 @@ type RectType = {
     updatedRect: boolean
 }
 
+type ChapterTag = {
+    id: number,
+    index: number
+}
+
 type chapterProps = {
     name: string,
     start: number,
     end: number,
     rect: RectType,
+    id: number,
     index: number,
-    editor: (newName: string, newStart: number, newEnd: number, newRect: RectType, newIndex: number) => void
+    editor: (newName: string, newStart: number, newEnd: number, newRect: RectType, newId: number, newIndex: number) => void
     jumper: (time: number) => void;
-    activator: (isActivated: boolean, index: number) => void;
+    activator: (isActivated: boolean, tag: ChapterTag) => void;
 }
 
 function Chapter(props: chapterProps) {
@@ -40,7 +46,7 @@ function Chapter(props: chapterProps) {
     }
 
     useEffect(() => {
-        props.activator(activated, props.index);
+        props.activator(activated, { id: props.id, index: props.index });
     }, [activated])
 
     return (
@@ -54,7 +60,7 @@ function Chapter(props: chapterProps) {
                     <ImLoop2 className={activated ? "chapter-card-icon-activated" : "chapter-card-icon"} />
                 </button>
                 <br />
-                <button onClick={() => props.editor(props.name, props.start, props.end, props.rect, props.index)}>
+                <button onClick={() => props.editor(props.name, props.start, props.end, props.rect, props.id, props.index)}>
                     <RiPencilFill className={activated ? "chapter-card-icon-activated" : "chapter-card-icon"} />
                 </button>
                 <br />

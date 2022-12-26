@@ -15,12 +15,17 @@ type RectType = {
     updatedRect: boolean
 }
 
-
 type ChapterType = {
     name: string,
     start: number,
     end: number,
-    rect: RectType
+    rect: RectType,
+    id: number
+}
+
+type ChapterTag = {
+    id: number,
+    index: number
 }
 
 type ChapterListProps = {
@@ -37,25 +42,28 @@ type ChapterListProps = {
 }
 
 function ChapterList(props: ChapterListProps) {
-    const [chapters, setChapters] = useState<ChapterType[]>([{ name: "test", start: 5, end: 10, rect: { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false } }, { name: "test2", start: 90, end: 100, rect: { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false } }]);
-    const [activeChapters, setActiveChapters] = useState<number[]>([]);
+    const [chapters, setChapters] = useState<ChapterType[]>([{ name: "test", start: 5, end: 10, rect: { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false }, id: 0 }, { name: "test2", start: 90, end: 100, rect: { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false }, id: 1 }]);
+    const [activeChapters, setActiveChapters] = useState<ChapterTag[]>([]);
     const [curActiveChapterIdx, setCurActiveChapterIdx] = useState(0);
 
-    const [editorValues, setEditorValues] = useState({ name: "Untitled", start: 0, end: Number(props.vidLength), rect: { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false }, index: -1 });
+    const [editorValues, setEditorValues] = useState({ name: "Untitled", start: 0, end: Number(props.vidLength), rect: { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false }, id: -1, index: -1 });
     const [showEditor, setShowEditor] = useState(false);
     const firstRender = useRef(true);
+
+    const [nextId, setNextId] = useState(2);
 
     const defaultRect = useRef(props.rect);
 
     /**
      * Sets the values of the editor to be used before showed to the user
      */
-    const resetChapterEditor = (newName: string, newStart: number, newEnd: number, newRect: RectType, newIndex: number) => {
+    const resetChapterEditor = (newName: string, newStart: number, newEnd: number, newRect: RectType, newId: number, newIndex: number) => {
         setEditorValues(prevValues => ({
             name: newName,
             start: newStart,
             end: newEnd,
             rect: newRect,
+            id: newId,
             index: newIndex
         }));
     }
@@ -83,6 +91,11 @@ function ChapterList(props: ChapterListProps) {
      */
     const updateChapters = (chapter: ChapterType, index: number) => {
         setShowEditor(prev => false);
+        if (chapter.id === -1) {
+            chapter.id = nextId;
+            setNextId(prev => prev + 1);
+        }
+
         let updatedChapters = [...chapters];
         if (index === -1) {
             updatedChapters = [...updatedChapters, chapter];
@@ -107,19 +120,33 @@ function ChapterList(props: ChapterListProps) {
         setChapters(prevChapters => sortedChapters);
     }
 
+    useEffect(() => {
+        const maxIndex = chapters.length;
+        for (let tagIdx in activeChapters) {
+            let tag = activeChapters[tagIdx];
+            if (tag.index >= maxIndex || chapters[tag.index].id !== tag.id) {
+                if (tag.index - 1 >= 0 && chapters[tag.index - 1].id === tag.id) {
+                    activeChapters[tagIdx] = { ...activeChapters[tagIdx], index: tag.index - 1 }
+                } else if (tag.index + 1 < maxIndex && chapters[tag.index + 1].id === tag.id) {
+                    activeChapters[tagIdx] = { ...activeChapters[tagIdx], index: tag.index + 1 }
+                }
+            }
+        }
+    }, [chapters])
+
     /**
      * If a chapter gets activated, add it to activeChapters (in sorted order)
      * If a chapter gets deactivated, remove it from activateChapters and subtract 1 from curActiveChapterIdx
      * if curActiveChapterIdx >= size of activateChapters
      */
-    const toggleChapter = (isActivated: boolean, index: number) => {
+    const toggleChapter = (isActivated: boolean, tag: ChapterTag) => {
         if (isActivated) {
-            let newActiveChapters = [...activeChapters, index];
-            const sortedChapters = newActiveChapters.sort();
+            let newActiveChapters = [...activeChapters, tag];
+            const sortedChapters = newActiveChapters.sort((chp1, chp2) => { return (chp1.index - chp2.index) });
             setActiveChapters(prevActiveChapters => sortedChapters);
         } else {
             setActiveChapters(prevActiveChapters => {
-                const removedChapter = prevActiveChapters.filter((value) => value !== index);
+                const removedChapter = prevActiveChapters.filter((value) => value.id !== tag.id);
                 return removedChapter;
             });
         }
@@ -143,7 +170,7 @@ function ChapterList(props: ChapterListProps) {
             }
         }
         if (activeChapters.length > 0) {
-            const curActiveChap = chapters[activeChapters[curActiveChapterIdx]];
+            const curActiveChap = chapters[activeChapters[curActiveChapterIdx].index];
 
             //if we are within the current chapter, make sure that the correct rect is applied to the video
             //if the rect is not correct, call the current rect the default and then update the rect
@@ -158,9 +185,9 @@ function ChapterList(props: ChapterListProps) {
             if (props.vidProgress < curActiveChap.start || props.vidProgress > curActiveChap.end + 1) {
                 let foundNewActive = false;
                 let potentialNewActiveIdx = 0;
-                let potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx]];
+                let potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx].index];
                 while (!foundNewActive && potentialNewActiveIdx < activeChapters.length) {
-                    potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx]];
+                    potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx].index];
                     if (potentialActiveChapter.start >= props.vidProgress ||
                         (potentialActiveChapter.start <= props.vidProgress && props.vidProgress <= potentialActiveChapter.end)) {
                         foundNewActive = true;
@@ -188,7 +215,7 @@ function ChapterList(props: ChapterListProps) {
                 if (nextActiveChapterIdx >= activeChapters.length) {
                     nextActiveChapterIdx = 0;
                 }
-                const nextActiveChap = chapters[activeChapters[nextActiveChapterIdx]];
+                const nextActiveChap = chapters[activeChapters[nextActiveChapterIdx].index];
                 setCurActiveChapterIdx(prevChapter => nextActiveChapterIdx);
                 //update rect to new active chapter
                 if (!props.isSliding) {
@@ -224,14 +251,14 @@ function ChapterList(props: ChapterListProps) {
             <div className={chapterListHeightSelector(props.viewState)}>
                 <div className="header-section">
                     <p className="header">Chapters</p>
-                    <button onClick={() => resetChapterEditor("Untitled", 0, Number(props.vidLength), { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false }, -1)}>
+                    <button onClick={() => resetChapterEditor("Untitled", 0, Number(props.vidLength), { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false }, -1, -1)}>
                         <FiPlus className="plus-button" />
                     </button>
                 </div>
                 <hr />
                 <div className={props.viewState === 1 ? "chapter-section-short" : "chapter-section"}>
-                    {chapters.map((curElement, idx) => <Chapter name={curElement.name} start={curElement.start}
-                        end={curElement.end} rect={curElement.rect} index={idx} editor={resetChapterEditor} jumper={props.jumper}
+                    {chapters.map((curElement, idx) => <Chapter key={curElement.id} name={curElement.name} start={curElement.start}
+                        end={curElement.end} rect={curElement.rect} id={curElement.id} index={idx} editor={resetChapterEditor} jumper={props.jumper}
                         activator={toggleChapter} />)}
                 </div>
             </div>

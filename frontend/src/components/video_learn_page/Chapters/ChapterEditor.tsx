@@ -21,7 +21,8 @@ type ChapterType = {
     name: string,
     start: number,
     end: number,
-    rect: RectType
+    rect: RectType,
+    id: number
 }
 
 enum TimePos {
@@ -41,6 +42,7 @@ type ChapterEditorProps = {
         start: number,
         end: number,
         rect: RectType,
+        id: number,
         index: number
     },
     videoSource: string,
@@ -430,7 +432,7 @@ function ChapterEditor(props: ChapterEditorProps) {
         if (curStart <= curEnd) {
             setIsPlaying(false);
             setShowError(false);
-            props.updater({ name: curName, start: curStart, end: curEnd, rect: rect }, props.values.index);
+            props.updater({ name: curName, start: curStart, end: curEnd, rect: rect, id: props.values.id }, props.values.index);
         } else {
             console.log("Invalid time input")
         }
