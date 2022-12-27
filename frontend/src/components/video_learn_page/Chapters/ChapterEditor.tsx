@@ -9,21 +9,7 @@ import MultiRangeSlider from "../../utility/MultiRangeSlider";
 import useTime from "../../../hooks/useTime";
 import { AiOutlineConsoleSql } from "react-icons/ai";
 
-type RectType = {
-    startX: number,
-    startY: number,
-    width: number,
-    height: number,
-    updatedRect: boolean
-}
-
-type ChapterType = {
-    name: string,
-    start: number,
-    end: number,
-    rect: RectType,
-    id: number
-}
+import { RectType, ChapterType } from "../../../models/VideoLearnPage/VideoLearnPageTypes";
 
 enum TimePos {
     START,

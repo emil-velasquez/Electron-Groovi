@@ -7,19 +7,7 @@ import { BsFillTrashFill } from "react-icons/bs";
 import { ImLoop2 } from "react-icons/im";
 
 import useTime from "../../../hooks/useTime";
-
-type RectType = {
-    startX: number,
-    startY: number,
-    width: number,
-    height: number,
-    updatedRect: boolean
-}
-
-type ChapterTag = {
-    id: number,
-    index: number
-}
+import { RectType, ChapterTag } from "../../../models/VideoLearnPage/VideoLearnPageTypes";
 
 type chapterProps = {
     name: string,
@@ -28,9 +16,10 @@ type chapterProps = {
     rect: RectType,
     id: number,
     index: number,
-    editor: (newName: string, newStart: number, newEnd: number, newRect: RectType, newId: number, newIndex: number) => void
-    jumper: (time: number) => void;
-    activator: (isActivated: boolean, tag: ChapterTag) => void;
+    editor: (newName: string, newStart: number, newEnd: number, newRect: RectType, newId: number, newIndex: number) => void,
+    jumper: (time: number) => void,
+    activator: (isActivated: boolean, tag: ChapterTag) => void,
+    deleter: (tag: ChapterTag) => void
 }
 
 function Chapter(props: chapterProps) {
@@ -64,7 +53,7 @@ function Chapter(props: chapterProps) {
                     <RiPencilFill className={activated ? "chapter-card-icon-activated" : "chapter-card-icon"} />
                 </button>
                 <br />
-                <button>
+                <button onClick={() => props.deleter({ id: props.id, index: props.index })}>
                     <BsFillTrashFill className={activated ? "chapter-card-icon-activated" : "chapter-card-icon"} />
                 </button>
             </div>

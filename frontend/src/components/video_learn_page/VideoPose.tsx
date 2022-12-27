@@ -18,14 +18,7 @@ import useTime from "../../hooks/useTime";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 
-type RectType = {
-    startX: number,
-    startY: number,
-    width: number,
-    height: number,
-    updatedRect: boolean
-}
-
+import { RectType } from "../../models/VideoLearnPage/VideoLearnPageTypes";
 
 type videoPoseProps = {
     onPoseResults: (results: any) => void,

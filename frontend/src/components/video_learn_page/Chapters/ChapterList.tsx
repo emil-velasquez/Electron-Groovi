@@ -7,26 +7,7 @@ import Chapter from "./Chapter";
 
 import { FiPlus } from "react-icons/fi";
 
-type RectType = {
-    startX: number,
-    startY: number,
-    width: number,
-    height: number,
-    updatedRect: boolean
-}
-
-type ChapterType = {
-    name: string,
-    start: number,
-    end: number,
-    rect: RectType,
-    id: number
-}
-
-type ChapterTag = {
-    id: number,
-    index: number
-}
+import { RectType, ChapterTag, ChapterType } from "../../../models/VideoLearnPage/VideoLearnPageTypes";
 
 type ChapterListProps = {
     vidLength: string,
@@ -120,6 +101,28 @@ function ChapterList(props: ChapterListProps) {
         setChapters(prevChapters => sortedChapters);
     }
 
+    /**
+     * Callback that allows a chapter to be deleted from the chapter list and from the activated list if necessary
+     */
+    const deleteChapters = (tag: ChapterTag) => {
+        setActiveChapters(prevActiveChapters => {
+            const removedChapter = prevActiveChapters.filter((value) => value.id !== tag.id);
+            if (curActiveChapterIdx >= removedChapter.length && curActiveChapterIdx > 0) {
+                setCurActiveChapterIdx(prevChap => prevChap - 1);
+            }
+            return removedChapter;
+        })
+        setChapters(prevChapters => {
+            prevChapters.splice(tag.index, 1);
+            const cloneSplicedChapters = [...prevChapters];
+            return cloneSplicedChapters;
+        })
+    }
+
+    /**
+     * When chapter is updated, make sure that the activeChapter list is updated with any new indices
+     * for the activated chapters (which could have been moved around)
+     */
     useEffect(() => {
         const maxIndex = chapters.length;
         for (let tagIdx in activeChapters) {
@@ -152,6 +155,10 @@ function ChapterList(props: ChapterListProps) {
         }
     }
 
+    /**
+     * If the active chapter list is updated such that the last active chapter was deactived,
+     * decrement cur active chapter index to stay within the active chapter list
+     */
     useEffect(() => {
         if (curActiveChapterIdx >= activeChapters.length && curActiveChapterIdx > 0) {
             setCurActiveChapterIdx(prevChap => prevChap - 1);
@@ -170,66 +177,71 @@ function ChapterList(props: ChapterListProps) {
             }
         }
         if (activeChapters.length > 0) {
-            const curActiveChap = chapters[activeChapters[curActiveChapterIdx].index];
+            try {
+                const curActiveChap = chapters[activeChapters[curActiveChapterIdx].index];
 
-            //if we are within the current chapter, make sure that the correct rect is applied to the video
-            //if the rect is not correct, call the current rect the default and then update the rect
-            if (props.vidProgress >= curActiveChap.start && props.vidProgress <= curActiveChap.end) {
-                if (JSON.stringify({ ...props.rect, updatedRect: false }) !== JSON.stringify({ ...curActiveChap.rect, updatedRect: false })) {
-                    defaultRect.current = props.rect;
-                    props.setRect({ ...curActiveChap.rect, updatedRect: true });
-                }
-            }
-
-            //if progress is not within active chapter, figure out next active chapter after current progress
-            if (props.vidProgress < curActiveChap.start || props.vidProgress > curActiveChap.end + 1) {
-                let foundNewActive = false;
-                let potentialNewActiveIdx = 0;
-                let potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx].index];
-                while (!foundNewActive && potentialNewActiveIdx < activeChapters.length) {
-                    potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx].index];
-                    if (potentialActiveChapter.start >= props.vidProgress ||
-                        (potentialActiveChapter.start <= props.vidProgress && props.vidProgress <= potentialActiveChapter.end)) {
-                        foundNewActive = true;
-                    }
-                    potentialNewActiveIdx++;
-                }
-                potentialNewActiveIdx -= 1;
-                setCurActiveChapterIdx(prevChapter => potentialNewActiveIdx);
-
-                //if the user has scrolled in between the previous chapter and the next chapter, set the rect to the default
-                if (props.vidProgress < potentialActiveChapter.start || props.vidProgress > potentialActiveChapter.end + 1) {
-                    //check if the user wants to define a new default
-                    if (JSON.stringify({ ...defaultRect.current, updatedRect: false }) !== JSON.stringify({ ...props.rect, updatedRect: false })
-                        && JSON.stringify({ ...curActiveChap.rect, updatedRect: false }) !== JSON.stringify({ ...props.rect, updatedRect: false })) {
+                //if we are within the current chapter, make sure that the correct rect is applied to the video
+                //if the rect is not correct, call the current rect the default and then update the rect
+                if (props.vidProgress >= curActiveChap.start && props.vidProgress <= curActiveChap.end) {
+                    if (JSON.stringify({ ...props.rect, updatedRect: false }) !== JSON.stringify({ ...curActiveChap.rect, updatedRect: false })) {
                         defaultRect.current = props.rect;
+                        props.setRect({ ...curActiveChap.rect, updatedRect: true });
                     }
-                    props.setRect({ ...defaultRect.current, updatedRect: true });
-                }
-            }
-
-            //checking if we are at the end of the current active chapter
-            //if so figure out the next active chapter and jump if necessary to its start
-            if (curActiveChap.end <= props.vidProgress && props.vidProgress <= curActiveChap.end + 1) {
-                let nextActiveChapterIdx = curActiveChapterIdx + 1;
-                if (nextActiveChapterIdx >= activeChapters.length) {
-                    nextActiveChapterIdx = 0;
-                }
-                const nextActiveChap = chapters[activeChapters[nextActiveChapterIdx].index];
-                setCurActiveChapterIdx(prevChapter => nextActiveChapterIdx);
-                //update rect to new active chapter
-                if (!props.isSliding) {
-                    props.setRect({ ...nextActiveChap.rect, updatedRect: true });
-                    if (!(curActiveChap.start < nextActiveChap.start
-                        && nextActiveChap.start < curActiveChap.end
-                        && curActiveChap.end < nextActiveChap.end)) {
-                        props.jumper(nextActiveChap.start);
-                    }
-                } else {
-                    props.setRect({ ...defaultRect.current, updatedRect: true })
                 }
 
+                //if progress is not within active chapter, figure out next active chapter after current progress
+                if (props.vidProgress < curActiveChap.start || props.vidProgress > curActiveChap.end + 1) {
+                    let foundNewActive = false;
+                    let potentialNewActiveIdx = 0;
+                    let potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx].index];
+                    while (!foundNewActive && potentialNewActiveIdx < activeChapters.length) {
+                        potentialActiveChapter = chapters[activeChapters[potentialNewActiveIdx].index];
+                        if (potentialActiveChapter.start >= props.vidProgress ||
+                            (potentialActiveChapter.start <= props.vidProgress && props.vidProgress <= potentialActiveChapter.end)) {
+                            foundNewActive = true;
+                        }
+                        potentialNewActiveIdx++;
+                    }
+                    potentialNewActiveIdx -= 1;
+                    setCurActiveChapterIdx(prevChapter => potentialNewActiveIdx);
+
+                    //if the user has scrolled in between the previous chapter and the next chapter, set the rect to the default
+                    if (props.vidProgress < potentialActiveChapter.start || props.vidProgress > potentialActiveChapter.end + 1) {
+                        //check if the user wants to define a new default
+                        if (JSON.stringify({ ...defaultRect.current, updatedRect: false }) !== JSON.stringify({ ...props.rect, updatedRect: false })
+                            && JSON.stringify({ ...curActiveChap.rect, updatedRect: false }) !== JSON.stringify({ ...props.rect, updatedRect: false })) {
+                            defaultRect.current = props.rect;
+                        }
+                        props.setRect({ ...defaultRect.current, updatedRect: true });
+                    }
+                }
+
+                //checking if we are at the end of the current active chapter
+                //if so figure out the next active chapter and jump if necessary to its start
+                if (curActiveChap.end <= props.vidProgress && props.vidProgress <= curActiveChap.end + 1) {
+                    let nextActiveChapterIdx = curActiveChapterIdx + 1;
+                    if (nextActiveChapterIdx >= activeChapters.length) {
+                        nextActiveChapterIdx = 0;
+                    }
+                    const nextActiveChap = chapters[activeChapters[nextActiveChapterIdx].index];
+                    setCurActiveChapterIdx(prevChapter => nextActiveChapterIdx);
+                    //update rect to new active chapter
+                    if (!props.isSliding) {
+                        props.setRect({ ...nextActiveChap.rect, updatedRect: true });
+                        if (!(curActiveChap.start < nextActiveChap.start
+                            && nextActiveChap.start < curActiveChap.end
+                            && curActiveChap.end < nextActiveChap.end)) {
+                            props.jumper(nextActiveChap.start);
+                        }
+                    } else {
+                        props.setRect({ ...defaultRect.current, updatedRect: true })
+                    }
+
+                }
+            } catch {
+                console.error(chapters);
             }
+
         }
     }, [props.vidProgress])
 
@@ -259,7 +271,7 @@ function ChapterList(props: ChapterListProps) {
                 <div className={props.viewState === 1 ? "chapter-section-short" : "chapter-section"}>
                     {chapters.map((curElement, idx) => <Chapter key={curElement.id} name={curElement.name} start={curElement.start}
                         end={curElement.end} rect={curElement.rect} id={curElement.id} index={idx} editor={resetChapterEditor} jumper={props.jumper}
-                        activator={toggleChapter} />)}
+                        activator={toggleChapter} deleter={deleteChapters} />)}
                 </div>
             </div>
         </div>
