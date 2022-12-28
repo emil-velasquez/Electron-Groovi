@@ -3,6 +3,7 @@ import ChapterMap from "./chapterMap";
 
 export default interface User {
     id?: ObjectId,
+    authId: string,
     username: string,
     name: string,
     playlistIDs: ObjectId[],

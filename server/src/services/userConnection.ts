@@ -20,10 +20,14 @@ async function applyUserSchemaValidation(db: mongoDB.Db) {
     const jsonSchema = {
         $jsonSchema: {
             bsonType: "object",
-            required: ["username", "name", "playlistIDs", "profilePicHostID", "chapterMap"],
+            required: ["authId", "username", "name", "playlistIDs", "profilePicHostID", "chapterMap"],
             additionalProperties: false,
             properties: {
                 _id: {},
+                authId: {
+                    bsonType: "string",
+                    description: "authId is required and is a string"
+                },
                 username: {
                     bsonType: "string",
                     description: "username is required and is a string"

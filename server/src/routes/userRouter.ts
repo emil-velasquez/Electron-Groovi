@@ -54,6 +54,7 @@ userRouter.post("/loadProfile", checkJwt, async (req: Request, res: Response) =>
             let dbUser = await userCollection.findOne({ username: username });
             if (!dbUser) {
                 const newUser: User = {
+                    authId: req.auth.payload.sub,
                     username: username,
                     name: name,
                     playlistIDs: [],
@@ -65,6 +66,7 @@ userRouter.post("/loadProfile", checkJwt, async (req: Request, res: Response) =>
                 dbUser = await userCollection.findOne({ username: username });
             }
 
+            delete dbUser.authId;
             res.json({ message: "Success", profileInfo: dbUser })
         } else {
             res.json({ message: "Failure: Mismatched IDs" })
@@ -81,6 +83,7 @@ userRouter.post("/getUser", async (req: Request, res: Response) => {
     try {
         const userResult = await userCollection.findOne({ _id: new ObjectId(req.body.id) });
         if (userResult) {
+            delete userResult.authId;
             res.json({ message: "Success", userInfo: userResult });
         } else {
             res.json({ message: `Failure: Couldn't find user with id ${req.body.id}` });
