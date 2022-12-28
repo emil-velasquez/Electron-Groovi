@@ -20,7 +20,7 @@ async function applyUserSchemaValidation(db: mongoDB.Db) {
     const jsonSchema = {
         $jsonSchema: {
             bsonType: "object",
-            required: ["username", "name", "playlistIDs", "profilePicHostID"],
+            required: ["username", "name", "playlistIDs", "profilePicHostID", "chapterMap"],
             additionalProperties: false,
             properties: {
                 _id: {},
@@ -47,6 +47,10 @@ async function applyUserSchemaValidation(db: mongoDB.Db) {
                 bio: {
                     bsonType: "string",
                     description: "bio is not required and is a string"
+                },
+                chapterMap: {
+                    bsonType: "object",
+                    description: "chapterMap is required and is an object of (video id:chapter list id)"
                 }
             }
         }

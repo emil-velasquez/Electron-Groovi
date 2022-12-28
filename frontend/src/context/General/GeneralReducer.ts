@@ -2,6 +2,7 @@
 
 import { ObjectId } from "mongodb";
 import User from "../../models/user"
+import ChapterMap from "../../models/chapterMap";
 
 type ActionMap<M extends { [index: string]: any }> = {
     [Key in keyof M]: M[Key] extends undefined
@@ -24,7 +25,8 @@ type UserPayload = {
         name: string,
         playlistIDs: ObjectId[],
         profilePicHostID: string,
-        bio: string
+        bio: string,
+        chapterMap: ChapterMap
     }
 }
 
@@ -40,7 +42,8 @@ export const userReducer = (state: User, action: UserActions) => {
                 name: action.payload.name,
                 playlistIDs: action.payload.playlistIDs,
                 profilePicHostID: action.payload.profilePicHostID,
-                bio: action.payload.bio
+                bio: action.payload.bio,
+                chapterMap: action.payload.chapterMap
             })
         default:
             return state;

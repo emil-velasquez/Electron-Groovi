@@ -4,6 +4,7 @@ import React, { createContext, useReducer } from "react";
 
 import { userReducer, UserActions } from "./GeneralReducer";
 import User from "../../models/user";
+import ChapterMap from "../../models/chapterMap";
 
 type InitialStateType = {
     user: User
@@ -16,7 +17,8 @@ const initialState = {
         name: "",
         playlistIDs: [],
         profilePicHostID: "",
-        bio: ""
+        bio: "",
+        chapterMap: {} as ChapterMap
     }
 }
 

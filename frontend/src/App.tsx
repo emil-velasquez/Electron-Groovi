@@ -28,7 +28,8 @@ function App() {
                 name: responseUser.name,
                 playlistIDs: responseUser.playlistIDs,
                 profilePicHostID: responseUser.profilePicHostID,
-                bio: responseUser.bio
+                bio: responseUser.bio,
+                chapterMap: responseUser.chapterMap
             }
         })
     }

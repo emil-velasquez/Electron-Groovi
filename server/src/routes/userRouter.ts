@@ -58,7 +58,8 @@ userRouter.post("/loadProfile", checkJwt, async (req: Request, res: Response) =>
                     name: name,
                     playlistIDs: [],
                     profilePicHostID: "https://res.cloudinary.com/projectd/image/upload/v1659199898/ProfilePicture_rv3oah",
-                    bio: ""
+                    bio: "",
+                    chapterMap: {}
                 }
                 await userCollection.insertOne(newUser)
                 dbUser = await userCollection.findOne({ username: username });
