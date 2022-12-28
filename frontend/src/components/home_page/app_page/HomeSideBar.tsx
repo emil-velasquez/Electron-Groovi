@@ -1,6 +1,6 @@
 import "../../../styles/home_page/app_page/HomeSideBarStyle.css"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import User from "../../../models/user";
 import Playlist from "../../../models/playlist";
@@ -12,17 +12,17 @@ import { RiHeartFill } from "react-icons/ri"
 import { BiTrendingUp } from "react-icons/bi"
 import { TiHome } from "react-icons/ti"
 
-type HomeSideBarProps = {
-    user: User | null,
-}
+import { AppContext } from "../../../context/General/GeneralContext";
 
 type KeyPlaylistInfo = {
     _id: ObjectId,
     name: string
 }
 
-function HomeSideBar(props: HomeSideBarProps) {
+function HomeSideBar() {
     const [playlistList, setPlaylistList] = useState<KeyPlaylistInfo[]>([]);
+
+    const { state, dispatch } = useContext(AppContext);
 
     /**
      * Whenever the playlistIDs of the user updates, reset the playlistList and obtain all
@@ -30,9 +30,9 @@ function HomeSideBar(props: HomeSideBarProps) {
      */
     useEffect(() => {
         const loadUserPlaylists = async () => {
-            if (props.user !== null) {
+            if (state.user !== null) {
                 let newPlaylistList: KeyPlaylistInfo[] = [];
-                for (const id of props.user.playlistIDs) {
+                for (const id of state.user.playlistIDs) {
                     const playlistInfo: Playlist = await window.playlistAPI.getPlaylist(id.toString());
                     if (playlistInfo._id !== undefined) {
                         newPlaylistList.push({ _id: playlistInfo._id, name: playlistInfo.name });
@@ -44,7 +44,7 @@ function HomeSideBar(props: HomeSideBarProps) {
         }
 
         loadUserPlaylists().then((result) => setPlaylistList(result));
-    }, [props.user])
+    }, [state.user])
 
     /**
      * Returns class name for links depending on if they are the active link
