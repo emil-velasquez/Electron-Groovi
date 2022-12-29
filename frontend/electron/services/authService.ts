@@ -23,13 +23,18 @@ type ProfileInfo = {
     exp: number
 }
 
-type User = {
+interface ChapterMap {
+    [key: string]: ObjectId;
+}
+
+interface User {
     id?: ObjectId,
     username: string,
     name: string,
     playlistIDs: ObjectId[],
     profilePicHostID: string,
-    bio: string
+    bio: string,
+    chapterMap: ChapterMap
 }
 
 const redirectUri = "http://localhost/callback";
