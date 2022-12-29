@@ -79,7 +79,7 @@ userRouter.post("/loadProfile", checkJwt, async (req: Request, res: Response) =>
 /**
  * If found, returns the user with a certain ObjectId
  */
-userRouter.post("/getUser", async (req: Request, res: Response) => {
+userRouter.get("/getUser", async (req: Request, res: Response) => {
     try {
         const userResult = await userCollection.findOne({ _id: new ObjectId(req.body.id) });
         if (userResult) {

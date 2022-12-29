@@ -8,7 +8,7 @@ chapterListRouter.use(express.json());
 /**
  * If found, returns the chapter list with a certain ObjectId
  */
-chapterListRouter.post("/getChapterist", async (req: Request, res: Response) => {
+chapterListRouter.get("/getChapterist", async (req: Request, res: Response) => {
     try {
         const chapterListResult = await chapterListCollection.findOne({ _id: new ObjectId(req.body.id) });
         if (chapterListResult) {

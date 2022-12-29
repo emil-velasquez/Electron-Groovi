@@ -9,7 +9,7 @@ import { expressDomain } from "../env_variables.json"
  */
 const getUserInfo = async (userID: string) => {
     const getUserOptions = {
-        method: "POST",
+        method: "GET",
         url: `${expressDomain}/user/getUser`,
         data: {
             id: userID

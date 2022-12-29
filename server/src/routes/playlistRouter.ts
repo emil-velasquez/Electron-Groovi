@@ -8,7 +8,7 @@ playlistRouter.use(express.json());
 /**
  * If found, returns the playlist with a certain ObjectId
  */
-playlistRouter.post("/getPlaylist", async (req: Request, res: Response) => {
+playlistRouter.get("/getPlaylist", async (req: Request, res: Response) => {
     try {
         const playlistResult = await playlistCollection.findOne({ _id: new ObjectId(req.body.id) });
         if (playlistResult) {

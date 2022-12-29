@@ -9,7 +9,7 @@ import { expressDomain } from "../env_variables.json"
  */
 const getPlaylistInfo = async (playlistID: string) => {
     const getPlaylistOptions = {
-        method: "POST",
+        method: "GET",
         url: `${expressDomain}/playlist/getPlaylist`,
         data: {
             id: playlistID
