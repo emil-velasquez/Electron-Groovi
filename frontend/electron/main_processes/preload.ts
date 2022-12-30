@@ -39,7 +39,17 @@ const userAPI: UserAPI = {
     getUser: (id) => ipcRenderer.invoke("user:get-user", { userID: id })
 }
 
+//Chapter List API
+export type ChapterListAPI = {
+    getChapterList: (listID: string) => Promise<any>
+}
+
+const chapterListAPI: ChapterListAPI = {
+    getChapterList: (id) => ipcRenderer.invoke("chapterlist:get-list", { listID: id })
+}
+
 contextBridge.exposeInMainWorld("authAPI", authAPI)
 contextBridge.exposeInMainWorld("playlistAPI", playlistAPI)
 contextBridge.exposeInMainWorld("videoAPI", videoAPI)
 contextBridge.exposeInMainWorld("userAPI", userAPI)
+contextBridge.exposeInMainWorld("chapterListAPI", chapterListAPI)

@@ -7,6 +7,7 @@ import * as authService from "./services/authService";
 import * as playlistService from "./services/playlistService";
 import * as videoService from "./services/videoService";
 import * as userService from "./services/userService";
+import * as chapterListService from "./services/chapterListService";
 
 /**
  * If the user has a valid refresh token on their machine, log them in.
@@ -47,6 +48,13 @@ app.on("ready", () => {
     ipcMain.handle("user:get-user", async (event, ...args) => {
         const id = args[0].userID;
         const result = userService.getUserInfo(id);
+        return result;
+    })
+
+    //chapter list service handlers
+    ipcMain.handle("chapterlist:get-list", async (event, ...args) => {
+        const id = args[0].listID;
+        const result = chapterListService.getChapterListInfo(id);
         return result;
     })
 
