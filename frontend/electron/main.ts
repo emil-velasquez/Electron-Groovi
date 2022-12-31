@@ -51,11 +51,37 @@ app.on("ready", () => {
         return result;
     })
 
+    ipcMain.on("user:modify-chapter-map", async (event, ...args) => {
+        const id = args[0].userId;
+        const newMap = args[0].newMap;
+        userService.modifyChapterMap(id, newMap);
+    })
+
     //chapter list service handlers
     ipcMain.handle("chapterlist:get-list", async (event, ...args) => {
         const id = args[0].listID;
         const result = chapterListService.getChapterListInfo(id);
         return result;
+    })
+
+    ipcMain.handle("chapterlist:insert-new-list", async (event, ...args) => {
+        const id = args[0].userId;
+        const result = chapterListService.insertNewChapterList(id);
+        return result;
+    })
+
+    ipcMain.on("chapterlist:modify-max-id", async (event, ...args) => {
+        const userId = args[0].userId;
+        const listId = args[0].listId;
+        const newMaxId = args[0].newMaxId;
+        chapterListService.modifyChapterCurMaxID(userId, listId, newMaxId);
+    })
+
+    ipcMain.on("chapterlist:modify-chapters", async (event, ...args) => {
+        const userId = args[0].userId;
+        const listId = args[0].listId;
+        const newChapters = args[0].newChapters;
+        chapterListService.modifyChapterList(userId, listId, newChapters);
     })
 
     showWindow();

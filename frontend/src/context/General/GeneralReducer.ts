@@ -15,7 +15,8 @@ type ActionMap<M extends { [index: string]: any }> = {
 };
 
 export enum Types {
-    Login = "USER_LOGIN"
+    Login = "USER_LOGIN",
+    UpdateMap = "UPDATE_CHAPTER_MAP"
 }
 
 type UserPayload = {
@@ -33,7 +34,7 @@ type UserPayload = {
 export type UserActions = ActionMap<UserPayload>[keyof ActionMap<UserPayload>];
 
 export const userReducer = (state: User, action: UserActions) => {
-    switch (action.type) {
+    switch (action.type.toString()) {
         case Types.Login:
             return ({
                 ...state,
@@ -43,6 +44,11 @@ export const userReducer = (state: User, action: UserActions) => {
                 playlistIDs: action.payload.playlistIDs,
                 profilePicHostID: action.payload.profilePicHostID,
                 bio: action.payload.bio,
+                chapterMap: action.payload.chapterMap
+            })
+        case Types.UpdateMap:
+            return ({
+                ...state,
                 chapterMap: action.payload.chapterMap
             })
         default:

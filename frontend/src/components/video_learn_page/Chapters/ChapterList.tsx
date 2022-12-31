@@ -1,13 +1,16 @@
 import "../../../styles/video_learn_page/Chapters/ChapterListStyle.css"
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 
 import ChapterEditor from "./ChapterEditor";
 import Chapter from "./Chapter";
 
 import { FiPlus } from "react-icons/fi";
 
-import { RectType, ChapterTag, ChapterType } from "../../../models/VideoLearnPage/VideoLearnPageTypes";
+import { RectType, ChapterTag, ChapterType, ChapterListType } from "../../../models/VideoLearnPage/VideoLearnPageTypes";
+import { AppContext } from "../../../context/General/GeneralContext";
+
+import { Types } from "../../../context/General/GeneralReducer";
 
 type ChapterListProps = {
     vidLength: string,
@@ -19,11 +22,14 @@ type ChapterListProps = {
     volume: number,
     rect: RectType,
     setRect: (rect: RectType) => void,
-    isSliding: boolean
+    isSliding: boolean,
+    videoId: string | undefined
 }
 
 function ChapterList(props: ChapterListProps) {
-    const [chapters, setChapters] = useState<ChapterType[]>([{ name: "test", start: 5, end: 10, rect: { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false }, id: 0 }, { name: "test2", start: 90, end: 100, rect: { startX: 0, startY: 0, width: 1, height: 1, updatedRect: false }, id: 1 }]);
+    const { state, dispatch } = useContext(AppContext)
+
+    const [chapters, setChapters] = useState<ChapterType[]>([]);
     const [activeChapters, setActiveChapters] = useState<ChapterTag[]>([]);
     const [curActiveChapterIdx, setCurActiveChapterIdx] = useState(0);
 
@@ -31,9 +37,51 @@ function ChapterList(props: ChapterListProps) {
     const [showEditor, setShowEditor] = useState(false);
     const firstRender = useRef(true);
 
-    const [nextId, setNextId] = useState(2);
+    const [nextId, setNextId] = useState(0);
 
     const defaultRect = useRef(props.rect);
+    const listId = useRef("");
+
+    /**
+     * Initializes the ChapterList to whatever information is saved from the user
+     */
+    useEffect(() => {
+        const loadChapterList = async () => {
+            const userChapterMap = state.user.chapterMap;
+            if (props.videoId !== undefined) {
+                const listID = userChapterMap[props.videoId];
+                if (listID) {
+                    listId.current = listID;
+                    const listInfo: ChapterListType = await window.chapterListAPI.getChapterList(listID);
+                    return listInfo;
+                } else {
+                    if (state.user._id !== undefined) {
+                        console.log("here");
+                        const newListID: string = await window.chapterListAPI.insertNewChapterList(state.user._id.toString());
+                        listId.current = newListID;
+                        let modifiedChapterMap = { ...state.user.chapterMap };
+                        modifiedChapterMap[props.videoId] = newListID;
+                        console.log(modifiedChapterMap);
+                        await window.userAPI.modifyChapterMap(state.user._id.toString(), modifiedChapterMap);
+                        dispatch({
+                            type: Types.UpdateMap,
+                            payload: {
+                                chapterMap: modifiedChapterMap
+                            }
+                        })
+                        return ({ chapters: [], curMaxID: 0 })
+                    }
+                }
+            }
+        }
+
+        loadChapterList().then((result) => {
+            if (result !== undefined) {
+                setChapters(result.chapters)
+                setNextId(result.curMaxID)
+            }
+        });
+    }, [props.videoId])
 
     /**
      * Sets the values of the editor to be used before showed to the user
@@ -135,7 +183,28 @@ function ChapterList(props: ChapterListProps) {
                 }
             }
         }
+
+        if (firstRender.current) {
+            firstRender.current = false;
+        } else {
+            if (state.user._id !== undefined) {
+                window.chapterListAPI.modifyChapters(state.user._id.toString(), listId.current, chapters)
+            }
+        }
     }, [chapters])
+
+    /**
+     * Save what the next new chapter's id should be to uniquely identify it for this song
+     */
+    useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+        } else {
+            if (state.user._id !== undefined) {
+                window.chapterListAPI.modifyChapterCurMaxID(state.user._id.toString(), listId.current, nextId)
+            }
+        }
+    }, [nextId])
 
     /**
      * If a chapter gets activated, add it to activeChapters (in sorted order)

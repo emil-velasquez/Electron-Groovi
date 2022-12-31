@@ -540,7 +540,8 @@ function VideoPose(props: videoPoseProps) {
                 </div>
                 <ChapterList viewState={viewState} vidLength={videoLength} jumper={jumpVideoProgress}
                     vidProgress={progress} videoSource={curVideo.videoHostID} mirrored={isMirrored}
-                    volume={volume} rect={rect} setRect={setRectManually} isSliding={isSliding} />
+                    volume={volume} rect={rect} setRect={setRectManually} isSliding={isSliding}
+                    videoId={params.videoID} />
                 <div className="video-controls">
                     <input ref={timeSlider} className="time-slider" type="range" min="0" max={videoLength} step="0.1" value={progress}
                         onChange={(e) => handleVideoProgress(e)} onMouseDown={() => setIsSliding(true)} onMouseUp={() => setIsSliding(false)} />

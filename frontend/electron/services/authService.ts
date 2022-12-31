@@ -24,7 +24,7 @@ type ProfileInfo = {
 }
 
 interface ChapterMap {
-    [key: string]: ObjectId;
+    [key: string]: string;
 }
 
 interface User {

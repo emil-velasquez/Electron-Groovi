@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb"
+
 export type RectType = {
     startX: number,
     startY: number,
@@ -17,4 +19,11 @@ export type ChapterType = {
     end: number,
     rect: RectType,
     id: number
+}
+
+export interface ChapterListType {
+    _id?: ObjectId,
+    ownerId: ObjectId,
+    curMaxID: number,
+    chapters: ChapterType[]
 }

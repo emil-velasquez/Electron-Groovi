@@ -1,23 +1,16 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
-import { auth } from "express-oauth2-jwt-bearer";
 
 import { userCollection } from "../services/userConnection";
 import User from "../models/user";
 
-import { auth0Domain, clientId, clientSecret, apiIdentifier } from "../../env_variables.json";
+import { auth0Domain, clientId, clientSecret } from "../../env_variables.json";
+import { checkJwt } from "./middleware";
 import { ObjectId } from "mongodb";
 
 export const userRouter = express.Router();
 userRouter.use(express.json());
 
-/**
- * Middleware to be attached to any route that requires a valid authorization
- */
-const checkJwt = auth({
-    audience: apiIdentifier,
-    issuerBaseURL: `https://${auth0Domain}/`
-})
 
 /**
  * When a user logins in, return their public data in MongoDB, creating a document for the user
@@ -90,5 +83,28 @@ userRouter.get("/getUser", async (req: Request, res: Response) => {
         }
     } catch (error) {
         res.json({ message: "Failure: " + error });
+    }
+})
+
+/**
+ * If found and validated, modify a user's chapterMap
+ */
+userRouter.put("/modifyChapterMap", checkJwt, async (req: Request, res: Response) => {
+    try {
+        const posUser = await userCollection.findOne({ authId: req.auth.payload.sub })
+        if (posUser._id.toString() === req.body.userId) {
+            const filter = { _id: new ObjectId(req.body.userId) };
+            const update = {
+                $set: {
+                    chapterMap: req.body.newMap
+                }
+            };
+            const result = await userCollection.updateOne(filter, update);
+            res.json({ message: "Success" })
+        } else {
+            res.json({ message: "Failure: No permission to modify this document" })
+        }
+    } catch (error) {
+        res.json({ message: "Failure: " + error })
     }
 })

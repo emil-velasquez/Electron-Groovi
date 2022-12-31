@@ -1,6 +1,9 @@
 import axios from "axios";
 
+import { getAccessToken, refreshTokens } from "./authService";
 import { expressDomain } from "../env_variables.json"
+
+import { ChapterMap } from "../models/chapterTypes";
 
 /**
  * Returns the user info of the user at userID
@@ -25,4 +28,39 @@ const getUserInfo = async (userID: string) => {
     }
 }
 
-export { getUserInfo }
+const modifyChapterMap = async (userId: string, newMap: ChapterMap) => {
+    try {
+        const result = await modifyChapterMapBody(userId, newMap);
+        if (result.data.message === "Success") {
+            console.log("Successfully updated chapter map")
+        } else {
+            refreshTokens();
+            const result = await modifyChapterMapBody(userId, newMap);
+            if (result.data.message === "Success") {
+                console.log("Successfully updated chapter map")
+            } else {
+                console.log("Failed to update user's chapter map")
+            }
+        }
+    } catch (error) {
+        console.log("No access: " + error)
+    }
+}
+
+const modifyChapterMapBody = async (userId: string, newMap: ChapterMap) => {
+    const accessToken = getAccessToken();
+    const modifyOptions = {
+        method: "PUT",
+        url: `${expressDomain}/user/modifyChapterMap`,
+        headers: { "Authorization": `Bearer ${accessToken}` },
+        data: {
+            userId: userId,
+            newMap: newMap
+        }
+    }
+
+    const result = await axios(modifyOptions);
+    return result;
+}
+
+export { getUserInfo, modifyChapterMap }
