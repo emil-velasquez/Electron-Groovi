@@ -1,16 +1,14 @@
 .playlist-page {
-    padding: 1rem;
-}
-
-.overflow-container {
-    height: calc(100vh - 50px - 25px - 1rem);
+    margin-left: 1rem;
+    margin-top: 5px;
+    height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
 .video-card-section {
     display: flex;
-    width: calc(100vw - 250px);
+    width: 100%;
     flex-wrap: wrap;
     margin-top: 15px;
 }

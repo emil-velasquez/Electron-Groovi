@@ -6,6 +6,7 @@ import User from "./models/user";
 
 import { Outlet } from 'react-router-dom';
 import HomeSideBar from './components/home_page/app_page/HomeSideBar';
+import HistoryButtons from './components/home_page/HistoryButtons';
 
 import { AppContext } from './context/General/GeneralContext';
 import { Types } from './context/General/GeneralReducer';
@@ -44,10 +45,14 @@ function App() {
 
     return (
         <div className="App">
-            <HomeSideBar />
             <div className="outlet-section">
                 <Outlet />
             </div>
+            <HomeSideBar />
+            <div className='history-buttons'>
+                <HistoryButtons />
+            </div>
+
         </div>
     );
 }

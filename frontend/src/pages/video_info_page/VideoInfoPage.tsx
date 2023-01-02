@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 
 import ProfileBanner from "../../components/home_page/ProfileBanner";
 
-import HistoryButtons from "../../components/home_page/HistoryButtons";
 import { useParams } from "react-router-dom";
 
 import { RiHeartLine, RiHeartFill } from "react-icons/ri";
@@ -38,7 +37,6 @@ function SongPage() {
     } else {
         return (
             <div className="video-page">
-                <HistoryButtons />
                 <div className="overflow-container">
                     <div className="header">
                         <video controls className="video-preview">

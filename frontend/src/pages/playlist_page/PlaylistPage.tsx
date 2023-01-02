@@ -6,7 +6,6 @@ import Playlist from "../../models/playlist";
 import ProfileBanner from "../../components/home_page/ProfileBanner";
 import VideoCard from "../../components/home_page/VideoCard";
 
-import HistoryButtons from "../../components/home_page/HistoryButtons";
 import { useParams } from "react-router-dom";
 
 import { RiHeartLine, RiHeartFill } from "react-icons/ri"
@@ -36,25 +35,22 @@ function PlaylistPage() {
     } else {
         return (
             <div className="playlist-page">
-                <HistoryButtons />
-                <div className="overflow-container">
-                    <div className="header">
-                        <div className="header-logo">
-                            <img className="playlist-logo"
-                                src={curPlaylist?.pictureHostID}
-                                alt="playlist logo" />
-                        </div>
-                        <div className="header-info">
-                            <div className="header-info-content">
-                                <RiHeartLine className="like-heart" />
-                                <p className="header-name">{curPlaylist?.name}</p>
-                                <ProfileBanner userID={curPlaylist.ownerID.toString()} size={35} />
-                            </div>
+                <div className="header">
+                    <div className="header-logo">
+                        <img className="playlist-logo"
+                            src={curPlaylist?.pictureHostID}
+                            alt="playlist logo" />
+                    </div>
+                    <div className="header-info">
+                        <div className="header-info-content">
+                            <RiHeartLine className="like-heart" />
+                            <p className="header-name">{curPlaylist?.name}</p>
+                            <ProfileBanner userID={curPlaylist.ownerID.toString()} size={35} />
                         </div>
                     </div>
-                    <div className="video-card-section">
-                        {curPlaylist.videoIDs.map(id => <VideoCard videoID={id.toString()} />)}
-                    </div>
+                </div>
+                <div className="video-card-section">
+                    {curPlaylist.videoIDs.map(id => <VideoCard videoID={id.toString()} />)}
                 </div>
             </div>
         )
