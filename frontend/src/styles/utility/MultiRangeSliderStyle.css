@@ -27,7 +27,7 @@ followed this guide: https://dev.to/sandra_lewis/building-a-multi-range-slider-i
 }
 
 .slider-range {
-    background-color: #C17767;
+    background-color: #E88D67;
     z-index: 2;
 }
 
@@ -60,7 +60,7 @@ followed this guide: https://dev.to/sandra_lewis/building-a-multi-range-slider-i
 }
 
 .thumb::-webkit-slider-thumb {
-    background-color: #AE5A47;
+    background-color: #C17767;
     border: white solid 1px;
     cursor: pointer;
     border-radius: 2px;

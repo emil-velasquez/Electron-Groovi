@@ -9,8 +9,14 @@ import { NavLink } from "react-router-dom";
 import { ObjectId } from "mongodb";
 
 import { RiHeartFill } from "react-icons/ri"
-import { BiTrendingUp } from "react-icons/bi"
+import { BiTrendingUp, BiVideoPlus } from "react-icons/bi"
 import { TiHome } from "react-icons/ti"
+import { FiPlus } from "react-icons/fi";
+import { BsFillDiscFill } from "react-icons/bs"
+import { GoGear, GoBell } from "react-icons/go"
+import { FaSearch } from "react-icons/fa"
+import { CgProfile } from "react-icons/cg";
+import { IoChatboxOutline } from "react-icons/io5"
 
 import { AppContext } from "../../../context/General/GeneralContext";
 
@@ -72,24 +78,56 @@ function HomeSideBar() {
     return (
         <div className="side-bar">
             <div className="side-bar-content">
-                <NavLink className={({ isActive }) => setActiveLink(isActive)} to="/user">
-                    <div className="default-options-container">
-                        <TiHome className="side-bar-icons" /><p className="side-bar-text">Home</p>
+                <div className="logo-wrapper">
+                    <div className="logo-name">
+                        <BsFillDiscFill className="logo" />&nbsp;Groovi
                     </div>
-                </NavLink>
-                <div className="default-options-container">
-                    <BiTrendingUp className="side-bar-icons" /><p className="side-bar-text">Trending</p>
                 </div>
-                <div className="default-options-container">
-                    <RiHeartFill className="side-bar-icons" /><p className="side-bar-text">Liked</p>
+                <div className="side-bar-middle">
+                    <NavLink className={({ isActive }) => setActiveLink(isActive)} to="/user">
+                        <div className="default-options-container">
+                            <TiHome className="side-bar-icons" /><p className="side-bar-text">Home</p>
+                        </div>
+                    </NavLink>
+                    <div className="default-options-container">
+                        <BiTrendingUp className="side-bar-icons" /><p className="side-bar-text">Trending</p>
+                    </div>
+                    <div className="default-options-container">
+                        <RiHeartFill className="side-bar-icons" /><p className="side-bar-text">Liked</p>
+                    </div>
+                    <div className="default-options-container">
+                        <FaSearch className="side-bar-icons" /><p className="side-bar-text">Search</p>
+                    </div>
+                    <div className="side-bar-section">
+                        <div className="playlist-section-header">
+                            <p className="side-bar-text header-decoration">Playlists</p>
+                            <button>
+                                <FiPlus className="side-bar-icons" />
+                            </button>
+                        </div>
+                        {playlistList.map(playlistInfo => createPlaylistLink(playlistInfo))}
+                    </div>
+                    <div className="side-bar-section">
+                        <p className="side-bar-text header-decoration">Following</p>
+                    </div>
                 </div>
-                <hr />
-                <button>
-                    + New Playlist
-                </button>
-                {playlistList.map(playlistInfo => createPlaylistLink(playlistInfo))}
-                <hr />
-                <p className="side-bar-text">Subscribed</p>
+                <div className="additional-buttons">
+                    <div className="bot-button-wrapper">
+                        <CgProfile className="bottom-button" />
+                    </div>
+                    <div className="bot-button-wrapper">
+                        <IoChatboxOutline className="bottom-button" />
+                    </div>
+                    <div className="bot-button-wrapper">
+                        <GoBell className="bottom-button" />
+                    </div>
+                    <div className="bot-button-wrapper">
+                        <BiVideoPlus className="bottom-button" />
+                    </div>
+                    <div className="bot-button-wrapper">
+                        <GoGear className="bottom-button" />
+                    </div>
+                </div>
             </div>
         </div>
     )

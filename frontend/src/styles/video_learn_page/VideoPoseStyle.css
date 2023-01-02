@@ -91,7 +91,7 @@
     height: 7px;
     width: 88vw;
     background: #ffffff99;
-    background-image: linear-gradient(#C17767, #C17767);
+    background-image: linear-gradient(#E88D67, #E88D67);
     background-size: 2% 100%;
     background-repeat: no-repeat;
     margin-right: 0px;
@@ -103,7 +103,7 @@
     -webkit-appearance: none;
     height: 20px;
     width: 20px;
-    background: #C17767;
+    background: #E88D67;
     border-radius: 50%;
 }
 
@@ -167,7 +167,7 @@ option {
     height: 7px;
     background: #ffffff99;
     border-radius: 5px;
-    background-image: linear-gradient(#C17767, #C17767);
+    background-image: linear-gradient(#E88D67, #E88D67);
     background-size: 100% 100%;
     background-repeat: no-repeat;
 }
@@ -177,7 +177,7 @@ option {
     height: 15px;
     width: 15px;
     border-radius: 50%;
-    background: #C17767
+    background: #E88D67
 }
 
 .volume-slider::-webkit-slider-runnable-track {
@@ -195,7 +195,7 @@ option {
 
 .toggle-buttons-activated {
     font-size: 25px;
-    color: #C17767;
+    color: #E88D67;
     margin: 5px;
 }
 

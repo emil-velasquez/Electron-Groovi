@@ -1,14 +1,15 @@
 .App {
     color: white;
+    background-color: #030303;
 }
 
 .outlet-section {
     position: fixed;
-    top: 50px;
+    top: 0px;
     left: 250px;
     width: calc(100vw - 250px);
-    height: calc(100vh - 50px);
-    background-color: #151515;
+    height: 100vh;
+    background-color: #030303;
 }
 
 button {

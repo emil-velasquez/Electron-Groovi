@@ -47,6 +47,7 @@
 .header-section {
     display: flex;
     justify-content: space-around;
+    align-content: center;
     color: white;
     font-size: 25px;
     margin: 5px;

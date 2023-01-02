@@ -5,7 +5,6 @@ import React, { useEffect, useState, useContext } from "react";
 import User from "./models/user";
 
 import { Outlet } from 'react-router-dom';
-import HomeTopBar from './components/home_page/app_page/HomeTopBar';
 import HomeSideBar from './components/home_page/app_page/HomeSideBar';
 
 import { AppContext } from './context/General/GeneralContext';
@@ -45,7 +44,6 @@ function App() {
 
     return (
         <div className="App">
-            <HomeTopBar />
             <HomeSideBar />
             <div className="outlet-section">
                 <Outlet />
