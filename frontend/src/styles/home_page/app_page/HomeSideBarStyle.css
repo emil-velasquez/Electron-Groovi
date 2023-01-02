@@ -33,6 +33,7 @@
 
 .side-bar-middle {
     height: calc(100vh - 50px - 45px - 20px);
+    overflow-y: auto;
 }
 
 .side-bar-link {
