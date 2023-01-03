@@ -1,10 +1,10 @@
 .video-card {
-    margin-right: 15px;
+    margin-right: 25px;
     margin-bottom: 20px;
-
+    width: calc((100vw - 250px - 1rem - 15px - 40px - 60px) / 3);
     border: white solid 3px;
     border-radius: 15px;
-    box-shadow: 5px 5px white;
+    box-shadow: 1px 1px 0px 1px black, 5px 5px white;
     background-color: #252525;
 }
 
@@ -12,7 +12,7 @@
     height: auto;
     border-top-left-radius: 13px;
     border-top-right-radius: 13px;
-    width: calc((100vw - 250px - 1rem - 15px - 40px - 60px) / 3 + 3px)
+    width: calc((100vw - 250px - 1rem - 15px - 40px - 60px) / 3)
 }
 
 .video-info {
