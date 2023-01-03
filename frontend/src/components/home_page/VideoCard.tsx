@@ -34,11 +34,14 @@ function VideoCard(props: videoCardProps) {
                     <img className="video-thumbnail" src={curVideo.thumbnailHostID} alt="video thumbnail" />
                     <p className="video-info">{curVideo.videoName}</p>
                 </Link>
-                <ProfileBanner userID={curVideo.choreographerID.toString()} size={15} />
-                <Link className="video-link" to={`/videoinfo/${curVideo._id?.toString()}`}>
-                    <p className="song-info">{curVideo.songName}</p>
-                    <p className="song-info">{curVideo.artistName}</p>
-                </Link>
+                <div className="video-card-bottom">
+                    <ProfileBanner userID={curVideo.choreographerID.toString()} size={15} />
+                    <Link className="video-link" to={`/videoinfo/${curVideo._id?.toString()}`}>
+                        <p className="song-info">
+                            {curVideo.artistName}:&nbsp;{curVideo.songName}
+                        </p>
+                    </Link>
+                </div>
             </div>
         )
     }

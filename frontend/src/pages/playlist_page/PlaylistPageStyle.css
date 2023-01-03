@@ -10,7 +10,7 @@
     display: flex;
     width: 100%;
     flex-wrap: wrap;
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
 .playlist-header {
@@ -20,8 +20,8 @@
     padding: 5px;
     border: white solid 5px;
     border-radius: 15px;
-    box-shadow: 1px 1px 0px 1px black, 10px 10px white;
-    background-color: #202020;
+    box-shadow: 5px 5px white;
+    background-color: #252525;
 }
 
 .playlist-logo {
