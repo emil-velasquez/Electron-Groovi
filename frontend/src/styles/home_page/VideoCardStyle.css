@@ -1,5 +1,4 @@
 .video-card {
-    margin-right: 25px;
     margin-bottom: 20px;
     width: calc((100vw - 250px - 1rem - 15px - 40px - 60px) / 3);
     border: white solid 3px;
@@ -17,7 +16,7 @@
 
 .video-info {
     margin: 0px;
-    margin-left: 15px;
+    margin-left: 10px;
     font-size: 15px;
 }
 
@@ -34,6 +33,6 @@
 
 .video-card-bottom {
     left: 10px;
-    margin-left: 15px;
+    margin-left: 10px;
     margin-bottom: 5px;
 }
