@@ -4,7 +4,7 @@
     height: 40px;
     justify-content: flex-end;
     color: white;
-    background-color: #030303
+    background-color: #151515
 }
 
 .nav-buttons {
@@ -20,7 +20,7 @@
     border-style: solid;
     border-width: 2px;
     border-radius: 50%;
-    box-shadow: 3px 3px white;
+    box-shadow: 1px 1px 0px 1px black, 3px 3px white;
     align-content: center;
     justify-content: center;
     background-color: #252525;
