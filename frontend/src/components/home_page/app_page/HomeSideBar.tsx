@@ -13,8 +13,8 @@ import { BiTrendingUp, BiVideoPlus } from "react-icons/bi"
 import { TiHome } from "react-icons/ti"
 import { FiPlus } from "react-icons/fi";
 import { BsFillDiscFill } from "react-icons/bs"
-import { GoGear, GoBell } from "react-icons/go"
-import { FaSearch } from "react-icons/fa"
+import { GoGear } from "react-icons/go"
+import { FaSearch, FaRegBell } from "react-icons/fa"
 import { CgProfile } from "react-icons/cg";
 import { IoChatboxOutline } from "react-icons/io5"
 
@@ -119,7 +119,7 @@ function HomeSideBar() {
                         <IoChatboxOutline className="bottom-button" />
                     </div>
                     <div className="bot-button-wrapper">
-                        <GoBell className="bottom-button" />
+                        <FaRegBell className="bottom-button" />
                     </div>
                     <div className="bot-button-wrapper">
                         <BiVideoPlus className="bottom-button" />
