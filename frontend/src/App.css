@@ -1,5 +1,5 @@
 .App {
-    color: white;
+    color: #faf9f6;
     background-color: #151515;
 }
 
@@ -16,7 +16,7 @@ button {
     border: none;
     padding: 0;
     background: none;
-    color: white;
+    color: #faf9f6;
 }
 
 .history-buttons {
@@ -29,7 +29,7 @@ button {
 
 /* width */
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 7px;
 }
 
 /* Track */

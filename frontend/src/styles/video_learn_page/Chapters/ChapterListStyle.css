@@ -11,7 +11,7 @@
     background-color: #151515;
     border-radius: 15px;
     border-style: solid;
-    border-color: white;
+    border-color: #faf9f6;
     border-width: 5px;
 
     box-shadow: 10px 10px black;
@@ -34,7 +34,7 @@
     background-color: #151515;
     border-radius: 15px;
     border-style: solid;
-    border-color: white;
+    border-color: #faf9f6;
     border-width: 5px;
 
     box-shadow: 10px 10px black;
@@ -48,7 +48,7 @@
     display: flex;
     justify-content: space-around;
     align-content: center;
-    color: white;
+    color: #faf9f6;
     font-size: 25px;
     margin: 5px;
 }
@@ -58,7 +58,7 @@
 }
 
 .plus-button {
-    color: white;
+    color: #faf9f6;
     font-size: 25px;
 }
 

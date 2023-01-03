@@ -19,9 +19,9 @@
     margin: auto;
     width: calc(100% - 50px);
     padding: 5px;
-    border: white solid 5px;
+    border: #faf9f6 solid 3px;
     border-radius: 15px;
-    box-shadow: 1px 1px 0px 1px black, 5px 5px white;
+    box-shadow: 1px 1px 0px 1px black, 5px 5px grey;
     background-color: #252525;
 }
 

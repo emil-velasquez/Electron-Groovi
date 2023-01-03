@@ -75,7 +75,7 @@
     background-color: #151515;
     border-radius: 15px;
     border-style: solid;
-    border-color: white;
+    border-color: #faf9f6;
     border-width: 5px;
 
     box-shadow: 10px 10px black;
@@ -128,7 +128,7 @@
 }
 
 .current-time {
-    color: white;
+    color: #faf9f6;
     margin-left: 5px;
     margin-right: 5px;
     padding-bottom: 5px;
@@ -136,7 +136,7 @@
 }
 
 .play-pause-button {
-    color: white;
+    color: #faf9f6;
     font-size: 25px;
     padding-top: 2px;
 }
@@ -144,7 +144,7 @@
 .select-speed {
     appearance: none;
     background: none;
-    color: white;
+    color: #faf9f6;
     outline: none;
     border: none;
     text-align: center;
@@ -153,12 +153,12 @@
 
 option {
     background-color: #151515;
-    color: white
+    color: #faf9f6
 }
 
 .control-bar-icon {
     font-size: 27px;
-    color: white;
+    color: #faf9f6;
 }
 
 .volume-slider {
@@ -189,7 +189,7 @@ option {
 
 .toggle-buttons-deactivated {
     font-size: 25px;
-    color: white;
+    color: #faf9f6;
     margin: 5px;
 }
 
@@ -245,13 +245,13 @@ option {
     background-color: #151515;
     border-radius: 15px;
     border-style: solid;
-    border-color: white;
+    border-color: #faf9f6;
     border-width: 5px;
 
     box-shadow: 10px 10px black;
 
     font-size: 30px;
-    color: white;
+    color: #faf9f6;
     z-index: 5;
 }
 

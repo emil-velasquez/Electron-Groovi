@@ -12,7 +12,7 @@
     background-color: #151515;
     border-radius: 15px;
     border-style: solid;
-    border-color: white;
+    border-color: #faf9f6;
     border-width: 5px;
 
     box-shadow: 10px 10px black;
@@ -37,7 +37,7 @@
     outline: none;
     border: 0;
     text-align: center;
-    color: white;
+    color: #faf9f6;
     font-size: 30px;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .edit-title {
-    color: white;
+    color: #faf9f6;
     font-size: 30px;
     margin-left: 10px;
 }
@@ -78,7 +78,7 @@
     display: flex;
     margin-top: 5px;
     justify-content: center;
-    color: white;
+    color: #faf9f6;
     font-size: 25px;
 }
 
@@ -88,7 +88,7 @@
     background-color: #151515;
     border: none;
 
-    color: white;
+    color: #faf9f6;
     font-size: 25px;
 
     margin-top: 5px;
@@ -105,7 +105,7 @@
 .save-button {
     margin-top: 10px;
     margin-bottom: 20px;
-    border: solid 2px white;
+    border: solid 2px #faf9f6;
     border-radius: 5px;
     background-color: #DC8F65;
     color: black;
@@ -124,5 +124,5 @@
     margin-top: 5px;
     margin-bottom: 0px;
     font-size: 15px;
-    color: white;
+    color: #faf9f6;
 }

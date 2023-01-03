@@ -2,7 +2,7 @@
     width: 190px;
     padding-right: 10px;
     padding-left: 10px;
-    border: 2px solid white;
+    border: 2px solid #faf9f6;
     display: flex;
     margin-top: 5px;
     margin-bottom: 10px;
@@ -14,7 +14,7 @@
     width: 190px;
     padding-right: 10px;
     padding-left: 10px;
-    border: 2px solid white;
+    border: 2px solid #faf9f6;
     background-color: #DC8F65;
     display: flex;
     margin-top: 5px;
@@ -37,7 +37,7 @@
 }
 
 .chapter-card-text {
-    color: white;
+    color: #faf9f6;
     font-size: 20px;
     margin: 0px;
 }
@@ -49,7 +49,7 @@
 }
 
 .chapter-card-icon {
-    color: white;
+    color: #faf9f6;
     font-size: 20px;
     margin-top: 5px;
 }

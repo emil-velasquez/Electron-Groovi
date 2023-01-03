@@ -61,7 +61,7 @@ followed this guide: https://dev.to/sandra_lewis/building-a-multi-range-slider-i
 
 .thumb::-webkit-slider-thumb {
     background-color: #C17767;
-    border: white solid 1px;
+    border: #faf9f6 solid 1px;
     cursor: pointer;
     border-radius: 2px;
     height: 40px;

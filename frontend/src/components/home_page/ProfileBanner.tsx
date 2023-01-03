@@ -33,7 +33,7 @@ function ProfileBanner(props: ProfileBannerProps) {
                 <div className="profile-banner">
                     <img className="profile-banner-content"
                         style={{ width: `${props.size}px`, height: `${props.size}px` }}
-                        src={`https://res.cloudinary.com/projectd/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_white,b_rgb:151515/${curUser.profilePicHostID}`}
+                        src={`https://res.cloudinary.com/projectd/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_white,b_rgb:252525/${curUser.profilePicHostID}`}
                         alt="profile" />
                     <span className="profile-banner-content" style={{ fontSize: `${props.size}px` }}>{curUser.username}</span>
                 </div>

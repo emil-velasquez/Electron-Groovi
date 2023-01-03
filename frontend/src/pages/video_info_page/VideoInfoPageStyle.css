@@ -61,7 +61,7 @@
 .vid-buttons {
     border-style: solid;
     border-width: 3px;
-    border-color: white;
+    border-color: #faf9f6;
     background-color: #151515;
     color: #DC8F65;
     border-radius: 15px;
@@ -77,7 +77,7 @@
 .vid-button-perform {
     border-style: solid;
     border-width: 3px;
-    border-color: white;
+    border-color: #faf9f6;
     background-color: #151515;
     color: #DC8F65;
     border-radius: 15px;
@@ -109,7 +109,7 @@
 
 .star {
     font-size: 25px;
-    color: white;
+    color: #faf9f6;
 }
 
 .vid-link {
