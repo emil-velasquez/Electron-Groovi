@@ -35,7 +35,7 @@ function PlaylistPage() {
     } else {
         return (
             <div className="playlist-page">
-                <div className="header">
+                <div className="playlist-header">
                     <div className="header-logo">
                         <img className="playlist-logo"
                             src={curPlaylist?.pictureHostID}
