@@ -3,7 +3,7 @@
     width: calc((100vw - 250px - 1rem - 15px - 40px - 44px) / 3);
     border: #faf9f6 solid 3px;
     border-radius: 15px;
-    box-shadow: 1px 1px 0px 1px black, 4px 4px 0px 1px grey;
+    box-shadow: 0px 7px #555, 0px 8px #AAA;
     background-color: #252525;
 }
 
