@@ -26,6 +26,8 @@ function VideoLearnPage(props: any, ref: Ref<unknown>) {
 
     const [viewState, setViewState] = useState(0);
 
+    const [webcamInterval, setWebcamInterval] = useState(0);
+
     /**
      * Update whether the video is mirrored
      */
@@ -153,12 +155,19 @@ function VideoLearnPage(props: any, ref: Ref<unknown>) {
         setViewState(newView);
     }
 
+    /**
+     * Listens to getting the webcam interval from WebcamPose and sends it into VideoPose
+     */
+    function sendWebcamInterval(interval: number) {
+        setWebcamInterval(interval);
+    }
+
     return (
         <div className="media-container">
             <VideoPose onPoseResults={videoPoseOnResults} onUpdateMirror={updateMirrored}
-                onViewStateChange={onViewStateChange} />
+                onViewStateChange={onViewStateChange} webcamInterval={webcamInterval} />
             <WebcamPose onPoseResults={webcamPoseOnResults} onWebcamReady={webcamLoaded}
-                viewState={viewState} />
+                viewState={viewState} sendWebcamInterval={sendWebcamInterval} />
             <Score score={score} />
         </div>
     );

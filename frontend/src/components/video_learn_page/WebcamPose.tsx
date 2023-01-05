@@ -9,6 +9,7 @@ import usePose from "../../hooks/usePose";
 type webcamPoseProps = {
     onPoseResults: (results: any) => void,
     onWebcamReady: () => void,
+    sendWebcamInterval: (interval: number) => void,
     viewState: number
 }
 
@@ -26,7 +27,8 @@ function WebcamPose(props: webcamPoseProps) {
         webcamPoseModel.onResults(webcamOnResults);
 
         if (webcamRef.current !== null && webcamRef.current.video !== null) {
-            startPoseEstimation(webcamPoseModel, webcamRef.current.video)
+            let webInterval = startPoseEstimation(webcamPoseModel, webcamRef.current.video)
+            props.sendWebcamInterval(webInterval);
         }
         props.onWebcamReady();
     }

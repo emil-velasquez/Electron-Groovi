@@ -32,7 +32,7 @@ const usePose = () => {
         // }
         // poseDetectionFrame();
 
-        setInterval(async () => {
+        return window.setInterval(async () => {
             await poseModel.send({ image: mediaElement });
         }, 1000)
     }

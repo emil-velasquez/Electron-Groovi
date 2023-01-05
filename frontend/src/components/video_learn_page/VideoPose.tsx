@@ -23,7 +23,8 @@ import { RectType } from "../../models/VideoLearnPage/VideoLearnPageTypes";
 type videoPoseProps = {
     onPoseResults: (results: any) => void,
     onUpdateMirror: (mirrorState: boolean) => void,
-    onViewStateChange: (newView: number) => void
+    onViewStateChange: (newView: number) => void,
+    webcamInterval: number
 }
 
 function VideoPose(props: videoPoseProps) {
@@ -86,6 +87,8 @@ function VideoPose(props: videoPoseProps) {
 
     const boundsScale = useRef(1);
     const boundsOffset = useRef(0);
+
+    const videoInterval = useRef(0);
 
     /**
      * Given a rect object in screen proportions, returns an object of the true screen coordinates
@@ -308,7 +311,7 @@ function VideoPose(props: videoPoseProps) {
         videoCanvasPoseModel.onResults(videoOnResults);
 
         if (videoFocusCanvasRef.current !== null) {
-            startPoseEstimation(videoCanvasPoseModel, videoFocusCanvasRef.current)
+            videoInterval.current = startPoseEstimation(videoCanvasPoseModel, videoFocusCanvasRef.current)
         }
 
         setIsFocused(false);
@@ -512,6 +515,15 @@ function VideoPose(props: videoPoseProps) {
         }
     }
 
+    /**
+     * Deletes all intervals using pose models on exit and cleans up
+     */
+    const cleanUp = () => {
+        window.clearInterval(props.webcamInterval);
+        window.clearInterval(videoInterval.current);
+        navigate(-1);
+    }
+
     if (curVideo === null) {
         return (<div />);
     } return (
@@ -533,7 +545,7 @@ function VideoPose(props: videoPoseProps) {
             <div className={showControls ? "video-controls-shown" : "video-controls-hidden"}
                 onMouseEnter={() => setControlsHovered(true)} onMouseLeave={() => setControlsHovered(false)}>
                 <div className="top-header">
-                    <button onClick={() => navigate(-1)}>
+                    <button onClick={() => cleanUp()}>
                         <IoIosArrowBack className="video-back-button" />
                     </button>
                     <p className="top-header-video-name">{curVideo.videoName}</p>
