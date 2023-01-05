@@ -1,10 +1,18 @@
 .video-card {
+    transition: all 0.25s;
     margin-bottom: 20px;
     width: calc((100vw - 250px - 1rem - 15px - 40px - 44px) / 3);
     border: #faf9f6 solid 3px;
     border-radius: 15px;
     box-shadow: 0px 7px #555, 0px 8px #AAA;
     background-color: #252525;
+}
+
+.video-card:hover {
+    margin-top: 4px;
+    margin-bottom: 16px;
+    box-shadow: 0px 3px #555, 0px 4px #AAA;
+    background-color: #454545;
 }
 
 .video-thumbnail {
