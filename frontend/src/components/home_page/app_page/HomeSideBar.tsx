@@ -58,7 +58,7 @@ function HomeSideBar() {
      * @returns :name of the style for active and unactive links based on active
      */
     const setActiveLink = (active: boolean) => {
-        return active ? "active-side-bar-link" : "side-bar-link"
+        return active ? "active-side-bar-link" : "default-options-container"
     }
 
     /**
@@ -85,9 +85,7 @@ function HomeSideBar() {
                 </div>
                 <div className="side-bar-middle">
                     <NavLink className={({ isActive }) => setActiveLink(isActive)} to="/user">
-                        <div className="default-options-container">
-                            <TiHome className="side-bar-icons" /><p className="side-bar-text">Home</p>
-                        </div>
+                        <TiHome className="side-bar-icons" /><p className="side-bar-text">Home</p>
                     </NavLink>
                     <div className="default-options-container">
                         <BiTrendingUp className="side-bar-icons" /><p className="side-bar-text">Trending</p>
@@ -98,16 +96,18 @@ function HomeSideBar() {
                     <div className="default-options-container">
                         <FaSearch className="side-bar-icons" /><p className="side-bar-text">Search</p>
                     </div>
-                    <div className="side-bar-section">
-                        <div className="playlist-section-header">
-                            <p className="side-bar-text header-decoration">Playlists</p>
-                            <button>
-                                <FiPlus className="side-bar-icons" />
-                            </button>
-                        </div>
-                        {playlistList.map(playlistInfo => createPlaylistLink(playlistInfo))}
+                    <hr className="side-bar-divider" />
+                    <div className="playlist-section-header">
+                        <p className="side-bar-text header-decoration">Playlists</p>
+                        <button>
+                            <div className="playlist-plus-wrapper">
+                                <FiPlus className="playlist-plus" />
+                            </div>
+                        </button>
                     </div>
-                    <div className="side-bar-section">
+                    {playlistList.map(playlistInfo => createPlaylistLink(playlistInfo))}
+                    <hr className="side-bar-divider" />
+                    <div className="following-header">
                         <p className="side-bar-text header-decoration">Following</p>
                     </div>
                 </div>
