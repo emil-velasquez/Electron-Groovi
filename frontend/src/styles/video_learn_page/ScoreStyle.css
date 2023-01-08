@@ -1,9 +1,102 @@
 .score {
     z-index: 3;
     position: fixed;
-    top: 0;
-    right: 0;
+    top: 0px;
+    right: 5vw;
+    width: 150px;
     font-size: xx-large;
-    color: #faf9f6;
-    background-color: black;
+    height: 40px;
+    text-align: center;
+    color: #151515;
+    background-color: #151515;
+
+    border-radius: 15px;
+    border-style: solid;
+    border-color: #faf9f6;
+    border-width: 5px;
+}
+
+.perfect-score {
+    background-color: #151515;
+    animation: perfect-blinker 1s linear infinite;
+}
+
+@keyframes perfect-blinker {
+    25% {
+        color: #faf9f6;
+        background-color: #689915;
+    }
+
+    75% {
+        color: #151515;
+        background-color: #151515;
+    }
+}
+
+.great-score {
+    background-color: #151515;
+    animation: great-blinker 1s linear infinite;
+}
+
+@keyframes great-blinker {
+    25% {
+        color: #faf9f6;
+        background-color: #2978A0;
+    }
+
+    75% {
+        color: #151515;
+        background-color: #151515;
+    }
+}
+
+.good-score {
+    background-color: #151515;
+    animation: good-blinker 1s linear infinite;
+}
+
+@keyframes good-blinker {
+    25% {
+        color: #faf9f6;
+        background-color: #E16C19;
+    }
+
+    75% {
+        color: #151515;
+        background-color: #151515;
+    }
+}
+
+.ok-score {
+    background-color: #151515;
+    animation: ok-blinker 1s linear infinite;
+}
+
+@keyframes ok-blinker {
+    25% {
+        color: #faf9f6;
+        background-color: #5F0F40
+    }
+
+    75% {
+        color: #151515;
+        background-color: #151515;
+    }
+}
+
+.miss-score {
+    background-color: #151515;
+    animation: miss-blinker 1s linear infinite;
+}
+
+@keyframes miss-blinker {
+    25% {
+        color: #faf9f6;
+        background-color: #9A031E;
+    }
+
+    75% {
+        color: #151515;
+        background-color: #151515;
+    }
 }
